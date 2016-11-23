@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups>
+    <group name="Family">
+        <repeatable>F</repeatable>
+        <question name="Head of Family">
+            <qtext>Name of Head of the Family</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter text</qhint>
+            <req>T</req>
+        </question>
+        <question name="Map">
+            <qtext>Map</qtext>
+            <qtype>M</qtype>
+            <qhint></qhint>
+            <req>F</req>
+        </question>
+        <question name="Camera">
+            <qtext>Camera</qtext>
+            <qtype>C</qtype>
+            <qhint></qhint>
+            <req>F</req>
+        </question>
+        <question name="Consumer Durables">
+            <qtext>Consumer Durables</qtext>
+            <req>F</req>
+            <qhint>Check all that are owned by family</qhint>
+            <qtype>MC</qtype>
+            <qchoices>
+                <choice>
+                    <ctext>Electric Fan</ctext>
+                </choice>
+                <choice>
+                    <ctext>Refrigerator</ctext>
+                </choice>
+                <choice>
+                    <ctext>Cooler</ctext>
+                </choice>
+                <choice>
+                    <ctext>Residential Telephone</ctext>
+                </choice>
+                <choice>
+                    <ctext>Mobile Phone</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Sex">
+            <qtext>Sex</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <req>T</req>
+            <qchoices>
+                <choice>
+                    <ctext>Female</ctext>
+                </choice>
+                <choice>
+                    <ctext>Male</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Father's Name">
+            <qtext>Father's Name</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter text</qhint>
+            <req>F</req>
+        </question>
+        <question name="Poverty Line">
+            <qtext>Is your family below poverty line?</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <qchoices>
+                <choice>
+                    <ctext>Yes</ctext>
+                </choice>
+                <choice>
+                    <ctext>No</ctext>
+                </choice>
+                <choice>
+                    <ctext>Don't know</ctext>
+                </choice>
+            </qchoices>
+            <req>T</req>
+        </question>
+        <question name="Illiterate females">
+            <qtext>Number of illiterate female adult members (Age more than 14 years)</qtext>
+            <qtype>N</qtype>
+            <qhint>Enter number</qhint>
+            <req>T</req>
+        </question>
+        <question name="Illiterate males">
+            <qtext>Number of illiterate male adult members (Age more than 14 years)</qtext>
+            <qtype>N</qtype>
+            <qhint>Enter number</qhint>
+            <req>T</req>
+        </question>
+    </group>
+    <group name="Test (repeatable)">
+        <gtext>Test</gtext>
+        <repeatable>T</repeatable>
+        <question name="test1">
+            <qtext>Test question 1 for repeatable chunk</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter anything</qhint>
+            <req>T</req>
+        </question>
+        <question name="test2">
+            <qtext>Text question 2</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter anything</qhint>
+            <req>F</req>
+        </question>
+    </group>
+</groups>
