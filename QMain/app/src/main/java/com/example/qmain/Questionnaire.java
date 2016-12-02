@@ -34,25 +34,38 @@ import android.widget.ScrollView;
 import android.content.Intent;
 import android.app.AlertDialog;
 import android.widget.CheckBox;
+
+import android.app.Activity;
+import android.view.MotionEvent;
+import android.view.View.OnTouchListener;
+import android.app.ActivityManager;
+
+
 import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.app.Dialog;
 
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+
 
 public class Questionnaire extends AppCompatActivity {
     public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY";
-    List ETs = new ArrayList();
-    List RGs = new ArrayList();
     LinearLayout layout = null;
-    LinearLayout chunk = null;
     public static NodeList nodes = null;
     List Questions = null;
-    List Questions2 = null;
-    List Counter = new ArrayList();
-    public AlertDialog.Builder builder = null;
+    static List Questions2 = null;
+    static List Counter = new ArrayList();
+    public static AlertDialog.Builder builder = null;
     public Context context = this;
+    public String LOCATION = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +94,7 @@ public class Questionnaire extends AppCompatActivity {
             Questions = new ArrayList();
             Questions2 = new ArrayList();
             for(int g = 0; g<groups.getLength();g++){
+                LinearLayout layout1 = new LinearLayout(context);
                 Node gr = groups.item(g);
                 Element eE = (Element) gr;
                 String name = eE.getNodeName();
@@ -93,71 +107,29 @@ public class Questionnaire extends AppCompatActivity {
                     xx.add(i);
                 }
                 if(eE.getElementsByTagName("repeatable").item(0).getTextContent().equals("T")){
-                    System.out.println("it's detecting");
-
+                    LinearLayout chunk = new LinearLayout(context);
                     final NodeList nrList = nList;
+                    nodes = nrList;
                     Button bt = new Button(this);
                     bt.setText("Add new " + ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent());
                     bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                             ActionBar.LayoutParams.WRAP_CONTENT));
 
                     bt.setOnClickListener(new View.OnClickListener() {
-                                              public void onClick(View v) {
-                                                  //new activity
-                                                  Button b = (Button) v;
-                                                  for (int temp = 0; temp < nrList.getLength(); temp++) {
-                                                      System.out.println("add a question");
-                                                      LinearLayout repeat = new LinearLayout(context);
-                                                      Node nNode = nrList.item(temp);
-                                                      if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                                                          LinearLayout q = null;
-                                                          Element eElement = (Element) nNode;
-                                                          String a = " #" + Integer.toString((int) Counter.size()+1);
-                                                          String text = "";
-                                                          if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
-                                                              text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+a+"*";
-                                                          }
-                                                          else{
-                                                              text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+a;
-                                                          }
-                                                          String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-                                                          String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
-                                                          if (type.equals("T")) {
-                                                              q = TextQ(text, hint, context);
-                                                          } else if (type.equals("N")) {
-                                                              q = NumQ(text, hint, context);
-                                                          } else if (type.equals("SC")) {
-                                                              List c = new ArrayList();
-                                                              NodeList choices = eElement.getElementsByTagName("choice");
-                                                              for (int i = 0; i < choices.getLength(); i++) {
-                                                                  Node choice = choices.item(i);
-                                                                  Element e = (Element) choice;
-                                                                  String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
-                                                                  c.add(x);
-                                                              }
-                                                              q = SingleChoice(text, c, hint, context, builder);
-                                                          } else if (type.equals("MC")) {
-                                                              List c = new ArrayList();
-                                                              NodeList choices = eElement.getElementsByTagName("choice");
-                                                              for (int i = 0; i < choices.getLength(); i++) {
-                                                                  Node choice = choices.item(i);
-                                                                  Element e = (Element) choice;
-                                                                  String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
-                                                                  c.add(x);
-                                                              }
-                                                              q = MultipleChoice(text, c, hint, context, builder);
-                                                          }
-                                                          Questions2.add(q);
-                                                          repeat.addView(q);
-
-                                                      }
-                                                      layout.addView(repeat, layout.getChildCount()-1);
-                                                  }
-                                                  Counter.add(1);
-                                              }
-                                          }
+                        public void onClick(View v) {
+                            /*
+                            Intent intent = new Intent(context, Repeat.class);
+                            startActivity(intent);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("nodes", (Serializable) nrList);
+                            intent.putExtras(bundle);
+                            Counter.add(1);
+                            */
+                        }
+                    }
                     );
-                    layout.addView(bt);
+                    chunk.addView(bt);
+                    layout.addView(chunk);
 
                 }
                 else {
@@ -204,18 +176,13 @@ public class Questionnaire extends AppCompatActivity {
                             } else if (type.equals("C")){
                                 q = Camera(text, context);
                             }
+                            setupUI(q);
                             layout.addView(q);
                             Questions.add(q);
                         }
                     }
                 }
             }
-            /*
-            for(int i = 0; i<Questions.size(); i++){
-                LinearLayout l = (LinearLayout) Questions.get(i);
-                layout.addView(l);
-            }
-            */
 
             Button bt = new Button(this);
             bt.setText("Submit");
@@ -237,31 +204,36 @@ public class Questionnaire extends AppCompatActivity {
 
     }
 
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public Activity a = this;
+
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+
+                    hideSoftKeyboard(a);
+                    return false;
+                }
+            });
+        }
+    }
+
     public static LinearLayout TextQ(String questiontext, String hint, Context context){
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
         final EditText edittext = new EditText(context);
-        //trigger blur event
-        //edittext.setInputType(1);
-        /*
-        final Context c = context;
-        edittext.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (v == edittext) {
-                    if (hasFocus) {
-                        // Open keyboard
-                        ((InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(edittext, InputMethodManager.SHOW_IMPLICIT);
-                    } else {
-                        // Close keyboard
-                        ((InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(edittext.getWindowToken(), 0);
-                    }
-                }
-            }
-        });
-        */
-
         edittext.setHint(hint);
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
@@ -332,25 +304,61 @@ public class Questionnaire extends AppCompatActivity {
         return qlayout;
     }
 
+    int PLACE_PICKER_REQUEST = 1;
+
     public LinearLayout Map(String questiontext, Context context){
         LinearLayout qlayout = new LinearLayout(context);
+        TextView tv = new TextView(context);
+        tv.setTag("text");
+        tv.setText(questiontext);
         Button bt = new Button(context);
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
         final Context c = context;
+        final Activity a = this;
+
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(c, MapsActivity.class);
-                startActivity(intent);
+
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(a), PLACE_PICKER_REQUEST);
+                }catch(GooglePlayServicesNotAvailableException e){
+                    System.out.println("didn't work");
+                }catch(GooglePlayServicesRepairableException e){
+                    System.out.println(":(");
+                }
+
             }
         });
+
+        qlayout.addView(tv);
         qlayout.addView(bt);
+        qlayout.setTag("M");
         return qlayout;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                String toastMsg = String.format("Place: %s", place.getLatLng());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+                System.out.println(toastMsg);
+                System.out.println(PlacePicker.getLatLngBounds(data));
+                LOCATION = toastMsg.substring(7);
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
     }
 
     public LinearLayout Camera(String questiontext, Context context){
         LinearLayout qlayout = new LinearLayout(context);
+        TextView tv = new TextView(context);
+        tv.setTag("text");
+        tv.setText(questiontext);
         Button bt = new Button(context);
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
@@ -361,7 +369,9 @@ public class Questionnaire extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
+        qlayout.addView(tv);
         qlayout.addView(bt);
+        qlayout.setTag("C");
         return qlayout;
     }
 
@@ -495,14 +505,16 @@ public class Questionnaire extends AppCompatActivity {
                         }
                     }
                 }
-                line = line.substring(0, line.length()-2);
+                if(line.length()>20){
+                    line = line.substring(0, line.length()-2);
+                }
                 System.out.println(line);
             }
             else if(tag.equals("M")){
-                System.out.println("cool");
+                line = question + ": " + LOCATION;
             }
             else if(tag.equals("C")){
-                System.out.println("cool");
+                line = question + ": ";
             }
             try{
                 line = line + "~~";
