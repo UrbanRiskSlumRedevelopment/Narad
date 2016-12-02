@@ -215,7 +215,7 @@ public class Questionnaire extends AppCompatActivity {
     public Activity a = this;
 
     public void setupUI(View view) {
-
+        // lose focus on text
         // Set up touch listener for non-text box views to hide keyboard.
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new OnTouchListener() {
@@ -307,6 +307,7 @@ public class Questionnaire extends AppCompatActivity {
     int PLACE_PICKER_REQUEST = 1;
 
     public LinearLayout Map(String questiontext, Context context){
+        // save location
         LinearLayout qlayout = new LinearLayout(context);
         TextView tv = new TextView(context);
         tv.setTag("text");
