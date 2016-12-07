@@ -15,17 +15,15 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.Locale;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.RadioButton;
@@ -40,12 +38,8 @@ import android.view.MotionEvent;
 import android.view.View.OnTouchListener;
 import android.app.ActivityManager;
 
+import android.content.SharedPreferences;
 
-import android.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.app.Dialog;
-
-import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -59,13 +53,12 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 public class Questionnaire extends AppCompatActivity {
     public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY";
     LinearLayout layout = null;
-    public static NodeList nodes = null;
     List Questions = null;
     static List Questions2 = null;
     static List Counter = new ArrayList();
     public static AlertDialog.Builder builder = null;
     public Context context = this;
-    public String LOCATION = "";
+    public static String LOCATION = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +70,11 @@ public class Questionnaire extends AppCompatActivity {
         layout.setOrientation(LinearLayout.VERTICAL);
         scroll_layout.addView(layout);
 
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                DATA, Context.MODE_PRIVATE);
+
         AlertDialog.Builder newbuilder = new AlertDialog.Builder(this);
         builder = newbuilder;
-
-        final Context context = getApplicationContext();
 
         // parsing question
         try {
@@ -97,34 +91,34 @@ public class Questionnaire extends AppCompatActivity {
                 LinearLayout layout1 = new LinearLayout(context);
                 Node gr = groups.item(g);
                 Element eE = (Element) gr;
-                String name = eE.getNodeName();
                 NodeList nList = eE.getElementsByTagName("question");
-                System.out.println(name);
-                NodeList rList = eE.getElementsByTagName("repeatable");
-                System.out.println(rList.item(0).getTextContent());
                 final ArrayList xx = new ArrayList();
                 for(int i = 0; i<100; i++){
                     xx.add(i);
                 }
                 if(eE.getElementsByTagName("repeatable").item(0).getTextContent().equals("T")){
                     LinearLayout chunk = new LinearLayout(context);
-                    final NodeList nrList = nList;
-                    nodes = nrList;
                     Button bt = new Button(this);
-                    bt.setText("Add new " + ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent());
+                    final String name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent();
+                    String textset = "Add new " + name;
+                    bt.setText(textset);
                     bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                             ActionBar.LayoutParams.WRAP_CONTENT));
 
                     bt.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            /*
+
                             Intent intent = new Intent(context, Repeat.class);
-                            startActivity(intent);
                             Bundle bundle = new Bundle();
-                            bundle.putSerializable("nodes", (Serializable) nrList);
+                            try {
+                                bundle.putString("group name", name);
+                            } catch(Exception e){
+                                System.out.println(name);
+                            }
                             intent.putExtras(bundle);
+                            startActivity(intent);
                             Counter.add(1);
-                            */
+
                         }
                     }
                     );
@@ -157,7 +151,7 @@ public class Questionnaire extends AppCompatActivity {
                                 for (int i = 0; i < choices.getLength(); i++) {
                                     Node choice = choices.item(i);
                                     Element e = (Element) choice;
-                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
+                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                                     c.add(x);
                                 }
                                 q = SingleChoice(text, c, hint, context, builder);
@@ -167,7 +161,7 @@ public class Questionnaire extends AppCompatActivity {
                                 for (int i = 0; i < choices.getLength(); i++) {
                                     Node choice = choices.item(i);
                                     Element e = (Element) choice;
-                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
+                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                                     c.add(x);
                                 }
                                 q = MultipleChoice(text, c, hint, context, builder);
@@ -185,7 +179,8 @@ public class Questionnaire extends AppCompatActivity {
             }
 
             Button bt = new Button(this);
-            bt.setText("Submit");
+            String submit = "Submit";
+            bt.setText(submit);
             bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                     ActionBar.LayoutParams.WRAP_CONTENT));
 
@@ -316,7 +311,6 @@ public class Questionnaire extends AppCompatActivity {
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
-        final Context c = context;
         final Activity a = this;
 
         bt.setOnClickListener(new View.OnClickListener() {
@@ -342,7 +336,7 @@ public class Questionnaire extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK)  {
                 Place place = PlacePicker.getPlace(this, data);
                 String toastMsg = String.format("Place: %s", place.getLatLng());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
@@ -364,7 +358,6 @@ public class Questionnaire extends AppCompatActivity {
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
-        final Context c = context;
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dispatchTakePictureIntent();
@@ -429,7 +422,7 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public String submit(){
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename = timeStamp+".txt";
         System.out.println("we here");
         FileOutputStream fos = null;
@@ -445,6 +438,16 @@ public class Questionnaire extends AppCompatActivity {
             Questions.add(Questions2.get(i));
         }
 
+        String answers = writeAnswers(Questions, true, fos);
+        if (answers.equals("")){
+            AlertDialog.Builder bdr = builder;
+            bdr.setMessage("Answer all required questions before submitting");
+            AlertDialog dialog = bdr.create();
+            dialog.show();
+            return "";
+        }
+
+        /* // code made into writeAnswers method
         for(int i = 0; i<Questions.size();i++){
             LinearLayout q = (LinearLayout) Questions.get(i);
             TextView text = (TextView) q.findViewWithTag("text");
@@ -522,7 +525,7 @@ public class Questionnaire extends AppCompatActivity {
                 fos.write(line.getBytes());
             }catch(Exception e){}
         }
-
+        */
         try {
             fos.close();
         }catch(Exception e){}
@@ -530,12 +533,94 @@ public class Questionnaire extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
+        Counter = new ArrayList();
+
         return filename;
 
         //hexcode, title from question field, device id, account
 
     }
 
+    public static String writeAnswers(List qs, boolean toFile, FileOutputStream f) {
+        String total = "";
+        for (int i = 0; i < qs.size(); i++) {
+            LinearLayout q = (LinearLayout) qs.get(i);
+            TextView text = (TextView) q.findViewWithTag("text");
+            String question = (String) text.getText();
+            String line = "";
+            String tag = "";
+            try {
+                tag = (String) q.getTag();
+            } catch (Exception e) {
+                System.out.println("there's no tag?");
+            }
+
+            System.out.println(tag);
+            if (tag.equals("T") || tag.equals("N")) {
+                EditText editText = (EditText) q.findViewWithTag("answer");
+                if (editText.getText().toString().equals("") && question.endsWith("*")) {
+                    return "";
+                } else {
+                    line = question + ": " + editText.getText();
+                }
+            } else if (tag.equals("SC")) {
+                line = question + ": ";
+                RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
+                int id = rg.getCheckedRadioButtonId();
+                if (id == -1) {
+                    return "";
+                } else {
+                    RadioButton rb = (RadioButton) rg.getChildAt(id);
+                    System.out.println(rg.getChildAt(id));
+                    System.out.println(rg.getChildCount());
+                    System.out.println(id);
+                    try {
+                        line += rb.getText();
+                        System.out.println(line);
+                    } catch (Exception e) {
+                    }
+                }
+
+            } else if (tag.equals("MC")) {
+                line = question + ": ";
+                System.out.println(q.getChildCount());
+                for (int j = 0; j < q.getChildCount(); j++) {
+                    System.out.println(q.getChildAt(j).getTag());
+                    String ctag = (String) q.getChildAt(j).getTag();
+                    if (ctag.equals("choice")) {
+                        CheckBox cb = (CheckBox) q.getChildAt(j);
+                        if (cb.isChecked()) {
+                            line += cb.getText() + ", ";
+                        }
+                    }
+                }
+                if (line.length() > 20) {
+                    line = line.substring(0, line.length() - 2);
+                }
+                System.out.println(line);
+            } else if (tag.equals("M")) {
+                line = question + ": " + LOCATION;
+            } else if (tag.equals("C")) {
+                line = question + ": ";
+            }
+            if (toFile) {
+                try {
+                    line = line + "~~";
+                    total += line;
+                    f.write(line.getBytes());
+                } catch (Exception e) {}
+            } else {
+                line = line + "~~";
+                total += line;
+            }
+        }
+        return total;
+    }
+
 
 
 }
+
+// readme
+// bundling/deploying to phone
+// backwards compatibility

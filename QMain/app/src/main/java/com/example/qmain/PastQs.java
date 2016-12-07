@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import android.content.Intent;
 import android.content.Context;
+import android.widget.ScrollView;
 
 public class PastQs extends AppCompatActivity {
     public final static String RESULTS = "";
@@ -20,8 +21,10 @@ public class PastQs extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_past_qs);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.activity_past_qs);
+        ScrollView sv = (ScrollView) findViewById(R.id.activity_past_qs);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        sv.addView(layout);
 
         String[] files = fileList();
         if(files.length > 0) {
@@ -41,7 +44,9 @@ public class PastQs extends AppCompatActivity {
                                               FileInputStream file = null;
                                               try{
                                                   file = openFileInput(filename);
-                                              }catch(Exception e){}
+                                              }catch(Exception e){
+                                                  System.out.println("cannot open file");
+                                              }
                                               StringBuilder sb = new StringBuilder();
                                               try{
                                                   BufferedReader reader = new BufferedReader(new InputStreamReader(file));

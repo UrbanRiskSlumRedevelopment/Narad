@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <groups>
     <group name="Family">
+        <gtext>Family</gtext>
         <repeatable>F</repeatable>
         <question name="Head of Family">
             <qtext>Name of Head of the Family</qtext>
@@ -11,13 +12,13 @@
         <question name="Map">
             <qtext>Map</qtext>
             <qtype>M</qtype>
-            <qhint></qhint>
+            <qhint>None</qhint>
             <req>F</req>
         </question>
         <question name="Camera">
             <qtext>Camera</qtext>
             <qtype>C</qtype>
-            <qhint></qhint>
+            <qhint>None</qhint>
             <req>F</req>
         </question>
         <question name="Consumer Durables">

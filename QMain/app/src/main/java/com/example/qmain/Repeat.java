@@ -10,15 +10,22 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.widget.Button;
+import android.widget.ScrollView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class Repeat extends AppCompatActivity {
     Context context = this;
@@ -27,22 +34,60 @@ public class Repeat extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repeat);
+        ScrollView scroll_layout = (ScrollView) findViewById(R.id.activity_repeat);
         LinearLayout chunk = new LinearLayout(getApplicationContext());
         chunk.setOrientation(LinearLayout.VERTICAL);
+        scroll_layout.addView(chunk);
 
         Bundle bundle = getIntent().getExtras();
-        NodeList nodes = (NodeList) bundle.getSerializable("nodes");
+        NodeList nodes = null;
+        String name = bundle.getString("group name");
 
-        System.out.println(nodes.getLength());
+        Boolean skip = false;
+
+        try {
+            InputStream in = getResources().openRawResource(R.raw.questions);
+            DocumentBuilderFactory dbFactory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(in);
+            doc.getDocumentElement().normalize();
+            NodeList groups = doc.getElementsByTagName("group");
+            for (int g = 0; g < groups.getLength(); g++) {
+                Node gr = groups.item(g);
+                Element eE = (Element) gr;
+                String gname = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent();
+                if (gname.equals(name)){
+                    nodes = eE.getElementsByTagName("question");
+                }
+                else{
+                    System.out.println(gname);
+                    System.out.println(name);
+                }
+            }
+        } catch (Exception e){
+            skip = true;
+        }
+        TextView tv = new TextView(this);
+        tv.setText("Enter unique identifier for entry");
+        tv.setTextSize(20);
+        EditText id = new EditText(this);
+        id.setHint("enter here");
+        chunk.addView(tv);
+        chunk.addView(id);
 
         for (int temp = 0; temp < nodes.getLength(); temp++) {
+            if(skip){
+                break;
+            }
             System.out.println("add a question");
             LinearLayout repeat = new LinearLayout(context);
+            repeat.setOrientation(LinearLayout.VERTICAL);
             Node nNode = nodes.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 LinearLayout q = null;
                 Element eElement = (Element) nNode;
-                String a = " #" + Integer.toString((int) Questionnaire.Counter.size()+1);
+                String a = " #" + Integer.toString(Questionnaire.Counter.size());
                 String text = "";
                 if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
                     text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+a+"*";
@@ -62,7 +107,7 @@ public class Repeat extends AppCompatActivity {
                     for (int i = 0; i < choices.getLength(); i++) {
                         Node choice = choices.item(i);
                         Element e = (Element) choice;
-                        String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
+                        String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                         c.add(x);
                     }
                     q = Questionnaire.SingleChoice(text, c, hint, context, Questionnaire.builder);
@@ -72,7 +117,7 @@ public class Repeat extends AppCompatActivity {
                     for (int i = 0; i < choices.getLength(); i++) {
                         Node choice = choices.item(i);
                         Element e = (Element) choice;
-                        String x = e.getElementsByTagName("ctext").item(0).getTextContent().toString();
+                        String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                         c.add(x);
                     }
                     q = Questionnaire.MultipleChoice(text, c, hint, context, Questionnaire.builder);
