@@ -42,10 +42,10 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".RepeatGroup" />
         <activity android:name=".PastQs" />
         <activity android:name=".QDisplay" />
-        <activity android:name=".Repeat"></activity>
+        <activity android:name=".Repeat" />
+        <activity android:name=".Display"></activity>
     </application>
 
 </manifest>

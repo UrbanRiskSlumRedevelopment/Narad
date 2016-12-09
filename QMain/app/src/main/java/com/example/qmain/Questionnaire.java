@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,8 @@ import android.widget.ScrollView;
 import android.content.Intent;
 import android.app.AlertDialog;
 import android.widget.CheckBox;
+import android.view.ViewGroup;
+import android.graphics.Color;
 
 import android.app.Activity;
 import android.view.MotionEvent;
@@ -59,6 +62,7 @@ public class Questionnaire extends AppCompatActivity {
     public static AlertDialog.Builder builder = null;
     public Context context = this;
     public static String LOCATION = "";
+    HashMap<String, Button> RepeatButtons = new HashMap();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +101,20 @@ public class Questionnaire extends AppCompatActivity {
                     xx.add(i);
                 }
                 if(eE.getElementsByTagName("repeatable").item(0).getTextContent().equals("T")){
-                    LinearLayout chunk = new LinearLayout(context);
+                    final ViewGroup chunk = new LinearLayout(context);
+                    /*
+                    chunk.setLayoutParams(new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                    chunk.setBackgroundColor(Color.BLUE);
+                    */
                     Button bt = new Button(this);
                     final String name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent();
                     String textset = "Add new " + name;
                     bt.setText(textset);
                     bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                             ActionBar.LayoutParams.WRAP_CONTENT));
+
 
                     bt.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
@@ -116,14 +127,55 @@ public class Questionnaire extends AppCompatActivity {
                                 System.out.println(name);
                             }
                             intent.putExtras(bundle);
+                            hideSoftKeyboard(a);
                             startActivity(intent);
                             Counter.add(1);
+
+                            Button b = new Button(context);
+                            String bname = name + Integer.toString(Counter.size());
+                            b.setText(bname);
+                            System.out.println(bname);
+                            /*
+                            b.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
+                                    ActionBar.LayoutParams.WRAP_CONTENT));
+                            */
+                            LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            int i = layout.indexOfChild(RepeatButtons.get(name));
+
+
+                            b.setOnClickListener(new View.OnClickListener(){
+                                public void onClick(View v){
+                                    String display = Repeat.ANSWERS;
+                                    System.out.println(display);
+                                    Intent in = new Intent(context, Display.class);
+                                    Bundle bun = new Bundle();
+                                    bun.putString("answers", display);
+                                    in.putExtras(bun);
+                                    startActivity(in);
+                                }
+                            });
+                            System.out.println("here");
+                            RepeatButtons.put(name, b);
+                            System.out.println("and here");
+                            layout.addView(b, i+1, params);
+
+
 
                         }
                     }
                     );
-                    chunk.addView(bt);
-                    layout.addView(chunk);
+                    /*
+                    final TextView tv = new TextView(this);
+                    tv.setText("chunk answers");
+                    tv.setTextSize(20);
+                    tv.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
+                            ActionBar.LayoutParams.WRAP_CONTENT));
+                            */
+                    RepeatButtons.put(name, bt);
+                    //chunk.addView(bt);
+                    //chunk.addView(tv);
+                    layout.addView(bt);
 
                 }
                 else {
@@ -187,6 +239,7 @@ public class Questionnaire extends AppCompatActivity {
             bt.setOnClickListener(new View.OnClickListener() {
                                       public void onClick(View v) {
                                           Button b = (Button) v;
+                                          hideSoftKeyboard(a);
                                           submit();
                                       }
                                   }
@@ -315,7 +368,7 @@ public class Questionnaire extends AppCompatActivity {
 
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                hideSoftKeyboard(a);
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(a), PLACE_PICKER_REQUEST);
@@ -422,6 +475,7 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public String submit(){
+        hideSoftKeyboard(a);
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename = timeStamp+".txt";
         System.out.println("we here");
@@ -446,86 +500,6 @@ public class Questionnaire extends AppCompatActivity {
             dialog.show();
             return "";
         }
-
-        /* // code made into writeAnswers method
-        for(int i = 0; i<Questions.size();i++){
-            LinearLayout q = (LinearLayout) Questions.get(i);
-            TextView text = (TextView) q.findViewWithTag("text");
-            String question = (String) text.getText();
-            String line = "";
-            String tag = "";
-            try{
-                tag = (String) q.getTag();
-            }catch(Exception e){
-                System.out.println("there's no tag?");
-            }
-
-            System.out.println(tag);
-            if(tag.equals("T") || tag.equals("N")){
-                EditText editText = (EditText) q.findViewWithTag("answer");
-                if(editText.getText().toString().equals("") && question.endsWith("*")){
-                    AlertDialog.Builder bdr = builder;
-                    bdr.setMessage("Answer all required questions before submitting");
-                    AlertDialog dialog = bdr.create();
-                    dialog.show();
-                    return "";
-                }
-                else {
-                    line = question + ": " + editText.getText();
-                }
-            }
-            else if(tag.equals("SC")){
-                line = question + ": ";
-                RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
-                int id = rg.getCheckedRadioButtonId();
-                if(id == -1){
-                    AlertDialog.Builder bdr = builder;
-                    bdr.setMessage("Answer all required questions before submitting");
-                    AlertDialog dialog = bdr.create();
-                    dialog.show();
-                    return "";
-                }else{
-                    RadioButton rb = (RadioButton) rg.getChildAt(id);
-                    System.out.println(rg.getChildAt(id));
-                    System.out.println(rg.getChildCount());
-                    System.out.println(id);
-                    try{
-                        line += rb.getText();
-                        System.out.println(line);
-                    }catch(Exception e){}
-                }
-
-            }
-            else if(tag.equals("MC")){
-                line = question + ": ";
-                System.out.println(q.getChildCount());
-                for (int j=0; j<q.getChildCount(); j++){
-                    System.out.println(q.getChildAt(j).getTag());
-                    String ctag = (String) q.getChildAt(j).getTag();
-                    if(ctag.equals("choice")){
-                        CheckBox cb = (CheckBox) q.getChildAt(j);
-                        if(cb.isChecked()){
-                            line += cb.getText() + ", ";
-                        }
-                    }
-                }
-                if(line.length()>20){
-                    line = line.substring(0, line.length()-2);
-                }
-                System.out.println(line);
-            }
-            else if(tag.equals("M")){
-                line = question + ": " + LOCATION;
-            }
-            else if(tag.equals("C")){
-                line = question + ": ";
-            }
-            try{
-                line = line + "~~";
-                fos.write(line.getBytes());
-            }catch(Exception e){}
-        }
-        */
         try {
             fos.close();
         }catch(Exception e){}
@@ -610,7 +584,7 @@ public class Questionnaire extends AppCompatActivity {
                     f.write(line.getBytes());
                 } catch (Exception e) {}
             } else {
-                line = line + "~~";
+                line = line + "\n";
                 total += line;
             }
         }

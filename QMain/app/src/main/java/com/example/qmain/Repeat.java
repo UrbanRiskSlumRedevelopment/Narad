@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.app.AlertDialog;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,6 +30,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class Repeat extends AppCompatActivity {
     Context context = this;
+    List rqs = new ArrayList();
+    EditText id = null;
+    public static String ANSWERS = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +73,10 @@ public class Repeat extends AppCompatActivity {
             skip = true;
         }
         TextView tv = new TextView(this);
-        tv.setText("Enter unique identifier for entry");
+        String s = "Enter unique identifier for entry*";
+        tv.setText(s);
         tv.setTextSize(20);
-        EditText id = new EditText(this);
+        id = new EditText(this);
         id.setHint("enter here");
         chunk.addView(tv);
         chunk.addView(id);
@@ -124,6 +129,7 @@ public class Repeat extends AppCompatActivity {
                 }
                 setupUI(q);
                 Questionnaire.Questions2.add(q);
+                rqs.add(q);
                 repeat.addView(q);
 
             }
@@ -134,7 +140,21 @@ public class Repeat extends AppCompatActivity {
         bt.setText("Done");
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                finish();
+                hideSoftKeyboard(act);
+                String repeatAnswers = Questionnaire.writeAnswers(rqs, false, null);
+                String identifier = id.getText().toString();
+                if(repeatAnswers.equals("") || identifier.equals("")){
+                    AlertDialog.Builder bdr = new AlertDialog.Builder(context);
+                    bdr.setMessage("Answer all required questions before submitting");
+                    AlertDialog dialog = bdr.create();
+                    dialog.show();
+                    //return;
+                }
+                else{
+                    ANSWERS = repeatAnswers;
+                    finish();
+                }
+
             }
         });
         chunk.addView(bt);
@@ -148,7 +168,7 @@ public class Repeat extends AppCompatActivity {
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
 
-    public Activity a = this;
+    public Activity act = this;
 
     public void setupUI(View view) {
 
@@ -158,7 +178,7 @@ public class Repeat extends AppCompatActivity {
                 public boolean onTouch(View v, MotionEvent event) {
                     ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
-                    hideSoftKeyboard(a);
+                    hideSoftKeyboard(act);
                     return false;
                 }
             });
