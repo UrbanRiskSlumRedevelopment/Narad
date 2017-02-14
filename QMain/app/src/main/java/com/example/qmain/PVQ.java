@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -53,25 +52,24 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 public class PVQ extends AppCompatActivity {
-    public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY";
+    public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY"; // Data from completed questionnaire to be stored
     LinearLayout layout = null;
-    List Questions = new ArrayList();
-    HashMap<String,List> Groups = new HashMap<>();
+    List Questions = new ArrayList(); // List of all questions
+    HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
     String answers = "";
     TextView ans = null;
-    static List Questions2 = null;
     static List Counter = new ArrayList();
-    public static AlertDialog.Builder builder = null;
-    public Context context = this;
-    public static String LOCATION = "";
-    HashMap<String, Button> RepeatButtons = new HashMap();
-    static ImageView mImageView = null;
+    public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
+    public Context context = this; // For accessing context of the questionnaire
+    public static String LOCATION = ""; // Location stored here
+    ImageView mImageView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pvq);
 
+        // Create and set up new questionnaire ViewPager
         final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
         vp.setId(View.generateViewId());
         setupUI(vp);
@@ -79,13 +77,12 @@ public class PVQ extends AppCompatActivity {
         MainPagerAdapter pg = new MainPagerAdapter();
         vp.setAdapter(pg);
 
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                DATA, Context.MODE_PRIVATE);
+        // Sets up an alert dialog builder for use when necessary
+        builder = new AlertDialog.Builder(this);
 
-        AlertDialog.Builder newbuilder = new AlertDialog.Builder(this);
-        builder = newbuilder;
-
+        // Builds Questionnaire
         try{
+            // Parses XML doc so code can read it
             InputStream in = getResources().openRawResource(R.raw.questions);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
@@ -93,30 +90,34 @@ public class PVQ extends AppCompatActivity {
             Document doc = dBuilder.parse(in);
             doc.getDocumentElement().normalize();
 
-            // first page
+            // Builds first page
+            // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
             ScrollView sv1 = new ScrollView(this);
             LinearLayout p1 = new LinearLayout(this);
             p1.setOrientation(LinearLayout.VERTICAL);
 
+            // Adds first page to ViewPager
             pg.addView(sv1,0);
             sv1.addView(p1);
             setupUI(sv1);
             setupUI(p1);
 
+            // Adds "Sections" title to first page
             TextView title = new TextView(this);
             title.setTextSize(30);
-            title.setText("Sections");
+            String sections = "Sections";
+            title.setText(sections);
             p1.addView(title);
 
 
-            // iterates through all groups
+            // iterates through all groups of questions in XML doc
             NodeList groups = doc.getElementsByTagName("group");
             for(int g = 0; g<groups.getLength(); g++){
                 System.out.println(g);
                 Node gr = groups.item(g);
                 Element eE = (Element) gr;
-                final int g_button = g;
-                String g_name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent();
+                final int g_button = g; // number of group, counting from 0
+                String g_name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent(); // group name
 
                 // creates button on menu page linked to group page
                 Button p1_button = new Button(this);
@@ -142,15 +143,18 @@ public class PVQ extends AppCompatActivity {
                 group_name.setTextSize(30);
                 ll.addView(group_name);
 
-                // iterates through all question nodes
+                // iterates through all questions in group
                 NodeList nList = eE.getElementsByTagName("question");
                 List Qs = new ArrayList();
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
+                    // makes sure question is a valid node
                     if (nNode.getNodeType() == Node.ELEMENT_NODE){
+                        // Initializes question LinearLayout
                         LinearLayout q = null;
                         Element eElement = (Element) nNode;
-                        String text = "";
+                        // Obtains question type, hint, and text; adds * to question text if required
+                        String text;
                         String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
                         String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
                         if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
@@ -160,12 +164,17 @@ public class PVQ extends AppCompatActivity {
                             text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
                         }
                         System.out.println("ok");
+
+                        // Creates question LinearLayout by calling the appropriate method for the type of the question
                         if (type.equals("T")) {
+                            // Text question
                             q = Questionnaire.TextQ(text, hint, context);
                         } else if (type.equals("N")) {
+                            // Numeric question
                             q = Questionnaire.NumQ(text, hint, context);
                         } else if (type.equals("SC")) {
-                            List c = new ArrayList();
+                            // Single Choice question
+                            List c = new ArrayList(); // initializes then fills list of choices
                             NodeList choices = eElement.getElementsByTagName("choice");
                             for (int i = 0; i < choices.getLength(); i++) {
                                 Node choice = choices.item(i);
@@ -175,7 +184,8 @@ public class PVQ extends AppCompatActivity {
                             }
                             q = Questionnaire.SingleChoice(text, c, hint, context, builder);
                         } else if (type.equals("MC")) {
-                            List c = new ArrayList();
+                            // Multiple Choice question
+                            List c = new ArrayList(); // initializes then fills list of choices
                             NodeList choices = eElement.getElementsByTagName("choice");
                             for (int i = 0; i < choices.getLength(); i++) {
                                 Node choice = choices.item(i);
@@ -185,17 +195,27 @@ public class PVQ extends AppCompatActivity {
                             }
                             q = Questionnaire.MultipleChoice(text, c, hint, context, builder);
                         } else if (type.equals("M")){
-                            System.out.println("lols");
+                            // Map question
                             q = Map(text, context);
                         } else if (type.equals("C")){
+                            // Camera question; still being worked out
                             System.out.print("lol");
                             //q = Camera(text, context);
                         }
                         if (!type.equals("C")){
+                            // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
                             setupUI(q);
-                            for (int i = 0; i < q.getChildCount(); i++){
+                            int kids;
+                            try{
+                            kids = q.getChildCount();}
+                            catch(Exception e){
+                                kids = 0;
+                            }
+                            for (int i = 0; i < kids; i++){
                                 setupUI(q.getChildAt(i));
                             }
+                            // Adds question to group LinearLayout, overall list of questions,
+                            // and list of questions to be mapped to group name in hash map of questions to groups
                             ll.addView(q);
                             Questions.add(q);
                             Qs.add(q);
@@ -204,7 +224,7 @@ public class PVQ extends AppCompatActivity {
                     }
                 }
 
-                // repeatable chunks
+                // Iterates through all repeatable chunks in the group
                 NodeList nList2 = eE.getElementsByTagName("rchunk");
                 for(int z=0; z<nList2.getLength();z++){
                     Node chunk = nList2.item(z);
@@ -349,12 +369,14 @@ public class PVQ extends AppCompatActivity {
             pg.addView(rv,pg.getCount());
             TextView rev = new TextView(this);
             rev.setTextSize(30);
-            rev.setText("Review");
+            String review = "Review";
+            rev.setText(review);
             rv1.addView(rev);
             rv.addView(rv1);
 
             Button menu_button = new Button(this);
-            menu_button.setText("Menuuuuu");
+            String menu = "Menu";
+            menu_button.setText(menu);
             menu_button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     vp.setCurrentItem(0, false);
@@ -362,7 +384,8 @@ public class PVQ extends AppCompatActivity {
             });
 
             Button submit = new Button(this);
-            submit.setText("Submit");
+            String sub = "Submit";
+            submit.setText(sub);
             submit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     submit();
@@ -567,9 +590,6 @@ public class PVQ extends AppCompatActivity {
         LOCATION = "";
 
         return filename;
-
-        //hexcode, title from question field, device id, account
-
     }
 
     public void update_answers(){
@@ -658,7 +678,6 @@ class RepeatOnClickListener implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
-        //read your lovely variable
     }
 
 };
