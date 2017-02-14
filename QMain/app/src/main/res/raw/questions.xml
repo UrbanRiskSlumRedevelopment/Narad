@@ -109,5 +109,29 @@
             <qhint>Enter anything</qhint>
             <req>F</req>
         </question>
+        <rchunk>
+            <rtext>TEst chunk</rtext>
+            <rquestion name="test3">
+                <qtype>T</qtype>
+                <qtext>ID</qtext>
+                <qhint>just a test</qhint>
+                <req>T</req>
+            </rquestion>
+        </rchunk>
+        <rchunk>
+            <rtext>TEst chunk 2</rtext>
+            <rquestion name="test4">
+                <qtype>T</qtype>
+                <qtext>ID</qtext>
+                <qhint>just a test</qhint>
+                <req>T</req>
+            </rquestion>
+            <rquestion name="test5">
+                <qtype>T</qtype>
+                <qtext>Testing 2</qtext>
+                <qhint>just a test</qhint>
+                <req>F</req>
+            </rquestion>
+        </rchunk>
     </group>
 </groups>

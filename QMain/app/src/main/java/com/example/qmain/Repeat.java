@@ -72,6 +72,7 @@ public class Repeat extends AppCompatActivity {
         } catch (Exception e){
             skip = true;
         }
+        /*
         TextView tv = new TextView(this);
         String s = "Enter unique identifier for entry*";
         tv.setText(s);
@@ -80,7 +81,7 @@ public class Repeat extends AppCompatActivity {
         id.setHint("enter here");
         chunk.addView(tv);
         chunk.addView(id);
-
+        */
         for (int temp = 0; temp < nodes.getLength(); temp++) {
             if(skip){
                 break;
@@ -141,9 +142,10 @@ public class Repeat extends AppCompatActivity {
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 hideSoftKeyboard(act);
-                String repeatAnswers = Questionnaire.writeAnswers(rqs, false, null);
-                String identifier = id.getText().toString();
-                if(repeatAnswers.equals("") || identifier.equals("")){
+                String repeatAnswers = Questionnaire.writeAnswers(rqs, false, null, true);
+                //String identifier = id.getText().toString();
+                //if(repeatAnswers.equals("") || identifier.equals("")){
+                if(repeatAnswers.equals("")){
                     AlertDialog.Builder bdr = new AlertDialog.Builder(context);
                     bdr.setMessage("Answer all required questions before submitting");
                     AlertDialog dialog = bdr.create();
@@ -184,4 +186,6 @@ public class Repeat extends AppCompatActivity {
             });
         }
     }
+
+    // group by group
 }

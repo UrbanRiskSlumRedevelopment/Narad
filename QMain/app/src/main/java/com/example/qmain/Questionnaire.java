@@ -35,6 +35,8 @@ import android.app.AlertDialog;
 import android.widget.CheckBox;
 import android.view.ViewGroup;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 import android.app.Activity;
 import android.view.MotionEvent;
@@ -52,6 +54,8 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
+import android.support.v7.app.ActionBar.LayoutParams;
+
 
 public class Questionnaire extends AppCompatActivity {
     public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY";
@@ -63,6 +67,7 @@ public class Questionnaire extends AppCompatActivity {
     public Context context = this;
     public static String LOCATION = "";
     HashMap<String, Button> RepeatButtons = new HashMap();
+    static ImageView mImageView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,6 +404,12 @@ public class Questionnaire extends AppCompatActivity {
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageView = new ImageView(this);
+            mImageView.setImageBitmap(imageBitmap);
+            layout.addView(mImageView, 3);
         }
     }
 
@@ -422,7 +433,7 @@ public class Questionnaire extends AppCompatActivity {
         return qlayout;
     }
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -430,6 +441,7 @@ public class Questionnaire extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
 
 
     public static LinearLayout MultipleChoice(String questiontext, List choices,
@@ -448,6 +460,7 @@ public class Questionnaire extends AppCompatActivity {
             cb.setId(i);
             cb.setText(ctext);
             cb.setTag("choice");
+            cb.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             qlayout.addView(cb);
         }
 
@@ -492,7 +505,7 @@ public class Questionnaire extends AppCompatActivity {
             Questions.add(Questions2.get(i));
         }
 
-        String answers = writeAnswers(Questions, true, fos);
+        String answers = writeAnswers(Questions, true, fos, false);
         if (answers.equals("")){
             AlertDialog.Builder bdr = builder;
             bdr.setMessage("Answer all required questions before submitting");
@@ -515,7 +528,7 @@ public class Questionnaire extends AppCompatActivity {
 
     }
 
-    public static String writeAnswers(List qs, boolean toFile, FileOutputStream f) {
+    public static String writeAnswers(List qs, boolean toFile, FileOutputStream f, boolean incomplete) {
         String total = "";
         for (int i = 0; i < qs.size(); i++) {
             LinearLayout q = (LinearLayout) qs.get(i);
@@ -532,16 +545,22 @@ public class Questionnaire extends AppCompatActivity {
             System.out.println(tag);
             if (tag.equals("T") || tag.equals("N")) {
                 EditText editText = (EditText) q.findViewWithTag("answer");
-                if (editText.getText().toString().equals("") && question.endsWith("*")) {
+                if (editText.getText().toString().equals("") && question.endsWith("*") && !incomplete) {
+                    System.out.println("oops");
                     return "";
                 } else {
+                    if(editText.getText().toString().equals("") && question.endsWith("*")){
+                        // set color of question to red
+                        question = question.toUpperCase();
+                    }
                     line = question + ": " + editText.getText();
+                    System.out.println(line);
                 }
             } else if (tag.equals("SC")) {
                 line = question + ": ";
                 RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
                 int id = rg.getCheckedRadioButtonId();
-                if (id == -1) {
+                if (id == -1 && !incomplete) {
                     return "";
                 } else {
                     RadioButton rb = (RadioButton) rg.getChildAt(id);
@@ -549,9 +568,14 @@ public class Questionnaire extends AppCompatActivity {
                     System.out.println(rg.getChildCount());
                     System.out.println(id);
                     try {
+                        if(id == -1){
+                            // set color of line to red
+                            line = line.toUpperCase();
+                        }
                         line += rb.getText();
                         System.out.println(line);
                     } catch (Exception e) {
+                        System.out.println("here");
                     }
                 }
 
@@ -575,7 +599,7 @@ public class Questionnaire extends AppCompatActivity {
             } else if (tag.equals("M")) {
                 line = question + ": " + LOCATION;
             } else if (tag.equals("C")) {
-                line = question + ": ";
+                line = question + ": "; //+ mImageView.toString();
             }
             if (toFile) {
                 try {

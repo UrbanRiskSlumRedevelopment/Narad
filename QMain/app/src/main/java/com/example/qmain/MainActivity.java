@@ -24,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void newVPQ(View view){
+        Intent intent = new Intent(this, PVQ.class);
+        startActivity(intent);
+    }
+
     public void sync(View view){
         String[] files = fileList();
         if (files.length > 0){

@@ -45,7 +45,8 @@
         <activity android:name=".PastQs" />
         <activity android:name=".QDisplay" />
         <activity android:name=".Repeat" />
-        <activity android:name=".Display"></activity>
+        <activity android:name=".Display" />
+        <activity android:name=".PVQ"></activity>
     </application>
 
 </manifest>
