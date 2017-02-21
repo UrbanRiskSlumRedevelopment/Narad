@@ -10,16 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.qmain.MainActivity">
 
-    <Button android:id="@+id/newq"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/newq"
-        android:onClick="newQ"/>
     <Button android:id="@+id/newvpq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New ViewPager Questionnaire"
-        android:layout_below="@id/newq"
+        android:text="New Questionnaire"
         android:onClick="newVPQ"/>
     <Button android:id="@+id/pastq"
         android:layout_width="wrap_content"

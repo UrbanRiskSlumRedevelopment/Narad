@@ -229,20 +229,22 @@ public class PVQ extends AppCompatActivity {
                 for(int z=0; z<nList2.getLength();z++){
                     Node chunk = nList2.item(z);
                     Element chunkE = (Element) chunk;
+                    // question chunk button
                     Button rbt = new Button(this);
                     rbt.setText(chunkE.getElementsByTagName("rtext").item(0).getTextContent()+" +");
                     ll.addView(rbt);
                     setupUI(rbt);
 
-                    // question chunk
+                    // XML question chunk
                     NodeList chqs = chunkE.getElementsByTagName("rquestion");
 
-
-
+                    // when button is clicked, following code takes as arguments linear layout, XML chunk of questions, context
                     rbt.setOnClickListener(new RepeatOnClickListener(ll,chqs,this) {
                         public void onClick(View v) {
+                            // new linear layout of questions in chunk
                             LinearLayout qchunk = new LinearLayout(context);
                             qchunk.setOrientation(LinearLayout.VERTICAL);
+                            // iterates through questions and adds them to the linear layout
                             for(int y=0;y<nlist.getLength();y++){
                                 Node question = nlist.item(y);
                                 if (question.getNodeType() == Node.ELEMENT_NODE){
@@ -307,15 +309,12 @@ public class PVQ extends AppCompatActivity {
                         }
                     });
 
-                    //ll.addView(qchunk);
-
-
                 }
 
+                // puts list of questions for current group in Groups dictionary with group name as key
                 Groups.put(g_name,Qs);
 
-                // creates back to menu button
-
+                // creates back to menu, previous, and next buttons
                 Button menu_button = new Button(this);
                 menu_button.setText("Menu");
                 menu_button.setOnClickListener(new View.OnClickListener() {
@@ -341,6 +340,7 @@ public class PVQ extends AppCompatActivity {
                     }
                 });
 
+                // creates a navigation bar at bottom of page, adds prev/next/menu buttons as appropriate
                 LinearLayout navbar = new LinearLayout(this);
                 navbar.setOrientation(LinearLayout.HORIZONTAL);
                 if(g_button>0){
@@ -374,6 +374,7 @@ public class PVQ extends AppCompatActivity {
             rv1.addView(rev);
             rv.addView(rv1);
 
+            // menu button
             Button menu_button = new Button(this);
             String menu = "Menu";
             menu_button.setText(menu);
@@ -383,6 +384,7 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
+            // submit button
             Button submit = new Button(this);
             String sub = "Submit";
             submit.setText(sub);
@@ -392,6 +394,7 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
+            // blank text view to be updated
             ans = new TextView(this);
             rv1.addView(ans);
             rv1.addView(menu_button);
@@ -408,8 +411,9 @@ public class PVQ extends AppCompatActivity {
     int PLACE_PICKER_REQUEST = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
 
+    // creates map question
     public LinearLayout Map(String questiontext, Context context){
-        // save location
+        // set up question linear layout with text and button
         LinearLayout qlayout = new LinearLayout(context);
         TextView tv = new TextView(context);
         tv.setTag("text");
@@ -420,6 +424,7 @@ public class PVQ extends AppCompatActivity {
                 ActionBar.LayoutParams.WRAP_CONTENT));
         final Activity a = this;
 
+        // on click, attempts to start place picker activity
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 hideSoftKeyboard(a,v);
@@ -441,19 +446,24 @@ public class PVQ extends AppCompatActivity {
         return qlayout;
     }
 
+    // depending on request code (1 for place picker, 2 for image capture), performs action
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK)  {
+                // Displays map and prompts user to place picker on location
                 Place place = PlacePicker.getPlace(this, data);
+                // Displays location in toast message after map activity is closed
                 String toastMsg = String.format("Place: %s", place.getLatLng());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
                 System.out.println(toastMsg);
                 System.out.println(PlacePicker.getLatLngBounds(data));
+                // saves location
                 LOCATION = toastMsg.substring(7);
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // opens camera, saves image as bitmap
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             mImageView = new ImageView(this);
@@ -462,15 +472,24 @@ public class PVQ extends AppCompatActivity {
         }
     }
 
+    // writes current answers and returns them as one string; optionally writes them to file
     public static String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
-        String total = "";
+        String total = ""; // string with all answers
+        String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
+        Boolean use_un = false;
+        // set of group names
         Set<String> keys = qgs.keySet();
+        // iterates through group names
         for(String key:keys) {
-            String name = "Group: "+key + "\n";
+            String name = "Section: "+key + "\n";
             total += name;
+            //unanswered += "\n"+name;
             List qs = (List) qgs.get(key);
+            // iterates through list of questions
             for (int i = 0; i < qs.size(); i++) {
+                // gets question linear layout
                 LinearLayout q = (LinearLayout) qs.get(i);
+                // gets question text
                 TextView text = (TextView) q.findViewWithTag("text");
                 String question = (String) text.getText();
                 String line = "";
@@ -481,6 +500,9 @@ public class PVQ extends AppCompatActivity {
                     System.out.println("there's no tag?");
                 }
 
+                // based on question tag (type), completes question line with answer in appropriate fashion
+                // if for submission, returns "" if any required (*) questions don't have answers
+                // otherwise adds unanswered required questions to unanswered string
                 System.out.println(tag);
                 if (tag.equals("T") || tag.equals("N")) {
                     EditText editText = (EditText) q.findViewWithTag("answer");
@@ -489,6 +511,8 @@ public class PVQ extends AppCompatActivity {
                         return "";
                     } else {
                         if (editText.getText().toString().equals("") && question.endsWith("*")) {
+                            unanswered += "\n" + name+question + "\n";
+                            use_un = true;
                             question = question.toUpperCase();
                         }
                         line = question + ": " + editText.getText();
@@ -507,7 +531,8 @@ public class PVQ extends AppCompatActivity {
                         System.out.println(id);
                         try {
                             if (id == -1) {
-                                // set color of line to red
+                                unanswered += "\n" + name+question + "\n";
+                                use_un = true;
                                 line = line.toUpperCase();
                             }
                             line += rb.getText();
@@ -541,33 +566,41 @@ public class PVQ extends AppCompatActivity {
                 }
                 if (toFile) {
                     try {
+                        // writes answers to file
                         line = line + "~~";
                         total += line;
                         f.write(line.getBytes());
                     } catch (Exception e) {
                     }
                 } else {
+                    // adds line to total string of answers
                     line = line + "\n";
                     total += line;
                 }
             }
         }
+        if(use_un){
+            // returns string of unanswered questions if any are present
+            return unanswered;
+        }
+        // returns total string of questions and answers
         return total;
     }
 
     public String submit(){
+        // time stamp of submission -> filename for file in which data from form at time to be saved
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename = timeStamp+".txt";
-        System.out.println("we here");
         FileOutputStream fos = null;
+        // opens file
         try{
             fos = openFileOutput(filename, Context.MODE_PRIVATE);
-            System.out.println("adkgjaldkfjladkjglkadfjklda");
             System.out.println(getFileStreamPath(filename));
         }catch(Exception e){
             return "";
         }
 
+        // calls writeAnswers first to check for unanswered required questions
         String answers = Questionnaire.writeAnswers(Questions, false, fos, false);
         if (answers.equals("")) {
             AlertDialog.Builder bdr = builder;
@@ -577,37 +610,40 @@ public class PVQ extends AppCompatActivity {
             this.deleteFile(filename);
             return "";
         } else{
+            // if all required questions answered, writes questions and answers to file
             answers = Questionnaire.writeAnswers(Questions, true, fos, false);
         }
         try {
             fos.close();
         }catch(Exception e){}
 
+        // goes back to main page of app
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
+        // resets values for new questionnaire
         Counter = new ArrayList();
         LOCATION = "";
 
         return filename;
     }
 
+    // updates ans TextView on submit page with current answers
     public void update_answers(){
         answers = writeAnswers(Groups, false, null, true);
         ans.setText(answers);
     }
 
+    // hides soft keyboard
     public static void hideSoftKeyboard (Activity activity, View view)
     {
         InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
+    // calls hideSoftKeyboard on non-EditText views
     public Activity a = this;
-    // call set up on all child views of a view etc
     public void setupUI(View view) {
-        // lose focus on text
-        // Set up touch listener for non-text box views to hide keyboard.
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
@@ -621,6 +657,7 @@ public class PVQ extends AppCompatActivity {
     }
 }
 
+// class used to create a PagerAdapter to work with ViewPager
 class MainPagerAdapter extends PagerAdapter
 {
     // This holds all the currently displayable views, in order from left to right.
@@ -664,11 +701,13 @@ class MainPagerAdapter extends PagerAdapter
 
 }
 
+// onClickListener customized for repeatable chunks
 class RepeatOnClickListener implements View.OnClickListener
 {
     LinearLayout view1;
     NodeList nlist;
     Context context;
+    // can take a linear layout, nodelist, and context as parameters
     public RepeatOnClickListener(LinearLayout view1, NodeList nlist, Context context) {
         this.view1 = view1;
         this.nlist = nlist;

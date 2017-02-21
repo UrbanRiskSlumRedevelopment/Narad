@@ -282,12 +282,18 @@ public class Questionnaire extends AppCompatActivity {
         }
     }
 
+
+    // Methods for each specific question type that make question linear layout for specific question type
+
     public static LinearLayout TextQ(String questiontext, String hint, Context context){
+        // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        // sets up box for answer text entry
         final EditText edittext = new EditText(context);
         edittext.setHint(hint);
+        // sets up linear layout for question, adds question text and answer text box
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
         text.setTag("text");
@@ -299,14 +305,17 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public static LinearLayout NumQ(String questiontext, String hint, Context context){
+        // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        // sets up box for answer text entry (numerical)
         EditText edittext = new EditText(context);
         edittext.setHint(hint);
         edittext.setInputType(2);
         text.setTag("text");
         edittext.setTag("answer");
+        // sets up linear layout for question, adds question text and answer text box
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
@@ -317,9 +326,11 @@ public class Questionnaire extends AppCompatActivity {
 
     public static LinearLayout SingleChoice(String questiontext, List choices,
                                             final String hint, Context context, AlertDialog.Builder builder){
+        // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        // creates group of radio buttons, each button being a choice from choices
         RadioGroup rg = new RadioGroup(context);
         for (int i=0; i<choices.size(); i++) {
             RadioButton rb = new RadioButton(rg.getContext());
@@ -332,6 +343,7 @@ public class Questionnaire extends AppCompatActivity {
         text.setTag("text");
         rg.setTag("choices");
 
+        // sets up info button, builds dialog with instructions when clicked on
         Button bt = new Button(context);
         bt.setText("?");
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
@@ -347,6 +359,7 @@ public class Questionnaire extends AppCompatActivity {
                                   }
                               });
 
+        // sets up question linear layout and adds all component views
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
@@ -360,7 +373,6 @@ public class Questionnaire extends AppCompatActivity {
     int PLACE_PICKER_REQUEST = 1;
 
     public LinearLayout Map(String questiontext, Context context){
-        // save location
         LinearLayout qlayout = new LinearLayout(context);
         TextView tv = new TextView(context);
         tv.setTag("text");
@@ -446,14 +458,17 @@ public class Questionnaire extends AppCompatActivity {
 
     public static LinearLayout MultipleChoice(String questiontext, List choices,
                                               final String hint, Context context, AlertDialog.Builder builder){
+        // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
 
+        // sets up question linear layout, adds question text
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
 
+        // for each question choice, adds checkbox to question linear layout
         for (int i=0; i<choices.size(); i++) {
             CheckBox cb = new CheckBox(context);
             String ctext = choices.get(i).toString();
@@ -466,6 +481,7 @@ public class Questionnaire extends AppCompatActivity {
 
         text.setTag("text");
 
+        // sets up info button
         Button bt = new Button(context);
         bt.setText("?");
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
