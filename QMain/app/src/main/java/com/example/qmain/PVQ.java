@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.support.v4.content.FileProvider;
+import android.net.Uri;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,6 +29,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.FileOutputStream;
+import java.io.File;
+import android.os.Environment;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,6 +69,9 @@ public class PVQ extends AppCompatActivity {
     public Context context = this; // For accessing context of the questionnaire
     public static String LOCATION = ""; // Location stored here
     ImageView mImageView = null;
+    LinearLayout camera_question = null;
+    LinearLayout map_question = null;
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,12 +206,13 @@ public class PVQ extends AppCompatActivity {
                         } else if (type.equals("M")){
                             // Map question
                             q = Map(text, context);
+                            map_question = q;
                         } else if (type.equals("C")){
                             // Camera question; still being worked out
-                            System.out.print("lol");
-                            //q = Camera(text, context);
+                            q = Camera(text, context);
+                            camera_question = q;
                         }
-                        if (!type.equals("C")){
+                        if (!type.equals("C") || type.equals("C")){
                             // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
                             setupUI(q);
                             int kids;
@@ -285,11 +295,11 @@ public class PVQ extends AppCompatActivity {
                                         }
                                         q = Questionnaire.MultipleChoice(text, c, hint, context, builder);
                                     } else if (type.equals("M")){
-                                        System.out.println("lols");
                                         q = Map(text, context);
+                                        map_question = q;
                                     } else if (type.equals("C")){
-                                        System.out.print("lol");
-                                        //q = Camera(text, context);
+                                        q = Camera(text, context);
+                                        camera_question = q;
                                     }
                                     if (!type.equals("C")){
                                         setupUI(q);
@@ -415,6 +425,7 @@ public class PVQ extends AppCompatActivity {
     public LinearLayout Map(String questiontext, Context context){
         // set up question linear layout with text and button
         LinearLayout qlayout = new LinearLayout(context);
+        qlayout.setOrientation(LinearLayout.VERTICAL);
         TextView tv = new TextView(context);
         tv.setTag("text");
         tv.setText(questiontext);
@@ -446,6 +457,33 @@ public class PVQ extends AppCompatActivity {
         return qlayout;
     }
 
+    public LinearLayout Camera(String questiontext, Context context){
+        LinearLayout qlayout = new LinearLayout(context);
+        TextView tv = new TextView(context);
+        tv.setTag("text");
+        tv.setText(questiontext);
+        Button bt = new Button(context);
+        bt.setText(questiontext);
+        bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.WRAP_CONTENT));
+        bt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+        qlayout.addView(tv);
+        qlayout.addView(bt);
+        qlayout.setTag("C");
+        return qlayout;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
     // depending on request code (1 for place picker, 2 for image capture), performs action
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
@@ -459,6 +497,9 @@ public class PVQ extends AppCompatActivity {
                 System.out.println(PlacePicker.getLatLngBounds(data));
                 // saves location
                 LOCATION = toastMsg.substring(7);
+                TextView update_loc = new TextView(this);
+                update_loc.setText(LOCATION);
+                map_question.addView(update_loc);
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
@@ -468,7 +509,24 @@ public class PVQ extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(imageBitmap);
-            layout.addView(mImageView, 3);
+            camera_question.addView(mImageView);
+            FileOutputStream out = null;
+            try {
+                String imageFileName = "JPEG_" + timeStamp + ".jpeg";
+                out = openFileOutput(imageFileName, Context.MODE_PRIVATE);
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -485,7 +543,7 @@ public class PVQ extends AppCompatActivity {
             total += name;
             //unanswered += "\n"+name;
             List qs = (List) qgs.get(key);
-            // iterates through list of questions
+            // iterates through list of questionsg
             for (int i = 0; i < qs.size(); i++) {
                 // gets question linear layout
                 LinearLayout q = (LinearLayout) qs.get(i);
@@ -589,7 +647,7 @@ public class PVQ extends AppCompatActivity {
 
     public String submit(){
         // time stamp of submission -> filename for file in which data from form at time to be saved
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
+        //String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename = timeStamp+".txt";
         FileOutputStream fos = null;
         // opens file
