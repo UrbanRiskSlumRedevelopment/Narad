@@ -17,8 +17,10 @@ public class QDisplay extends AppCompatActivity {
 
         Intent intent = getIntent();
         String text = intent.getStringExtra(PastQs.RESULTS);
-
         displayText.setText(text);
         layout.addView(displayText);
+        if(text.substring(0,4).equals("JPEG")){
+
+        }
     }
 }

@@ -9,12 +9,6 @@
             <qhint>Enter text</qhint>
             <req>T</req>
         </question>
-        <question name="Map">
-            <qtext>Map</qtext>
-            <qtype>M</qtype>
-            <qhint>None</qhint>
-            <req>F</req>
-        </question>
         <question name="Camera">
             <qtext>Camera</qtext>
             <qtype>C</qtype>
@@ -94,6 +88,16 @@
             <req>T</req>
         </question>
     </group>
+    <group name="Map">
+        <gtext>Map</gtext>
+        <repeatable>F</repeatable>
+        <question name="Map">
+            <qtext>Map</qtext>
+            <qtype>M</qtype>
+            <qhint>None</qhint>
+            <req>F</req>
+        </question>
+    </group>
     <group name="Test (repeatable)">
         <gtext>Test</gtext>
         <repeatable>T</repeatable>
@@ -133,5 +137,26 @@
                 <req>F</req>
             </rquestion>
         </rchunk>
+    </group>
+    <group name="Linked Questions">
+        <gtext>Linked Questions</gtext>
+        <repeatable>F</repeatable>
+        <question name="Another Question">
+            <qtext>Would you like another question?</qtext>
+            <qtype>LC</qtype>
+            <qhint>Select one</qhint>
+            <qchoices>
+                <choice>
+                    <ctext>Yes</ctext>
+                </choice>
+                <choice>
+                    <ctext>No</ctext>
+                </choice>
+                <choice>
+                    <ctext>Don't know</ctext>
+                </choice>
+            </qchoices>
+            <req>T</req>
+        </question>
     </group>
 </groups>

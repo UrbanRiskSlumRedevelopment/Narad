@@ -211,8 +211,10 @@ public class PVQ extends AppCompatActivity {
                             // Camera question; still being worked out
                             q = Camera(text, context);
                             camera_question = q;
+                        } else if (type.equals("LC")){
+                            System.out.println("hahaha");
                         }
-                        if (!type.equals("C") || type.equals("C")){
+                        if (!type.equals("LC")){
                             // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
                             setupUI(q);
                             int kids;
@@ -499,6 +501,9 @@ public class PVQ extends AppCompatActivity {
                 LOCATION = toastMsg.substring(7);
                 TextView update_loc = new TextView(this);
                 update_loc.setText(LOCATION);
+                if(map_question.getChildCount() > 2){
+                    map_question.removeView(map_question.getChildAt(map_question.getChildCount()-1));
+                }
                 map_question.addView(update_loc);
             } else {
                 super.onActivityResult(requestCode, resultCode, data);

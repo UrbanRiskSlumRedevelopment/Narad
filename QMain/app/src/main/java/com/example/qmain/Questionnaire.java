@@ -324,6 +324,54 @@ public class Questionnaire extends AppCompatActivity {
         return qlayout;
     }
 
+
+    public LinearLayout LinkedQuestion(String questiontext, List choices, final String hint,
+                                       Context context, AlertDialog.Builder builder){
+        // sets up question text
+        TextView text = new TextView(context);
+        text.setTextSize(20);
+        text.setText(questiontext);
+        // creates group of radio buttons, each button being a choice from choices
+        RadioGroup rg = new RadioGroup(context);
+        for (int i=0; i<choices.size(); i++) {
+            RadioButton rb = new RadioButton(rg.getContext());
+            String btext = choices.get(i).toString();
+            rb.setId(i);
+            rb.setText(btext);
+            rg.addView(rb);
+            System.out.println(rb.getId());
+        }
+        text.setTag("text");
+        rg.setTag("choices");
+
+        // sets up info button, builds dialog with instructions when clicked on
+        Button bt = new Button(context);
+        bt.setText("?");
+        bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.WRAP_CONTENT));
+
+        final AlertDialog.Builder bdr = builder;
+
+        bt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                bdr.setMessage(hint);
+                AlertDialog dialog = bdr.create();
+                dialog.show();
+            }
+        });
+
+        // sets up question linear layout and adds all component views
+        LinearLayout qlayout = new LinearLayout(context);
+        qlayout.setOrientation(LinearLayout.VERTICAL);
+        qlayout.addView(text);
+        qlayout.addView(rg);
+        qlayout.addView(bt);
+        bt.setTag("button");
+        qlayout.setTag("SC");
+        return qlayout;
+    }
+
+
     public static LinearLayout SingleChoice(String questiontext, List choices,
                                             final String hint, Context context, AlertDialog.Builder builder){
         // sets up question text

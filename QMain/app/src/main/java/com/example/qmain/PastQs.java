@@ -30,54 +30,86 @@ public class PastQs extends AppCompatActivity {
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
                 System.out.println(files[i]);
-                String btext = files[i].substring(0, files[i].length() - 4);
+                String btext;
+                if(files[i].substring(files[i].length()-1).equals("g")){
+                    btext = files[i].substring(0, files[i].length()-5);
+                }
+                else {
+                    btext = files[i].substring(0, files[i].length()-4);
+                }
                 Button bt = new Button(this);
                 bt.setText(btext);
                 bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
                         ActionBar.LayoutParams.WRAP_CONTENT));
 
-                bt.setOnClickListener(new View.OnClickListener() {
-                                          public void onClick(View v) {
-                                              Button b = (Button) v;
-                                              System.out.println(b.getText());
-                                              String filename = b.getText() + ".txt";
-                                              FileInputStream file = null;
-                                              try{
-                                                  file = openFileInput(filename);
-                                              }catch(Exception e){
-                                                  System.out.println("cannot open file");
-                                              }
-                                              StringBuilder sb = new StringBuilder();
-                                              try{
-                                                  BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-                                                  String line = null;
-                                                  while ((line = reader.readLine()) != null) {
-                                                      //sb.append(line).append("\n");
-                                                      //System.out.println(line);
-
-                                                      while(line.contains("~~")){
-                                                          String nline = line.substring(0,line.indexOf("~~"));
-                                                          line = line.substring(line.indexOf("~~")+2);
-                                                          sb.append(nline).append("\n");
-                                                          System.out.println(nline);
-                                                      }
-                                                      //sb.append(line).append("\n");
-                                                      //System.out.println("i");
-
+                if("JPEG".equals(btext.substring(0,4))){
+                    bt.setOnClickListener(new View.OnClickListener() {
+                                              public void onClick(View v) {
+                                                  Button b = (Button) v;
+                                                  System.out.println(b.getText());
+                                                  String filename = b.getText() + ".jpeg";
+                                                  FileInputStream file = null;
+                                                  try{
+                                                      file = openFileInput(filename);
+                                                  }catch(Exception e){
+                                                      System.out.println("cannot open file");
                                                   }
-                                                  file.close();
-                                              }catch(Exception e){
-                                                  e.printStackTrace();
+
+                                                  String result = (String) b.getText();
+                                                  Intent intent = new Intent(context, QDisplay.class);
+                                                  intent.putExtra(RESULTS, result);
+                                                  startActivity(intent);
+                                                  System.out.print(result);
+
                                               }
-                                              String result = sb.toString();
-                                              Intent intent = new Intent(context, QDisplay.class);
-                                              intent.putExtra(RESULTS, result);
-                                              startActivity(intent);
-                                              System.out.print(result);
                                           }
-                                      }
-                );
-                layout.addView(bt);
+                    );
+                    layout.addView(bt);
+                }
+                else{
+                    bt.setOnClickListener(new View.OnClickListener() {
+                                              public void onClick(View v) {
+                                                  Button b = (Button) v;
+                                                  System.out.println(b.getText());
+                                                  String filename = b.getText() + ".txt";
+                                                  FileInputStream file = null;
+                                                  try{
+                                                      file = openFileInput(filename);
+                                                  }catch(Exception e){
+                                                      System.out.println("cannot open file");
+                                                  }
+                                                  StringBuilder sb = new StringBuilder();
+                                                  try{
+                                                      BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+                                                      String line = null;
+                                                      while ((line = reader.readLine()) != null) {
+                                                          //sb.append(line).append("\n");
+                                                          //System.out.println(line);
+
+                                                          while(line.contains("~~")){
+                                                              String nline = line.substring(0,line.indexOf("~~"));
+                                                              line = line.substring(line.indexOf("~~")+2);
+                                                              sb.append(nline).append("\n");
+                                                              System.out.println(nline);
+                                                          }
+                                                          //sb.append(line).append("\n");
+                                                          //System.out.println("i");
+
+                                                      }
+                                                      file.close();
+                                                  }catch(Exception e){
+                                                      e.printStackTrace();
+                                                  }
+                                                  String result = sb.toString();
+                                                  Intent intent = new Intent(context, QDisplay.class);
+                                                  intent.putExtra(RESULTS, result);
+                                                  startActivity(intent);
+                                                  System.out.print(result);
+                                              }
+                                          }
+                    );
+                    layout.addView(bt);
+                }
             }
             System.out.println();
         }
