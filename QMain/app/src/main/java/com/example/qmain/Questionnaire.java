@@ -326,7 +326,7 @@ public class Questionnaire extends AppCompatActivity {
     }
 
 
-    public static LinearLayout LinkedQuestion(String questiontext, List choices, final String hint,
+    public static List LinkedQuestion(String questiontext, List choices, final String hint,
                                        Context context, AlertDialog.Builder builder){
         LinearLayout qlayout = new LinearLayout(context);
         // sets up question text
@@ -396,14 +396,20 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.addView(bt);
         bt.setTag("button");
         qlayout.setTag("LC");
+        ArrayList views = new ArrayList();
+        views.add(qlayout);
+
+        System.out.println(extras);
 
         for(int t = 0;t<questions.size();t++){
+            System.out.println(t);
             View v = (View) questions.get(t);
             v.setVisibility(View.GONE);
+            views.add(v);
             qlayout.addView(v);
         }
 
-        return qlayout;
+        return views;
     }
 
 
@@ -734,17 +740,23 @@ class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
     @Override
     public void onCheckedChanged(RadioGroup rg, int p)
     {
-        System.out.println(p);
-
         for(int i=0; i<questions.size();i++){
             List qs = (List)questions.get(i);
+            System.out.println(qs);
             if(i==p){
                 for(int j = 0; j<qs.size(); j++){
+                    System.out.println(((LinearLayout)qs.get(j)).getChildCount());
                     ((LinearLayout)qs.get(j)).setVisibility(View.VISIBLE);
                 }
             }else{
                 for(int j = 0; j<qs.size(); j++){
-                    ((LinearLayout)qs.get(j)).setVisibility(View.GONE);
+                    LinearLayout l = (LinearLayout)qs.get(j);
+                    (l).setVisibility(View.GONE);
+                    for(int c = 0; c<l.getChildCount();c++){
+                        if(l.getChildAt(c) instanceof EditText){
+                            ((EditText)l.getChildAt(c)).setText("");
+                        }
+                    }
                 }
             }
         }

@@ -173,7 +173,7 @@ public class PVQ extends AppCompatActivity {
                         else{
                             text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
                         }
-                        System.out.println("ok");
+                        List extras = new ArrayList();
 
                         // Creates question LinearLayout by calling the appropriate method for the type of the question
                         if (type.equals("T")) {
@@ -244,7 +244,13 @@ public class PVQ extends AppCompatActivity {
                                 stuff.add(extra_questions);
                                 c.add(stuff);
                             }
-                            q = Questionnaire.LinkedQuestion(text, c, hint, context, builder);
+                            List q_and_eqs = Questionnaire.LinkedQuestion(text, c, hint, context, builder);
+                            q = (LinearLayout) q_and_eqs.get(0);
+                            for(int o = 0;o<q_and_eqs.size();o++){
+                                if(o>0){
+                                    extras.add(q_and_eqs.get(o));
+                                }
+                            }
 
                         }
                         // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
@@ -263,6 +269,22 @@ public class PVQ extends AppCompatActivity {
                         ll.addView(q);
                         Questions.add(q);
                         Qs.add(q);
+
+                        for(int o=0;o<extras.size();o++){
+                            setupUI((LinearLayout)extras.get(o));
+                            try{
+                                kids = ((LinearLayout)extras.get(o)).getChildCount();}
+                            catch(Exception e){
+                                kids = 0;
+                            }
+                            for (int i = 0; i < kids; i++){
+                                setupUI(((LinearLayout)extras.get(o)).getChildAt(i));
+                            }
+                            // Adds question to group LinearLayout, overall list of questions,
+                            // and list of questions to be mapped to group name in hash map of questions to groups
+                            Questions.add((LinearLayout)extras.get(o));
+                            Qs.add((LinearLayout)extras.get(o));
+                        }
 
                     }
                 }
@@ -615,7 +637,7 @@ public class PVQ extends AppCompatActivity {
                         line = question + ": " + editText.getText();
                         System.out.println(line);
                     }
-                } else if (tag.equals("SC")) {
+                } else if (tag.equals("SC") || tag.equals("LC")) {
                     line = question + ": ";
                     RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
                     int id = rg.getCheckedRadioButtonId();
@@ -638,6 +660,7 @@ public class PVQ extends AppCompatActivity {
                             System.out.println("here");
                         }
                     }
+
 
                 } else if (tag.equals("MC")) {
                     line = question + ": ";
