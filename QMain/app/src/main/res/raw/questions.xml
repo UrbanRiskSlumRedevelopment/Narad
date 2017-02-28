@@ -148,12 +148,25 @@
             <qchoices>
                 <choice>
                     <ctext>Yes</ctext>
+                    <extra>T</extra>
+                    <equestion name="Enter Whatever">
+                        <qtext>Enter some text</qtext>
+                        <qhint>Enter anything</qhint>
+                        <qtype>T</qtype>
+                    </equestion>
+                    <equestion name="More Whatever">
+                        <qtext>Enter any number</qtext>
+                        <qhint>Enter anything</qhint>
+                        <qtype>N</qtype>
+                    </equestion>
                 </choice>
                 <choice>
                     <ctext>No</ctext>
+                    <extra>F</extra>
                 </choice>
                 <choice>
                     <ctext>Don't know</ctext>
+                    <extra>F</extra>
                 </choice>
             </qchoices>
             <req>T</req>

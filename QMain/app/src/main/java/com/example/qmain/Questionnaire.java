@@ -48,6 +48,7 @@ import android.content.SharedPreferences;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.android.gms.games.quest.Quest;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
@@ -325,22 +326,49 @@ public class Questionnaire extends AppCompatActivity {
     }
 
 
-    public LinearLayout LinkedQuestion(String questiontext, List choices, final String hint,
+    public static LinearLayout LinkedQuestion(String questiontext, List choices, final String hint,
                                        Context context, AlertDialog.Builder builder){
+        LinearLayout qlayout = new LinearLayout(context);
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
         // creates group of radio buttons, each button being a choice from choices
         RadioGroup rg = new RadioGroup(context);
+        HashMap extras = new HashMap();
+        List questions = new ArrayList();
         for (int i=0; i<choices.size(); i++) {
             RadioButton rb = new RadioButton(rg.getContext());
-            String btext = choices.get(i).toString();
+            List choice = (List) choices.get(i);
+            String btext = choice.get(0).toString();
             rb.setId(i);
             rb.setText(btext);
+            extras.put(i, new ArrayList());
+            if(choice.get(1).equals("T")){
+                for(int h=0; h<((List)choice.get(2)).size(); h++){
+                    System.out.println(choice.size());
+                    System.out.println(h);
+                    System.out.println("nere");
+                    List parts = (List)((List)choice.get(2)).get(h);
+                    System.out.println("rip");
+                    LinearLayout q;
+                    if(parts.get(2).equals("N")){
+                        q = Questionnaire.NumQ((String)parts.get(0),(String)parts.get(1),context);
+                    } else{
+                        q = Questionnaire.TextQ((String)parts.get(0),(String)parts.get(1),context);
+                    }
+                    ((List)extras.get(i)).add(q);
+                    questions.add(q);
+
+                }
+
+            }
+
             rg.addView(rb);
             System.out.println(rb.getId());
         }
+
+        rg.setOnCheckedChangeListener(new onCheckedChanged(extras, qlayout, context));
         text.setTag("text");
         rg.setTag("choices");
 
@@ -361,13 +389,20 @@ public class Questionnaire extends AppCompatActivity {
         });
 
         // sets up question linear layout and adds all component views
-        LinearLayout qlayout = new LinearLayout(context);
+
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
         qlayout.addView(rg);
         qlayout.addView(bt);
         bt.setTag("button");
-        qlayout.setTag("SC");
+        qlayout.setTag("LC");
+
+        for(int t = 0;t<questions.size();t++){
+            View v = (View) questions.get(t);
+            v.setVisibility(View.GONE);
+            qlayout.addView(v);
+        }
+
         return qlayout;
     }
 
@@ -682,6 +717,43 @@ public class Questionnaire extends AppCompatActivity {
 
 
 }
+
+
+
+class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
+    LinearLayout ll;
+    HashMap questions;
+    Context context;
+    // can take a linear layout, nodelist, and context as parameters
+    public onCheckedChanged(HashMap questions, LinearLayout ll, Context context) {
+        this.questions = questions;
+        this.context = context;
+        this.ll = ll;
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup rg, int p)
+    {
+        System.out.println(p);
+
+        for(int i=0; i<questions.size();i++){
+            List qs = (List)questions.get(i);
+            if(i==p){
+                for(int j = 0; j<qs.size(); j++){
+                    ((LinearLayout)qs.get(j)).setVisibility(View.VISIBLE);
+                }
+            }else{
+                for(int j = 0; j<qs.size(); j++){
+                    ((LinearLayout)qs.get(j)).setVisibility(View.GONE);
+                }
+            }
+        }
+
+
+    }
+};
+
+
 
 // readme
 // bundling/deploying to phone

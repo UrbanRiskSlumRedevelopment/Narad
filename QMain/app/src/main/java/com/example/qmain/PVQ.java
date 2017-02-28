@@ -155,6 +155,7 @@ public class PVQ extends AppCompatActivity {
                 // iterates through all questions in group
                 NodeList nList = eE.getElementsByTagName("question");
                 List Qs = new ArrayList();
+                System.out.println(nList.getLength());
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     // makes sure question is a valid node
@@ -212,27 +213,57 @@ public class PVQ extends AppCompatActivity {
                             q = Camera(text, context);
                             camera_question = q;
                         } else if (type.equals("LC")){
-                            System.out.println("hahaha");
-                        }
-                        if (!type.equals("LC")){
-                            // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
-                            setupUI(q);
-                            int kids;
-                            try{
-                            kids = q.getChildCount();}
-                            catch(Exception e){
-                                kids = 0;
+                            List c = new ArrayList(); // initializes then fills list of choices
+                            NodeList choices = eElement.getElementsByTagName("choice");
+                            for (int i = 0; i < choices.getLength(); i++) {
+                                Node choice = choices.item(i);
+                                Element e = (Element) choice;
+                                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                                String extra = e.getElementsByTagName("extra").item(0).getTextContent();
+                                List extra_questions = new ArrayList();
+                                if(extra.equals("T")){
+                                    // loop through list if multiple questions
+                                    NodeList questions = eElement.getElementsByTagName("equestion");
+                                    for(int k=0; k<questions.getLength();k++){
+                                        Node question = questions.item(k);
+                                        Element quest = (Element) question;
+                                        String qtext = quest.getElementsByTagName("qtext").item(0).getTextContent();
+                                        String qhint = quest.getElementsByTagName("qhint").item(0).getTextContent();
+                                        String qtype = quest.getElementsByTagName("qtype").item(0).getTextContent();
+                                        List qparts = new ArrayList();
+                                        qparts.add(qtext);
+                                        qparts.add(qhint);
+                                        qparts.add(qtype);
+                                        extra_questions.add(qparts);
+                                    }
+
+                                }
+                                List stuff = new ArrayList();
+                                stuff.add(x);
+                                stuff.add(extra);
+                                stuff.add(extra_questions);
+                                c.add(stuff);
                             }
-                            for (int i = 0; i < kids; i++){
-                                setupUI(q.getChildAt(i));
-                            }
-                            // Adds question to group LinearLayout, overall list of questions,
-                            // and list of questions to be mapped to group name in hash map of questions to groups
-                            ll.addView(q);
-                            Questions.add(q);
-                            Qs.add(q);
+                            q = Questionnaire.LinkedQuestion(text, c, hint, context, builder);
 
                         }
+                        // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
+                        setupUI(q);
+                        int kids;
+                        try{
+                            kids = q.getChildCount();}
+                        catch(Exception e){
+                            kids = 0;
+                        }
+                        for (int i = 0; i < kids; i++){
+                            setupUI(q.getChildAt(i));
+                        }
+                        // Adds question to group LinearLayout, overall list of questions,
+                        // and list of questions to be mapped to group name in hash map of questions to groups
+                        ll.addView(q);
+                        Questions.add(q);
+                        Qs.add(q);
+
                     }
                 }
 
@@ -490,6 +521,8 @@ public class PVQ extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK)  {
+
+
                 // Displays map and prompts user to place picker on location
                 Place place = PlacePicker.getPlace(this, data);
                 // Displays location in toast message after map activity is closed
@@ -534,6 +567,7 @@ public class PVQ extends AppCompatActivity {
             }
         }
     }
+    // don't generate a picture when report has not been completed
 
     // writes current answers and returns them as one string; optionally writes them to file
     public static String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {

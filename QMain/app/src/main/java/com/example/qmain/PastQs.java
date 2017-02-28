@@ -60,6 +60,7 @@ public class PastQs extends AppCompatActivity {
                                                   intent.putExtra(RESULTS, result);
                                                   startActivity(intent);
                                                   System.out.print(result);
+                                                  // put image in putextra, display it in QDisplay
 
                                               }
                                           }
