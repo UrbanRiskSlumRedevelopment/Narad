@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.support.v4.content.FileProvider;
 import android.net.Uri;
+import android.content.DialogInterface;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,7 +69,7 @@ public class PVQ extends AppCompatActivity {
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
     public Context context = this; // For accessing context of the questionnaire
     public static String LOCATION = ""; // Location stored here
-    ImageView mImageView = null;
+    static ImageView mImageView = null;
     LinearLayout camera_question = null;
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -408,11 +409,13 @@ public class PVQ extends AppCompatActivity {
                 // creates a navigation bar at bottom of page, adds prev/next/menu buttons as appropriate
                 LinearLayout navbar = new LinearLayout(this);
                 navbar.setOrientation(LinearLayout.HORIZONTAL);
+                /*
                 if(g_button>0){
                     navbar.addView(prev);
                 }
+                */
                 navbar.addView(menu_button);
-                navbar.addView(next);
+                //navbar.addView(next);
 
 
                 ll.addView(navbar);
@@ -439,6 +442,16 @@ public class PVQ extends AppCompatActivity {
             rv1.addView(rev);
             rv.addView(rv1);
 
+            // review button
+            Button review_button = new Button(this);
+            review_button.setText(review);
+            review_button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    update_answers();
+                }
+            });
+
+
             // menu button
             Button menu_button = new Button(this);
             String menu = "Menu";
@@ -463,7 +476,16 @@ public class PVQ extends AppCompatActivity {
             ans = new TextView(this);
             rv1.addView(ans);
             rv1.addView(menu_button);
+            rv1.addView(review_button);
             rv1.addView(submit);
+
+            vp.setOnTouchListener(new ViewPager.OnTouchListener(){
+                public boolean onTouch(View v,MotionEvent event) {
+                    if(vp.getCurrentItem() != vp.getChildCount()-1){
+                        ans.setText("");
+                    }
+                    return false;
+                }});
 
 
 
@@ -587,12 +609,13 @@ public class PVQ extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
         }
     }
     // don't generate a picture when report has not been completed
 
     // writes current answers and returns them as one string; optionally writes them to file
-    public static String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
+    public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
         String total = ""; // string with all answers
         String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         Boolean use_un = false;
@@ -683,6 +706,9 @@ public class PVQ extends AppCompatActivity {
                     line = question + ": " + LOCATION;
                 } else if (tag.equals("C")) {
                     line = question + ": "; //+ mImageView.toString();
+                    if(!mImageView.equals(null)){
+                        line += "JPEG_"+timeStamp+".jpeg";
+                    }
                 }
                 if (toFile) {
                     try {
@@ -731,7 +757,7 @@ public class PVQ extends AppCompatActivity {
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
-            answers = Questionnaire.writeAnswers(Questions, true, fos, false);
+            Questionnaire.writeAnswers(Questions, true, fos, false);
         }
         try {
             fos.close();
@@ -744,6 +770,8 @@ public class PVQ extends AppCompatActivity {
         // resets values for new questionnaire
         Counter = new ArrayList();
         LOCATION = "";
+        mImageView = null;
+        timeStamp = "";
 
         return filename;
     }
@@ -774,6 +802,27 @@ public class PVQ extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit? Your answers will not be saved.")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteFile("JPEG_" + timeStamp + ".jpeg");
+                        PVQ.this.finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }
 

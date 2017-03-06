@@ -12,6 +12,12 @@ import java.io.InputStreamReader;
 import android.content.Intent;
 import android.content.Context;
 import android.widget.ScrollView;
+import java.io.File;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.media.ImageReader;
 
 public class PastQs extends AppCompatActivity {
     public final static String RESULTS = "";
@@ -55,9 +61,13 @@ public class PastQs extends AppCompatActivity {
                                                       System.out.println("cannot open file");
                                                   }
 
+                                                  Bitmap myBitmap = BitmapFactory.decodeStream(file);
+
                                                   String result = (String) b.getText();
                                                   Intent intent = new Intent(context, QDisplay.class);
-                                                  intent.putExtra(RESULTS, result);
+                                                  intent.putExtra(RESULTS, filename);
+                                                  intent.putExtra("bitmap", myBitmap);
+
                                                   startActivity(intent);
                                                   System.out.print(result);
                                                   // put image in putextra, display it in QDisplay
