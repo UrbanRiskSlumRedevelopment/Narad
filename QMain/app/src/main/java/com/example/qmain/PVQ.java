@@ -55,6 +55,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.games.quest.Quest;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
@@ -93,7 +94,7 @@ public class PVQ extends AppCompatActivity {
         // Builds Questionnaire
         try{
             // Parses XML doc so code can read it
-            InputStream in = getResources().openRawResource(R.raw.questions);
+            InputStream in = getResources().openRawResource(R.raw.questionnaire);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -159,7 +160,32 @@ public class PVQ extends AppCompatActivity {
                 System.out.println(nList.getLength());
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this);
+                        if(null == qu){
+                            Element eElement = (Element) nNode;
+                            // Obtains question type, hint, and text; adds * to question text if required
+                            String text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
+                            String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
+                            if (type.equals("M")){
+                                // Map question
+                                qu = Map(text, context);
+                                map_question = qu;
+                                Questions.add(qu);
+                                Qs.add(qu);
+                                ll.addView(qu);
+                            } else if (type.equals("C")) {
+                                // Camera question; still being worked out
+                                qu = Camera(text, context);
+                                camera_question = qu;
+                                Questions.add(qu);
+                                Qs.add(qu);
+                                ll.addView(qu);
+                            }
+                        }
+                    }
                     // makes sure question is a valid node
+                    /*
                     if (nNode.getNodeType() == Node.ELEMENT_NODE){
                         // Initializes question LinearLayout
                         LinearLayout q = null;
@@ -287,8 +313,17 @@ public class PVQ extends AppCompatActivity {
                             Qs.add((LinearLayout)extras.get(o));
                         }
 
+                    } */
+                }
+                for(int qn = 0; qn < Questions.size(); qn++){
+                    LinearLayout q = (LinearLayout) Questions.get(qn);
+                    setupUI(q);
+                    int x = q.getChildCount();
+                    for(int qi = 0; qi < x; qi++){
+                        setupUI(q.getChildAt(qi));
                     }
                 }
+
 
                 // Iterates through all repeatable chunks in the group
                 NodeList nList2 = eE.getElementsByTagName("rchunk");
@@ -616,6 +651,7 @@ public class PVQ extends AppCompatActivity {
 
     // writes current answers and returns them as one string; optionally writes them to file
     public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
+        System.out.println("im not totally fucking crazy");
         String total = ""; // string with all answers
         String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         Boolean use_un = false;
@@ -645,7 +681,6 @@ public class PVQ extends AppCompatActivity {
                 // based on question tag (type), completes question line with answer in appropriate fashion
                 // if for submission, returns "" if any required (*) questions don't have answers
                 // otherwise adds unanswered required questions to unanswered string
-                System.out.println(tag);
                 if (tag.equals("T") || tag.equals("N")) {
                     EditText editText = (EditText) q.findViewWithTag("answer");
                     if (editText.getText().toString().equals("") && question.endsWith("*") && !incomplete) {
@@ -658,19 +693,15 @@ public class PVQ extends AppCompatActivity {
                             question = question.toUpperCase();
                         }
                         line = question + ": " + editText.getText();
-                        System.out.println(line);
                     }
-                } else if (tag.equals("SC") || tag.equals("LC")) {
+                } else if (tag.equals("SC")) {
                     line = question + ": ";
                     RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
                     int id = rg.getCheckedRadioButtonId();
-                    if (id == -1 && !incomplete) {
+                    if (id == -1 && !incomplete && question.endsWith("*")) {
                         return "";
                     } else {
                         RadioButton rb = (RadioButton) rg.getChildAt(id);
-                        System.out.println(rg.getChildAt(id));
-                        System.out.println(rg.getChildCount());
-                        System.out.println(id);
                         try {
                             if (id == -1) {
                                 unanswered += "\n" + name+question + "\n";
@@ -678,18 +709,13 @@ public class PVQ extends AppCompatActivity {
                                 line = line.toUpperCase();
                             }
                             line += rb.getText();
-                            System.out.println(line);
                         } catch (Exception e) {
                             System.out.println("here");
                         }
                     }
-
-
                 } else if (tag.equals("MC")) {
                     line = question + ": ";
-                    System.out.println(q.getChildCount());
                     for (int j = 0; j < q.getChildCount(); j++) {
-                        System.out.println(q.getChildAt(j).getTag());
                         String ctag = (String) q.getChildAt(j).getTag();
                         if (ctag.equals("choice")) {
                             CheckBox cb = (CheckBox) q.getChildAt(j);
@@ -701,13 +727,14 @@ public class PVQ extends AppCompatActivity {
                     if (line.length() > 20) {
                         line = line.substring(0, line.length() - 2);
                     }
-                    System.out.println(line);
                 } else if (tag.equals("M")) {
                     line = question + ": " + LOCATION;
                 } else if (tag.equals("C")) {
-                    line = question + ": "; //+ mImageView.toString();
-                    if(!mImageView.equals(null)){
-                        line += "JPEG_"+timeStamp+".jpeg";
+                    if(!toFile) {
+                        line = question + ": "; //+ mImageView.toString();
+                        if (!mImageView.equals(null)) {
+                            line += "JPEG_" + timeStamp + ".jpeg";
+                        }
                     }
                 }
                 if (toFile) {
@@ -717,6 +744,7 @@ public class PVQ extends AppCompatActivity {
                         total += line;
                         f.write(line.getBytes());
                     } catch (Exception e) {
+                        System.out.println("problem writing line");
                     }
                 } else {
                     // adds line to total string of answers
@@ -741,13 +769,12 @@ public class PVQ extends AppCompatActivity {
         // opens file
         try{
             fos = openFileOutput(filename, Context.MODE_PRIVATE);
-            System.out.println(getFileStreamPath(filename));
         }catch(Exception e){
             return "";
         }
 
         // calls writeAnswers first to check for unanswered required questions
-        String answers = Questionnaire.writeAnswers(Questions, false, fos, false);
+        String answers = writeAnswers(Groups, false, fos, false);
         if (answers.equals("")) {
             AlertDialog.Builder bdr = builder;
             bdr.setMessage("Answer all required questions before submitting");
@@ -757,14 +784,14 @@ public class PVQ extends AppCompatActivity {
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
-            Questionnaire.writeAnswers(Questions, true, fos, false);
+            System.out.println(writeAnswers(Groups, true, fos, false));
         }
         try {
             fos.close();
         }catch(Exception e){}
 
         // goes back to main page of app
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Home.class);
         startActivity(intent);
 
         // resets values for new questionnaire

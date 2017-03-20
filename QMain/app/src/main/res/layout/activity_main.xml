@@ -10,22 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.qmain.MainActivity">
 
-    <Button android:id="@+id/newvpq"
+    <Button android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Questionnaire"
-        android:onClick="newVPQ"/>
-    <Button android:id="@+id/pastq"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pastq"
-        android:layout_below="@id/newvpq"
-        android:onClick="pastQ"/>
-    <Button android:id="@+id/syncbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sync"
-        android:layout_alignParentBottom="true"
-        android:onClick="sync"/>
+        android:text="Log In"
+        android:onClick="start"/>
 
 </RelativeLayout>

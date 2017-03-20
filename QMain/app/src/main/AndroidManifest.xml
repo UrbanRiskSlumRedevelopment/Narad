@@ -46,7 +46,8 @@
         <activity android:name=".QDisplay" />
         <activity android:name=".Repeat" />
         <activity android:name=".Display" />
-        <activity android:name=".PVQ"></activity>
+        <activity android:name=".PVQ" />
+        <activity android:name=".Home"></activity>
     </application>
 
 </manifest>

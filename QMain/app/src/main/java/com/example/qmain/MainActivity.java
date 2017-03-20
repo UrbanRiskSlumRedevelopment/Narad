@@ -14,28 +14,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void newQ(View view) {
-        Intent intent = new Intent(this, Questionnaire.class);
+    public void start(View view) {
+        Intent intent = new Intent(this, Home.class);
         startActivity(intent);
     }
 
-    public void pastQ(View view){
-        Intent intent = new Intent(this, PastQs.class);
-        startActivity(intent);
-    }
-
-    public void newVPQ(View view){
-        Intent intent = new Intent(this, PVQ.class);
-        startActivity(intent);
-    }
-
-    public void sync(View view){
-        String[] files = fileList();
-        if (files.length > 0){
-            for(int i = 0; i<files.length; i++){
-                System.out.println(files[i]);
-                deleteFile(files[i]);
-            }
-        }
-    }
 }

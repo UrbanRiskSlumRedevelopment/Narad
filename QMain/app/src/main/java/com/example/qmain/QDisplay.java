@@ -25,13 +25,15 @@ public class QDisplay extends AppCompatActivity {
         displayText.setText(text);
         layout.addView(displayText);
 
-        if(text.substring(0,4).equals("JPEG")){
+        if(text.substring(0,4).equals("JPEG") || true){
             Bitmap myBitmap = (Bitmap) intent.getParcelableExtra("bitmap");
             ImageView myImage = new ImageView(this);
             myImage.setImageBitmap(myBitmap);
             layout.addView(myImage);
 
         }
+
+
 
     }
 }

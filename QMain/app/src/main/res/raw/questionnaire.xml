@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups>
+    <group name="Family">
+        <gtext>Family</gtext>
+        <repeatable>F</repeatable>
+        <question name="Head of Family">
+            <qtext>Name of Head of the Family</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter text</qhint>
+            <req>T</req>
+        </question>
+        <question name="Father's Name">
+            <qtext>Father's Name</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter text</qhint>
+            <req>F</req>
+        </question>
+        <question name="Sex">
+            <qtext>Sex</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <req>T</req>
+            <qchoices>
+                <choice>
+                    <ctext>Female</ctext>
+                </choice>
+                <choice>
+                    <ctext>Male</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Caste">
+            <qtext>Caste</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <req>T</req>
+            <qchoices>
+                <choice>
+                    <ctext>General</ctext>
+                </choice>
+                <choice>
+                    <ctext>SC</ctext>
+                </choice>
+                <choice>
+                    <ctext>ST</ctext>
+                </choice>
+                <choice>
+                    <ctext>OBC</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Religion">
+            <qtext>Religion</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <req>T</req>
+            <qchoices>
+                <choice>
+                    <ctext>Hindu</ctext>
+                </choice>
+                <choice>
+                    <ctext>Muslim</ctext>
+                </choice>
+                <choice>
+                    <ctext>Christian</ctext>
+                </choice>
+                <choice>
+                    <ctext>Sikh</ctext>
+                </choice>
+                <choice>
+                    <ctext>Jainism</ctext>
+                </choice>
+                <choice>
+                    <ctext>Buddhism</ctext>
+                </choice>
+                <choice>
+                    <ctext>Zoroastrianism</ctext>
+                </choice>
+                <choice>
+                    <ctext>Others</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Minority Status">
+            <qtext>Minority Status</qtext>
+            <qtype>SC</qtype>
+            <qhint>Select one</qhint>
+            <req>T</req>
+            <qchoices>
+                <choice>
+                    <ctext>Non-Minority</ctext>
+                </choice>
+                <choice>
+                    <ctext>Minority</ctext>
+                </choice>
+            </qchoices>
+        </question>
+        <question name="Female-headed">
+            <qtext>Female-headed Household?</qtext>
+            <qtype>LC</qtype>
+            <qhint>Select one</qhint>
+            <qchoices>
+                <choice>
+                    <ctext>Yes</ctext>
+                    <extra>T</extra>
+                    <equestion name="Status">
+                        <qtext>Status of female head?</qtext>
+                        <qhint>Enter status</qhint>
+                        <qtype>T</qtype>
+                    </equestion>
+                    <equestion name="Name">
+                        <qtext>Name of female head?</qtext>
+                        <qhint>Enter name</qhint>
+                        <qtype>T</qtype>
+                    </equestion>
+                </choice>
+                <choice>
+                    <ctext>No</ctext>
+                    <extra>F</extra>
+                </choice>
+            </qchoices>
+            <req>T</req>
+        </question>
+    </group>
+    <group name="Map">
+        <gtext>Map</gtext>
+        <repeatable>F</repeatable>
+        <question name="Map">
+            <qtext>Map</qtext>
+            <qtype>M</qtype>
+            <qhint>None</qhint>
+            <req>F</req>
+        </question>
+    </group>
+    <!--
+    <group name="Test (repeatable)">
+        <gtext>Test</gtext>
+        <repeatable>T</repeatable>
+        <question name="test1">
+            <qtext>Test question 1 for repeatable chunk</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter anything</qhint>
+            <req>T</req>
+        </question>
+        <question name="test2">
+            <qtext>Text question 2</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter anything</qhint>
+            <req>F</req>
+        </question>
+        <rchunk>
+            <rtext>TEst chunk</rtext>
+            <rquestion name="test3">
+                <qtype>T</qtype>
+                <qtext>ID</qtext>
+                <qhint>just a test</qhint>
+                <req>T</req>
+            </rquestion>
+        </rchunk>
+        <rchunk>
+            <rtext>TEst chunk 2</rtext>
+            <rquestion name="test4">
+                <qtype>T</qtype>
+                <qtext>ID</qtext>
+                <qhint>just a test</qhint>
+                <req>T</req>
+            </rquestion>
+            <rquestion name="test5">
+                <qtype>T</qtype>
+                <qtext>Testing 2</qtext>
+                <qhint>just a test</qhint>
+                <req>F</req>
+            </rquestion>
+        </rchunk>
+    </group>
+    !-->
+</groups>

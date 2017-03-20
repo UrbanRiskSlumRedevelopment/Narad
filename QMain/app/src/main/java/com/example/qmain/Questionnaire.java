@@ -70,6 +70,101 @@ public class Questionnaire extends AppCompatActivity {
     HashMap<String, Button> RepeatButtons = new HashMap();
     static ImageView mImageView = null;
 
+    public static LinearLayout build_question(Node nNode, List list1, List list2, LinearLayout layout1, Context context){
+        LinearLayout q = null;
+            Element eElement = (Element) nNode;
+            String text = "";
+            String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
+            String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
+            if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
+                text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
+            }
+            else{
+                text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
+            }
+            List extras = new ArrayList();
+            if (type.equals("T")) {
+                q = TextQ(text, hint, context);
+            } else if (type.equals("N")) {
+                q = NumQ(text, hint, context);
+            } else if (type.equals("SC")) {
+                List c = new ArrayList();
+                NodeList choices = eElement.getElementsByTagName("choice");
+                for (int i = 0; i < choices.getLength(); i++) {
+                    Node choice = choices.item(i);
+                    Element e = (Element) choice;
+                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                    c.add(x);
+                }
+                q = SingleChoice(text, c, hint, context, builder);
+            } else if (type.equals("MC")) {
+                List c = new ArrayList();
+                NodeList choices = eElement.getElementsByTagName("choice");
+                for (int i = 0; i < choices.getLength(); i++) {
+                    Node choice = choices.item(i);
+                    Element e = (Element) choice;
+                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                    c.add(x);
+                }
+                q = MultipleChoice(text, c, hint, context, builder);
+            } else if (type.equals("M")){
+                return null;
+            } else if (type.equals("C")){
+                return null;
+            } else if (type.equals("LC")){
+                List c = new ArrayList(); // initializes then fills list of choices
+                NodeList choices = eElement.getElementsByTagName("choice");
+                for (int i = 0; i < choices.getLength(); i++) {
+                    Node choice = choices.item(i);
+                    Element e = (Element) choice;
+                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                    String extra = e.getElementsByTagName("extra").item(0).getTextContent();
+                    List extra_questions = new ArrayList();
+                    if(extra.equals("T")){
+                        // loop through list if multiple questions
+                        NodeList questions = eElement.getElementsByTagName("equestion");
+                        for(int k=0; k<questions.getLength();k++){
+                            Node question = questions.item(k);
+                            Element quest = (Element) question;
+                            String qtext = quest.getElementsByTagName("qtext").item(0).getTextContent();
+                            String qhint = quest.getElementsByTagName("qhint").item(0).getTextContent();
+                            String qtype = quest.getElementsByTagName("qtype").item(0).getTextContent();
+                            List qparts = new ArrayList();
+                            qparts.add(qtext);
+                            qparts.add(qhint);
+                            qparts.add(qtype);
+                            extra_questions.add(qparts);
+                        }
+
+                    }
+                    List stuff = new ArrayList();
+                    stuff.add(x);
+                    stuff.add(extra);
+                    stuff.add(extra_questions);
+                    c.add(stuff);
+                }
+                List q_and_eqs = LinkedQuestion(text, c, hint, context, builder);
+                q = (LinearLayout) q_and_eqs.get(0);
+                for(int o = 0;o<q_and_eqs.size();o++){
+                    if(o>0){
+                        extras.add(q_and_eqs.get(o));
+                    }
+                }
+
+            }
+            layout1.addView(q);
+            list1.add(q);
+            list2.add(q);
+
+            for(int o=0;o<extras.size();o++){
+                // Adds question to group LinearLayout, overall list of questions,
+                // and list of questions to be mapped to group name in hash map of questions to groups
+                list1.add((LinearLayout)extras.get(o));
+                list2.add((LinearLayout)extras.get(o));
+            }
+        return q;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -346,11 +441,7 @@ public class Questionnaire extends AppCompatActivity {
             extras.put(i, new ArrayList());
             if(choice.get(1).equals("T")){
                 for(int h=0; h<((List)choice.get(2)).size(); h++){
-                    System.out.println(choice.size());
-                    System.out.println(h);
-                    System.out.println("nere");
                     List parts = (List)((List)choice.get(2)).get(h);
-                    System.out.println("rip");
                     LinearLayout q;
                     if(parts.get(2).equals("N")){
                         q = Questionnaire.NumQ((String)parts.get(0),(String)parts.get(1),context);
@@ -395,7 +486,7 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.addView(rg);
         qlayout.addView(bt);
         bt.setTag("button");
-        qlayout.setTag("LC");
+        qlayout.setTag("SC");
         ArrayList views = new ArrayList();
         views.add(qlayout);
 
