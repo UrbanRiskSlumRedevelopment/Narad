@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -184,136 +186,6 @@ public class PVQ extends AppCompatActivity {
                             }
                         }
                     }
-                    // makes sure question is a valid node
-                    /*
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE){
-                        // Initializes question LinearLayout
-                        LinearLayout q = null;
-                        Element eElement = (Element) nNode;
-                        // Obtains question type, hint, and text; adds * to question text if required
-                        String text;
-                        String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-                        String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
-                        if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
-                            text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
-                        }
-                        else{
-                            text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
-                        }
-                        List extras = new ArrayList();
-
-                        // Creates question LinearLayout by calling the appropriate method for the type of the question
-                        if (type.equals("T")) {
-                            // Text question
-                            q = Questionnaire.TextQ(text, hint, context);
-                        } else if (type.equals("N")) {
-                            // Numeric question
-                            q = Questionnaire.NumQ(text, hint, context);
-                        } else if (type.equals("SC")) {
-                            // Single Choice question
-                            List c = new ArrayList(); // initializes then fills list of choices
-                            NodeList choices = eElement.getElementsByTagName("choice");
-                            for (int i = 0; i < choices.getLength(); i++) {
-                                Node choice = choices.item(i);
-                                Element e = (Element) choice;
-                                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                c.add(x);
-                            }
-                            q = Questionnaire.SingleChoice(text, c, hint, context, builder);
-                        } else if (type.equals("MC")) {
-                            // Multiple Choice question
-                            List c = new ArrayList(); // initializes then fills list of choices
-                            NodeList choices = eElement.getElementsByTagName("choice");
-                            for (int i = 0; i < choices.getLength(); i++) {
-                                Node choice = choices.item(i);
-                                Element e = (Element) choice;
-                                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                c.add(x);
-                            }
-                            q = Questionnaire.MultipleChoice(text, c, hint, context, builder);
-                        } else if (type.equals("M")){
-                            // Map question
-                            q = Map(text, context);
-                            map_question = q;
-                        } else if (type.equals("C")){
-                            // Camera question; still being worked out
-                            q = Camera(text, context);
-                            camera_question = q;
-                        } else if (type.equals("LC")){
-                            List c = new ArrayList(); // initializes then fills list of choices
-                            NodeList choices = eElement.getElementsByTagName("choice");
-                            for (int i = 0; i < choices.getLength(); i++) {
-                                Node choice = choices.item(i);
-                                Element e = (Element) choice;
-                                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                String extra = e.getElementsByTagName("extra").item(0).getTextContent();
-                                List extra_questions = new ArrayList();
-                                if(extra.equals("T")){
-                                    // loop through list if multiple questions
-                                    NodeList questions = eElement.getElementsByTagName("equestion");
-                                    for(int k=0; k<questions.getLength();k++){
-                                        Node question = questions.item(k);
-                                        Element quest = (Element) question;
-                                        String qtext = quest.getElementsByTagName("qtext").item(0).getTextContent();
-                                        String qhint = quest.getElementsByTagName("qhint").item(0).getTextContent();
-                                        String qtype = quest.getElementsByTagName("qtype").item(0).getTextContent();
-                                        List qparts = new ArrayList();
-                                        qparts.add(qtext);
-                                        qparts.add(qhint);
-                                        qparts.add(qtype);
-                                        extra_questions.add(qparts);
-                                    }
-
-                                }
-                                List stuff = new ArrayList();
-                                stuff.add(x);
-                                stuff.add(extra);
-                                stuff.add(extra_questions);
-                                c.add(stuff);
-                            }
-                            List q_and_eqs = Questionnaire.LinkedQuestion(text, c, hint, context, builder);
-                            q = (LinearLayout) q_and_eqs.get(0);
-                            for(int o = 0;o<q_and_eqs.size();o++){
-                                if(o>0){
-                                    extras.add(q_and_eqs.get(o));
-                                }
-                            }
-
-                        }
-                        // Sets up UI (keyboard down when screen touched outside text entry box) for each question's parts
-                        setupUI(q);
-                        int kids;
-                        try{
-                            kids = q.getChildCount();}
-                        catch(Exception e){
-                            kids = 0;
-                        }
-                        for (int i = 0; i < kids; i++){
-                            setupUI(q.getChildAt(i));
-                        }
-                        // Adds question to group LinearLayout, overall list of questions,
-                        // and list of questions to be mapped to group name in hash map of questions to groups
-                        ll.addView(q);
-                        Questions.add(q);
-                        Qs.add(q);
-
-                        for(int o=0;o<extras.size();o++){
-                            setupUI((LinearLayout)extras.get(o));
-                            try{
-                                kids = ((LinearLayout)extras.get(o)).getChildCount();}
-                            catch(Exception e){
-                                kids = 0;
-                            }
-                            for (int i = 0; i < kids; i++){
-                                setupUI(((LinearLayout)extras.get(o)).getChildAt(i));
-                            }
-                            // Adds question to group LinearLayout, overall list of questions,
-                            // and list of questions to be mapped to group name in hash map of questions to groups
-                            Questions.add((LinearLayout)extras.get(o));
-                            Qs.add((LinearLayout)extras.get(o));
-                        }
-
-                    } */
                 }
                 for(int qn = 0; qn < Questions.size(); qn++){
                     LinearLayout q = (LinearLayout) Questions.get(qn);
@@ -324,91 +196,55 @@ public class PVQ extends AppCompatActivity {
                     }
                 }
 
-
                 // Iterates through all repeatable chunks in the group
                 NodeList nList2 = eE.getElementsByTagName("rchunk");
+                String num = "";
+                try{
+                    num = eE.getElementsByTagName("rsize").item(0).getTextContent();
+                }catch(Exception e){
+                    num="";
+                }
                 for(int z=0; z<nList2.getLength();z++){
                     Node chunk = nList2.item(z);
                     Element chunkE = (Element) chunk;
-                    // question chunk button
-                    Button rbt = new Button(this);
-                    rbt.setText(chunkE.getElementsByTagName("rtext").item(0).getTextContent()+" +");
-                    ll.addView(rbt);
-                    setupUI(rbt);
+                    if(num.equals("")) {
+                        // question chunk button
+                        Button rbt = new Button(this);
+                        rbt.setText(chunkE.getElementsByTagName("rtext").item(0).getTextContent() + " +");
+                        ll.addView(rbt);
+                        setupUI(rbt);
 
-                    // XML question chunk
-                    NodeList chqs = chunkE.getElementsByTagName("rquestion");
+                        // XML question chunk
+                        NodeList chqs = chunkE.getElementsByTagName("rquestion");
 
-                    // when button is clicked, following code takes as arguments linear layout, XML chunk of questions, context
-                    rbt.setOnClickListener(new RepeatOnClickListener(ll,chqs,this) {
-                        public void onClick(View v) {
-                            // new linear layout of questions in chunk
-                            LinearLayout qchunk = new LinearLayout(context);
-                            qchunk.setOrientation(LinearLayout.VERTICAL);
-                            // iterates through questions and adds them to the linear layout
-                            for(int y=0;y<nlist.getLength();y++){
-                                Node question = nlist.item(y);
-                                if (question.getNodeType() == Node.ELEMENT_NODE){
-                                    LinearLayout q = null;
-                                    Element eElement = (Element) question;
-                                    String text = "";
-                                    String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-                                    String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
-                                    if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
-                                        text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
+                        // when button is clicked, following code takes as arguments linear layout, XML chunk of questions, context
+                        rbt.setOnClickListener(new RepeatOnClickListener(ll, chqs, this) {
+                            public void onClick(View v) {
+                                // new linear layout of questions in chunk
+                                LinearLayout qchunk = new LinearLayout(context);
+                                qchunk.setOrientation(LinearLayout.VERTICAL);
+                                // iterates through questions and adds them to the linear layout
+                                for (int y = 0; y < nlist.getLength(); y++) {
+                                    Node question = nlist.item(y);
+                                    if (question.getNodeType() == Node.ELEMENT_NODE) {
+                                        String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
+                                        LinearLayout qu = Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context);
                                     }
-                                    else{
-                                        text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
-                                    }
-                                    System.out.println("ok");
-                                    if (type.equals("T")) {
-                                        q = Questionnaire.TextQ(text, hint, context);
-                                    } else if (type.equals("N")) {
-                                        q = Questionnaire.NumQ(text, hint, context);
-                                    } else if (type.equals("SC")) {
-                                        List c = new ArrayList();
-                                        NodeList choices = eElement.getElementsByTagName("choice");
-                                        for (int i = 0; i < choices.getLength(); i++) {
-                                            Node choice = choices.item(i);
-                                            Element e = (Element) choice;
-                                            String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                            c.add(x);
-                                        }
-                                        q = Questionnaire.SingleChoice(text, c, hint, context, builder);
-                                    } else if (type.equals("MC")) {
-                                        List c = new ArrayList();
-                                        NodeList choices = eElement.getElementsByTagName("choice");
-                                        for (int i = 0; i < choices.getLength(); i++) {
-                                            Node choice = choices.item(i);
-                                            Element e = (Element) choice;
-                                            String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                            c.add(x);
-                                        }
-                                        q = Questionnaire.MultipleChoice(text, c, hint, context, builder);
-                                    } else if (type.equals("M")){
-                                        q = Map(text, context);
-                                        map_question = q;
-                                    } else if (type.equals("C")){
-                                        q = Camera(text, context);
-                                        camera_question = q;
-                                    }
-                                    if (!type.equals("C")){
-                                        setupUI(q);
-                                        for (int i = 0; i < q.getChildCount(); i++){
-                                            setupUI(q.getChildAt(i));
-                                        }
-                                        qchunk.addView(q);
-                                        String g_name = (String)((TextView) view1.getChildAt(0)).getText();
-                                        Groups.get(g_name).add(q);
-                                        Questions.add(q);
-
-                                    }
-
                                 }
+                                view1.addView(qchunk, view1.getChildCount() - 1);
                             }
-                            view1.addView(qchunk, view1.getChildCount()-1);
-                        }
-                    });
+                        });
+                    }else{
+                        EditText num_times = new EditText(this);
+                        num_times.setHint(num);
+                        num_times.setInputType(2);
+                        NodeList chqs = chunkE.getElementsByTagName("rquestion");
+                        LinearLayout questions_here = new LinearLayout(this);
+                        questions_here.setOrientation(LinearLayout.VERTICAL);
+                        num_times.addTextChangedListener(new NumWatcher(questions_here, chqs, this, Questions, Qs));
+                        ll.addView(num_times);
+                        ll.addView(questions_here);
+                    }
 
                 }
 
@@ -651,7 +487,6 @@ public class PVQ extends AppCompatActivity {
 
     // writes current answers and returns them as one string; optionally writes them to file
     public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
-        System.out.println("im not totally fucking crazy");
         String total = ""; // string with all answers
         String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         Boolean use_un = false;
@@ -663,7 +498,7 @@ public class PVQ extends AppCompatActivity {
             total += name;
             //unanswered += "\n"+name;
             List qs = (List) qgs.get(key);
-            // iterates through list of questionsg
+            // iterates through list of questions
             for (int i = 0; i < qs.size(); i++) {
                 // gets question linear layout
                 LinearLayout q = (LinearLayout) qs.get(i);
@@ -694,6 +529,23 @@ public class PVQ extends AppCompatActivity {
                         }
                         line = question + ": " + editText.getText();
                     }
+                } else if (tag.equals("S")){
+                    TextView answer_total = (TextView) q.findViewWithTag("answer");
+                    String at = answer_total.getText().toString();
+                    if(question.endsWith("*") && !incomplete && at.equals("Total: ")){
+                        System.out.println("oops");
+                        return "";
+                    }else if(question.endsWith("*")&& at.equals("Total: ")){
+                        unanswered += "\n" + name+question + "\n";
+                        use_un = true;
+                        question = question.toUpperCase();
+                    } else{
+                        try {
+                            line = question + ": " + at.substring(at.indexOf(" ") + 1);
+                        }catch(Exception e){
+                            line = question + ": ";
+                        }
+                    }
                 } else if (tag.equals("SC")) {
                     line = question + ": ";
                     RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
@@ -703,14 +555,18 @@ public class PVQ extends AppCompatActivity {
                     } else {
                         RadioButton rb = (RadioButton) rg.getChildAt(id);
                         try {
-                            if (id == -1) {
+                            if (id == -1  && question.endsWith("*")) {
                                 unanswered += "\n" + name+question + "\n";
                                 use_un = true;
                                 line = line.toUpperCase();
+                                continue;
+                            } else if(id == -1){
+                                continue;
                             }
                             line += rb.getText();
                         } catch (Exception e) {
-                            System.out.println("here");
+                            System.out.println("something went wrong");
+                            System.out.println(question);
                         }
                     }
                 } else if (tag.equals("MC")) {
@@ -915,5 +771,46 @@ class RepeatOnClickListener implements View.OnClickListener
     {
     }
 
-};
+}
 
+class NumWatcher implements TextWatcher {
+    private LinearLayout view1;
+    private NodeList nodes;
+    private Context context;
+    private List list1;
+    private List list2;
+    NumWatcher(LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
+        this.view1 = ll;
+        this.nodes = nodes;
+        this.context = context;
+        this.list1 = list1;
+        this.list2 = list2;
+    }
+
+    public void afterTextChanged(Editable s) {
+        String value = s.toString();
+        if(value.equals("")){
+            view1.removeAllViews();
+            return;
+        }
+        view1.removeAllViews();
+        int times = Integer.parseInt(value);
+        for(int i = 0;i<times;i++){
+            LinearLayout qchunk = new LinearLayout(context);
+            qchunk.setOrientation(LinearLayout.VERTICAL);
+            for (int y = 0; y < nodes.getLength(); y++) {
+                Node question = nodes.item(y);
+                if (question.getNodeType() == Node.ELEMENT_NODE) {
+                    System.out.println(list2==null);
+                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context);
+                }
+            }
+            view1.addView(qchunk, view1.getChildCount() - 1);
+        }
+    }
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+}
+
+
+        // iterates through questions and adds them to the linear layout

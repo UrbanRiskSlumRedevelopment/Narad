@@ -15,9 +15,11 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.text.Editable;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -111,12 +113,29 @@ public class Questionnaire extends AppCompatActivity {
                 return null;
             } else if (type.equals("C")){
                 return null;
-            } else if (type.equals("LC")){
+            } else if (type.equals("S")){
+                NodeList factors = eElement.getElementsByTagName("factor");
+                q = SumQ(text,hint,context,factors);
+            }
+            else if (type.equals("LC")){
                 List c = new ArrayList(); // initializes then fills list of choices
                 NodeList choices = eElement.getElementsByTagName("choice");
-                for (int i = 0; i < choices.getLength(); i++) {
-                    Node choice = choices.item(i);
-                    Element e = (Element) choice;
+                Node choice = eElement.getElementsByTagName("choice").item(0);
+                //for (int i = 0; i < choices.getLength(); i++) {
+                    //Node choice = choices.item(i);
+                while(choice != null){
+                    Element e;
+                    try{
+                        e = (Element) choice;
+                    }catch(Exception exception){
+                        choice = choice.getNextSibling();
+                        if(choice==null){
+                            break;
+                        }
+                        continue;
+                    }
+
+                    //Element e = (Element) choice;
                     String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                     String extra = e.getElementsByTagName("extra").item(0).getTextContent();
                     List extra_questions = new ArrayList();
@@ -125,24 +144,22 @@ public class Questionnaire extends AppCompatActivity {
                         NodeList questions = eElement.getElementsByTagName("equestion");
                         for(int k=0; k<questions.getLength();k++){
                             Node question = questions.item(k);
-                            Element quest = (Element) question;
-                            String qtext = quest.getElementsByTagName("qtext").item(0).getTextContent();
-                            String qhint = quest.getElementsByTagName("qhint").item(0).getTextContent();
-                            String qtype = quest.getElementsByTagName("qtype").item(0).getTextContent();
-                            List qparts = new ArrayList();
-                            qparts.add(qtext);
-                            qparts.add(qhint);
-                            qparts.add(qtype);
-                            extra_questions.add(qparts);
+                            extra_questions.add(question);
                         }
 
                     }
+
                     List stuff = new ArrayList();
                     stuff.add(x);
                     stuff.add(extra);
                     stuff.add(extra_questions);
                     c.add(stuff);
+                    choice = choice.getNextSibling();
+                    if(choice.equals(null)){
+                        break;
+                    }
                 }
+
                 List q_and_eqs = LinkedQuestion(text, c, hint, context, builder);
                 q = (LinearLayout) q_and_eqs.get(0);
                 for(int o = 0;o<q_and_eqs.size();o++){
@@ -152,7 +169,9 @@ public class Questionnaire extends AppCompatActivity {
                 }
 
             }
-            layout1.addView(q);
+            if(layout1 != null){
+                layout1.addView(q);
+            }
             list1.add(q);
             list2.add(q);
 
@@ -420,6 +439,44 @@ public class Questionnaire extends AppCompatActivity {
         return qlayout;
     }
 
+    public static LinearLayout SumQ(String questiontext,String hint,Context context,NodeList factors){
+        System.out.println("getting here");
+        // sets up question text
+        TextView text = new TextView(context);
+        text.setTextSize(20);
+        text.setText(questiontext);
+        text.setTag("text");
+        // sets up linear layout for question, adds question text
+        LinearLayout qlayout = new LinearLayout(context);
+        qlayout.setOrientation(LinearLayout.VERTICAL);
+        qlayout.addView(text);
+        // sets up boxes for answer text entry (numerical)
+        TextView tv = new TextView(context);
+        List to_sum = new ArrayList();
+        for(int i = 0;i<factors.getLength();i++){
+            Element factor = (Element) factors.item(i);
+            System.out.println(factor.getTextContent());
+            String ftext = factor.getElementsByTagName("ftext").item(0).getTextContent();
+            EditText et = new EditText(context);
+            et.setTextSize(15);
+            et.setHint("            ");
+            et.addTextChangedListener(new SumWatcher(tv,to_sum));
+            to_sum.add(et);
+            LinearLayout hbar = new LinearLayout(context);
+            hbar.setOrientation(LinearLayout.HORIZONTAL);
+            TextView ft = new TextView(context);
+            ft.setTextSize(15);
+            ft.setText(ftext+ " ");
+
+            hbar.addView(ft);
+            hbar.addView(et);
+            qlayout.addView(hbar);
+        }
+        qlayout.addView(tv);
+        tv.setTag("answer");
+        qlayout.setTag("S");
+        return qlayout;
+    }
 
     public static List LinkedQuestion(String questiontext, List choices, final String hint,
                                        Context context, AlertDialog.Builder builder){
@@ -441,19 +498,18 @@ public class Questionnaire extends AppCompatActivity {
             extras.put(i, new ArrayList());
             if(choice.get(1).equals("T")){
                 for(int h=0; h<((List)choice.get(2)).size(); h++){
-                    List parts = (List)((List)choice.get(2)).get(h);
-                    LinearLayout q;
-                    if(parts.get(2).equals("N")){
-                        q = Questionnaire.NumQ((String)parts.get(0),(String)parts.get(1),context);
-                    } else{
-                        q = Questionnaire.TextQ((String)parts.get(0),(String)parts.get(1),context);
-                    }
+                    Node question = (Node)((List)choice.get(2)).get(h);
+                    List filler1 = new ArrayList();
+                    List filler2 = new ArrayList();
+                    LinearLayout filler3 = null;
+                    LinearLayout q = build_question(question, filler1, filler2, filler3, context);
                     ((List)extras.get(i)).add(q);
                     questions.add(q);
 
                 }
 
             }
+
 
             rg.addView(rb);
             System.out.println(rb.getId());
@@ -815,12 +871,41 @@ public class Questionnaire extends AppCompatActivity {
 
 }
 
+class SumWatcher implements TextWatcher{
+    private TextView tv;
+    private List factors;
+    public SumWatcher(TextView tv, List factors){
+        this.tv = tv;
+        this.factors = factors;
+    }
 
+    public void afterTextChanged(Editable s) {
+        int sum = 0;
+        for(int i = 0;i<factors.size();i++){
+            String value = ((EditText)factors.get(i)).getText().toString();
+            try {
+                int v = Integer.parseInt(value);
+                sum += v;
+            }catch(Exception e){
+            }
+        }
+        if(sum == 0){
+            tv.setText("Total:");
+            tv.setTextSize(17);
+        } else{
+            String total = Integer.toString(sum);
+            tv.setText("Total: " + total);
+            tv.setTextSize(17);
+        }
+    }
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+}
 
 class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
-    LinearLayout ll;
-    HashMap questions;
-    Context context;
+    private LinearLayout ll;
+    private HashMap questions;
+    private Context context;
     // can take a linear layout, nodelist, and context as parameters
     public onCheckedChanged(HashMap questions, LinearLayout ll, Context context) {
         this.questions = questions;
@@ -846,6 +931,10 @@ class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
                     for(int c = 0; c<l.getChildCount();c++){
                         if(l.getChildAt(c) instanceof EditText){
                             ((EditText)l.getChildAt(c)).setText("");
+                        } else if(l.getChildAt(c) instanceof RadioGroup){
+                            ((RadioGroup) l.getChildAt(c)).clearCheck();
+                        } else if(l.getChildAt(c) instanceof CheckBox){
+                            ((CheckBox)l.getChildAt(c)).setChecked(false);
                         }
                     }
                 }

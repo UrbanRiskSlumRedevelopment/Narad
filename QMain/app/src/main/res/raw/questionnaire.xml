@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <groups>
+    <group name="Slum">
+        <gtext>General Information</gtext>
+        <repeatable>F</repeatable>
+        <question>
+            <qtext>Name of Slum</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter slum</qhint>
+            <req>T</req>
+        </question>
+        <question>
+            <qtext>Location - Ward No/Name</qtext>
+            <qtype>T</qtype>
+            <req>F</req>
+            <qhint>Enter location</qhint>
+        </question>
+        <question>
+            <qtext>House/Flat/Door No.</qtext>
+            <qtype>N</qtype>
+            <qhint>Enter number</qhint>
+            <req>F</req>
+        </question>
+    </group>
+    <group name="Map">
+        <gtext>Map</gtext>
+        <repeatable>F</repeatable>
+        <question name="Map">
+            <qtext>Map</qtext>
+            <qtype>M</qtype>
+            <qhint>None</qhint>
+            <req>F</req>
+        </question>
+    </group>
     <group name="Family">
-        <gtext>Family</gtext>
+        <gtext>Household Level General Information</gtext>
         <repeatable>F</repeatable>
         <question name="Head of Family">
             <qtext>Name of Head of the Family</qtext>
@@ -20,21 +52,21 @@
             <qtype>SC</qtype>
             <qhint>Select one</qhint>
             <req>T</req>
-            <qchoices>
+            <choices>
                 <choice>
                     <ctext>Female</ctext>
                 </choice>
                 <choice>
                     <ctext>Male</ctext>
                 </choice>
-            </qchoices>
+            </choices>
         </question>
         <question name="Caste">
             <qtext>Caste</qtext>
             <qtype>SC</qtype>
             <qhint>Select one</qhint>
             <req>T</req>
-            <qchoices>
+            <choices>
                 <choice>
                     <ctext>General</ctext>
                 </choice>
@@ -47,14 +79,14 @@
                 <choice>
                     <ctext>OBC</ctext>
                 </choice>
-            </qchoices>
+            </choices>
         </question>
         <question name="Religion">
             <qtext>Religion</qtext>
             <qtype>SC</qtype>
             <qhint>Select one</qhint>
             <req>T</req>
-            <qchoices>
+            <choices>
                 <choice>
                     <ctext>Hindu</ctext>
                 </choice>
@@ -79,99 +111,229 @@
                 <choice>
                     <ctext>Others</ctext>
                 </choice>
-            </qchoices>
+            </choices>
         </question>
         <question name="Minority Status">
             <qtext>Minority Status</qtext>
             <qtype>SC</qtype>
             <qhint>Select one</qhint>
             <req>T</req>
-            <qchoices>
+            <choices>
                 <choice>
                     <ctext>Non-Minority</ctext>
                 </choice>
                 <choice>
                     <ctext>Minority</ctext>
                 </choice>
-            </qchoices>
+            </choices>
         </question>
         <question name="Female-headed">
             <qtext>Female-headed Household?</qtext>
             <qtype>LC</qtype>
             <qhint>Select one</qhint>
-            <qchoices>
+            <choices>
                 <choice>
                     <ctext>Yes</ctext>
                     <extra>T</extra>
                     <equestion name="Status">
                         <qtext>Status of female head?</qtext>
-                        <qhint>Enter status</qhint>
-                        <qtype>T</qtype>
-                    </equestion>
-                    <equestion name="Name">
-                        <qtext>Name of female head?</qtext>
-                        <qhint>Enter name</qhint>
-                        <qtype>T</qtype>
+                        <qhint>Select one</qhint>
+                        <qtype>SC</qtype>
+                        <req>F</req>
+                        <choices>
+                            <choice>
+                                <ctext>Married</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Widowed</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Abandoned/Single</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Divorced</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Unwed Mother</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Other</ctext>
+                            </choice>
+                        </choices>
                     </equestion>
                 </choice>
                 <choice>
                     <ctext>No</ctext>
                     <extra>F</extra>
                 </choice>
-            </qchoices>
+            </choices>
+            <req>T</req>
+        </question>
+        <question>
+            <qtype>S</qtype>
+            <qtext>Number of family members</qtext>
+            <qhint>Enter number</qhint>
+            <factor>
+                <ftext>Male</ftext>
+            </factor>
+            <factor>
+                <ftext>Female</ftext>
+            </factor>
+            <req>F</req>
+        </question>
+        <question>
+            <qtype>S</qtype>
+            <qtext>Number of illiterate adult members</qtext>
+            <qhint>(Age more than 14 years)</qhint>
+            <factor>
+                <ftext>Male</ftext>
+            </factor>
+            <factor>
+                <ftext>Female</ftext>
+            </factor>
+            <req>F</req>
+        </question>
+        <question>
+            <qtype>S</qtype>
+            <qtext>Number of children in age group 6-14 not attending school</qtext>
+            <qhint>Enter number</qhint>
+            <factor>
+                <ftext>Male</ftext>
+            </factor>
+            <factor>
+                <ftext>Female</ftext>
+            </factor>
+            <req>F</req>
+        </question>
+        <question>
+            <qtype>S</qtype>
+            <qtext>Number of handicapped persons</qtext>
+            <qhint>Enter number</qhint>
+            <factor>
+                <ftext>Mentally</ftext>
+            </factor>
+            <factor>
+                <ftext>Physically</ftext>
+            </factor>
+            <req>F</req>
+        </question>
+        <question name="Female-earner">
+            <qtext>Is major earning member female?</qtext>
+            <qtype>LC</qtype>
+            <qhint>Select one</qhint>
+            <choices>
+                <choice>
+                    <ctext>Yes</ctext>
+                    <extra>T</extra>
+                    <equestion name="Status">
+                        <qtext>What is her status?</qtext>
+                        <qhint>Select one</qhint>
+                        <qtype>SC</qtype>
+                        <req>F</req>
+                        <choices>
+                            <choice>
+                                <ctext>Married</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Widowed</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Abandoned/Single</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Divorced</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Unwed Mother</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>Other</ctext>
+                            </choice>
+                        </choices>
+                    </equestion>
+                </choice>
+                <choice>
+                    <ctext>No</ctext>
+                    <extra>F</extra>
+                </choice>
+            </choices>
+            <req>T</req>
+        </question>
+        <question name="Poverty Line">
+            <qtext>Is your family below the poverty line?</qtext>
+            <qtype>LC</qtype>
+            <qhint>Select one</qhint>
+            <choices>
+                <choice>
+                    <ctext>Yes</ctext>
+                    <extra>T</extra>
+                    <equestion name="BPL">
+                        <qtext>Does the family possess BPL card?</qtext>
+                        <qhint>Select one</qhint>
+                        <qtype>SC</qtype>
+                        <req>F</req>
+                        <choices>
+                            <choice>
+                                <ctext>Yes</ctext>
+                            </choice>
+                            <choice>
+                                <ctext>No</ctext>
+                            </choice>
+                        </choices>
+                    </equestion>
+                </choice>
+                <choice>
+                    <ctext>No</ctext>
+                    <extra>F</extra>
+                </choice>
+                <choice>
+                    <ctext>Don't know</ctext>
+                    <extra>F</extra>
+                </choice>
+            </choices>
             <req>T</req>
         </question>
     </group>
-    <group name="Map">
-        <gtext>Map</gtext>
-        <repeatable>F</repeatable>
-        <question name="Map">
-            <qtext>Map</qtext>
-            <qtype>M</qtype>
-            <qhint>None</qhint>
-            <req>F</req>
-        </question>
-    </group>
-    <!--
+
     <group name="Test (repeatable)">
-        <gtext>Test</gtext>
+        <gtext>Details of Earning Members of the Household</gtext>
         <repeatable>T</repeatable>
-        <question name="test1">
-            <qtext>Test question 1 for repeatable chunk</qtext>
-            <qtype>T</qtype>
-            <qhint>Enter anything</qhint>
-            <req>T</req>
-        </question>
-        <question name="test2">
-            <qtext>Text question 2</qtext>
-            <qtype>T</qtype>
-            <qhint>Enter anything</qhint>
-            <req>F</req>
-        </question>
         <rchunk>
-            <rtext>TEst chunk</rtext>
-            <rquestion name="test3">
-                <qtype>T</qtype>
-                <qtext>ID</qtext>
-                <qhint>just a test</qhint>
-                <req>T</req>
-            </rquestion>
-        </rchunk>
-        <rchunk>
-            <rtext>TEst chunk 2</rtext>
+            <rtext>Details of Earning Members of the Household</rtext>
+            <rsize>Number of earning members</rsize>
             <rquestion name="test4">
                 <qtype>T</qtype>
-                <qtext>ID</qtext>
-                <qhint>just a test</qhint>
+                <qtext>Name</qtext>
+                <qhint>Enter name</qhint>
                 <req>T</req>
             </rquestion>
             <rquestion name="test5">
                 <qtype>T</qtype>
-                <qtext>Testing 2</qtext>
-                <qhint>just a test</qhint>
+                <qtext>Relation to head of family</qtext>
+                <qhint>Enter relation</qhint>
                 <req>F</req>
+            </rquestion>
+            <rquestion>
+                <qtype>N</qtype>
+                <qtext>Age</qtext>
+                <qhint>Enter age</qhint>
+                <req>F</req>
+            </rquestion>
+            <rquestion>
+                <qtype>SC</qtype>
+                <qtext>Sex</qtext>
+                <qhint>Select one</qhint>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Male</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Female</ctext>
+                    </choice>
+                </choices>
             </rquestion>
         </rchunk>
     </group>
-    !-->
+
 </groups>
