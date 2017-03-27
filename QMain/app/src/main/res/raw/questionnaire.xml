@@ -64,7 +64,7 @@
         <question name="Caste">
             <qtext>Caste</qtext>
             <qtype>SC</qtype>
-            <qhint>Select one</qhint>
+            <qhint></qhint>
             <req>T</req>
             <choices>
                 <choice>
@@ -84,7 +84,7 @@
         <question name="Religion">
             <qtext>Religion</qtext>
             <qtype>SC</qtype>
-            <qhint>Select one</qhint>
+            <qhint></qhint>
             <req>T</req>
             <choices>
                 <choice>
@@ -116,7 +116,7 @@
         <question name="Minority Status">
             <qtext>Minority Status</qtext>
             <qtype>SC</qtype>
-            <qhint>Select one</qhint>
+            <qhint></qhint>
             <req>T</req>
             <choices>
                 <choice>
@@ -294,7 +294,16 @@
             <req>T</req>
         </question>
     </group>
-
+    <group name="Camera">
+        <gtext>Camera</gtext>
+        <repeatable>F</repeatable>
+        <question name="Camera">
+            <qtext>Camera</qtext>
+            <qtype>C</qtype>
+            <qhint>None</qhint>
+            <req>F</req>
+        </question>
+    </group>
     <group name="Test (repeatable)">
         <gtext>Details of Earning Members of the Household</gtext>
         <repeatable>T</repeatable>

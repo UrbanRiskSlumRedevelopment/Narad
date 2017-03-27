@@ -588,7 +588,7 @@ public class PVQ extends AppCompatActivity {
                 } else if (tag.equals("C")) {
                     if(!toFile) {
                         line = question + ": "; //+ mImageView.toString();
-                        if (!mImageView.equals(null)) {
+                        if (mImageView!=null) {
                             line += "JPEG_" + timeStamp + ".jpeg";
                         }
                     }
@@ -790,6 +790,21 @@ class NumWatcher implements TextWatcher {
     public void afterTextChanged(Editable s) {
         String value = s.toString();
         if(value.equals("")){
+            for(int i = 0; i < view1.getChildCount(); i++){
+                for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
+                    System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
+                    System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
+                }
+            }
+            /*
+            for(int i = 0; i < ((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildCount(); i++){
+                System.out.println(list1.remove(((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildAt(i)));
+                System.out.println(list2.remove(((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildAt(i)));
+                System.out.println(list1.size());
+                System.out.println(i);
+                System.out.println("^^^^^^^^^^");
+            }
+            */
             view1.removeAllViews();
             return;
         }
@@ -801,7 +816,6 @@ class NumWatcher implements TextWatcher {
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
-                    System.out.println(list2==null);
                     LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context);
                 }
             }

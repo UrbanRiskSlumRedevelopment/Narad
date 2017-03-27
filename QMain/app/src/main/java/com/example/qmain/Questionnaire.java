@@ -98,6 +98,7 @@ public class Questionnaire extends AppCompatActivity {
                     String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                     c.add(x);
                 }
+                builder = PVQ.builder;
                 q = SingleChoice(text, c, hint, context, builder);
             } else if (type.equals("MC")) {
                 List c = new ArrayList();
@@ -108,6 +109,7 @@ public class Questionnaire extends AppCompatActivity {
                     String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                     c.add(x);
                 }
+                builder = PVQ.builder;
                 q = MultipleChoice(text, c, hint, context, builder);
             } else if (type.equals("M")){
                 return null;
@@ -540,7 +542,9 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
         qlayout.addView(rg);
-        qlayout.addView(bt);
+        if(!hint.equals("")){
+            qlayout.addView(bt);
+        }
         bt.setTag("button");
         qlayout.setTag("SC");
         ArrayList views = new ArrayList();
@@ -600,7 +604,9 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.setOrientation(LinearLayout.VERTICAL);
         qlayout.addView(text);
         qlayout.addView(rg);
-        qlayout.addView(bt);
+        if(!hint.equals("")){
+            qlayout.addView(bt);
+        }
         bt.setTag("button");
         qlayout.setTag("SC");
         return qlayout;
@@ -733,7 +739,9 @@ public class Questionnaire extends AppCompatActivity {
             }
         });
 
-        qlayout.addView(bt);
+        if(!hint.equals("")){
+            qlayout.addView(bt);
+        }
         bt.setTag("button");
         qlayout.setTag("MC");
         return qlayout;
