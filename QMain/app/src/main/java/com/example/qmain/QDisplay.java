@@ -25,6 +25,8 @@ public class QDisplay extends AppCompatActivity {
         displayText.setText(text);
         layout.addView(displayText);
 
+        getSupportActionBar().setTitle(intent.getStringExtra("date"));
+
         if(text.substring(0,4).equals("JPEG") || true){
             Bitmap myBitmap = (Bitmap) intent.getParcelableExtra("bitmap");
             ImageView myImage = new ImageView(this);

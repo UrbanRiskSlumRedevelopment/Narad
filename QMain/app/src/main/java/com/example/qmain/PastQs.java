@@ -35,6 +35,8 @@ public class PastQs extends AppCompatActivity {
         sv.addView(layout);
         final HashMap<String,LinearLayout> hm = new HashMap<String,LinearLayout>();
 
+        getSupportActionBar().setTitle("Past Questionnaires");
+
         String[] files = fileList();
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
@@ -111,6 +113,7 @@ public class PastQs extends AppCompatActivity {
                                                       Intent intent = new Intent(context, QDisplay.class);
                                                       intent.putExtra(RESULTS, result);
                                                       intent.putExtra("bitmap", myBitmap);
+                                                      intent.putExtra("date", b.getText());
                                                       startActivity(intent);
                                                   }
                                               }

@@ -39,6 +39,8 @@ import android.view.ViewGroup;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
 import android.app.Activity;
 import android.view.MotionEvent;
@@ -49,6 +51,7 @@ import android.content.SharedPreferences;
 
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+import android.content.res.Resources;
 
 import com.google.android.gms.games.quest.Quest;
 import com.google.android.gms.location.places.Place;
@@ -442,7 +445,6 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public static LinearLayout SumQ(String questiontext,String hint,Context context,NodeList factors){
-        System.out.println("getting here");
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
@@ -463,6 +465,7 @@ public class Questionnaire extends AppCompatActivity {
             et.setTextSize(15);
             et.setHint("            ");
             et.addTextChangedListener(new SumWatcher(tv,to_sum));
+            et.setInputType(2);
             to_sum.add(et);
             LinearLayout hbar = new LinearLayout(context);
             hbar.setOrientation(LinearLayout.HORIZONTAL);
@@ -586,6 +589,8 @@ public class Questionnaire extends AppCompatActivity {
         // sets up info button, builds dialog with instructions when clicked on
         Button bt = new Button(context);
         bt.setText("?");
+        Drawable help = ContextCompat.getDrawable(context, R.drawable.help_circle_outline);
+        //bt.setBackground(help);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
 
@@ -609,7 +614,9 @@ public class Questionnaire extends AppCompatActivity {
         }
         bt.setTag("button");
         qlayout.setTag("SC");
+
         return qlayout;
+
     }
 
     int PLACE_PICKER_REQUEST = 1;
@@ -898,7 +905,7 @@ class SumWatcher implements TextWatcher{
             }
         }
         if(sum == 0){
-            tv.setText("Total:");
+            tv.setText("Total: 0");
             tv.setTextSize(17);
         } else{
             String total = Integer.toString(sum);

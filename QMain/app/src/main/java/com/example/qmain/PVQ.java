@@ -22,9 +22,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.support.v4.content.FileProvider;
-import android.net.Uri;
 import android.content.DialogInterface;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.graphics.Color;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -83,12 +85,91 @@ public class PVQ extends AppCompatActivity {
         setContentView(R.layout.activity_pvq);
 
         // Create and set up new questionnaire ViewPager
-        final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
+        //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
+        RelativeLayout form = (RelativeLayout) findViewById(R.id.activity_pvq);
+
+        getSupportActionBar().setTitle("Questionnaire");
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        final ViewPager vp = new ViewPager(this);
         vp.setId(View.generateViewId());
         setupUI(vp);
+        form.addView(vp);
 
-        MainPagerAdapter pg = new MainPagerAdapter();
+        final MainPagerAdapter pg = new MainPagerAdapter();
         vp.setAdapter(pg);
+
+        LinearLayout navbar = new LinearLayout(this);
+        navbar.setOrientation(LinearLayout.HORIZONTAL);
+        navbar.setBackgroundColor(Color.WHITE);
+
+        // creates back to menu, previous, and next buttons
+        Button menu_button = new Button(this);
+        menu_button.setText("Menu");
+        menu_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            try {
+                vp.setCurrentItem(0, false);
+                if(vp.getCurrentItem() != vp.getChildCount()-1){
+                    ans.setText("");
+                }
+            }catch(Exception e){
+
+            }
+            }
+        });
+
+        Button scroll_up = new Button(this);
+        scroll_up.setText("Back to Top");
+        scroll_up.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    ScrollView view = (ScrollView) vp.findViewWithTag("myview" + vp.getCurrentItem());
+                    view.fullScroll(ScrollView.FOCUS_UP);
+                }catch(Exception e){
+                }
+            }
+        });
+
+        Button prev = new Button(this);
+        prev.setText("Previous");
+        prev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    int gb = vp.getCurrentItem();
+                    vp.setCurrentItem(gb -1, false);
+                    if(vp.getCurrentItem() != vp.getChildCount()-1){
+                        ans.setText("");
+                    }
+                }catch(Exception e){}
+            }
+        });
+
+        Button next = new Button(this);
+        next.setText("Next");
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    int gb = vp.getCurrentItem();
+                    vp.setCurrentItem(gb + 1, false);
+                }catch(Exception e){}
+            }
+        });
+
+        setupUI(prev);
+        setupUI(menu_button);
+        setupUI(next);
+        setupUI(scroll_up);
+        navbar.addView(prev);
+        navbar.addView(menu_button);
+        navbar.addView(scroll_up);
+        navbar.addView(next);
+        setupUI(navbar);
+        RelativeLayout.LayoutParams rLParams =
+                new RelativeLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        rLParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
+        form.addView(navbar, rLParams);
 
         // Sets up an alert dialog builder for use when necessary
         builder = new AlertDialog.Builder(this);
@@ -251,6 +332,7 @@ public class PVQ extends AppCompatActivity {
                 // puts list of questions for current group in Groups dictionary with group name as key
                 Groups.put(g_name,Qs);
 
+                /*
                 // creates back to menu, previous, and next buttons
                 Button menu_button = new Button(this);
                 menu_button.setText("Menu");
@@ -276,26 +358,27 @@ public class PVQ extends AppCompatActivity {
                         update_answers();
                     }
                 });
+                */
 
                 // creates a navigation bar at bottom of page, adds prev/next/menu buttons as appropriate
-                LinearLayout navbar = new LinearLayout(this);
-                navbar.setOrientation(LinearLayout.HORIZONTAL);
+                //LinearLayout navbar = new LinearLayout(this);
+                //navbar.setOrientation(LinearLayout.HORIZONTAL);
                 /*
                 if(g_button>0){
                     navbar.addView(prev);
                 }
-                */
+
                 navbar.addView(menu_button);
-                //navbar.addView(next);
+                navbar.addView(next);
 
 
                 ll.addView(navbar);
-
+                */
                 setupUI(ll);
-                setupUI(menu_button);
-                setupUI(navbar);
-                setupUI(next);
-                setupUI(prev);
+                //setupUI(menu_button);
+                //setupUI(navbar);
+                //setupUI(next);
+                //setupUI(prev);
 
 
 
@@ -322,7 +405,7 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
-
+            /*
             // menu button
             Button menu_button = new Button(this);
             String menu = "Menu";
@@ -332,6 +415,7 @@ public class PVQ extends AppCompatActivity {
                     vp.setCurrentItem(0, false);
                 }
             });
+            */
 
             // submit button
             Button submit = new Button(this);
@@ -346,7 +430,7 @@ public class PVQ extends AppCompatActivity {
             // blank text view to be updated
             ans = new TextView(this);
             rv1.addView(ans);
-            rv1.addView(menu_button);
+            //rv1.addView(menu_button);
             rv1.addView(review_button);
             rv1.addView(submit);
 
@@ -740,6 +824,7 @@ class MainPagerAdapter extends PagerAdapter
     public Object instantiateItem (ViewGroup container, int position)
     {
         View v = views.get (position);
+        v.setTag("myview" + position);
         container.addView (v);
         return v;
     }
@@ -796,15 +881,6 @@ class NumWatcher implements TextWatcher {
                     System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
                 }
             }
-            /*
-            for(int i = 0; i < ((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildCount(); i++){
-                System.out.println(list1.remove(((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildAt(i)));
-                System.out.println(list2.remove(((LinearLayout)view1.getChildAt(view1.getChildCount()-1)).getChildAt(i)));
-                System.out.println(list1.size());
-                System.out.println(i);
-                System.out.println("^^^^^^^^^^");
-            }
-            */
             view1.removeAllViews();
             return;
         }
