@@ -41,6 +41,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.graphics.drawable.ScaleDrawable;
 
 import android.app.Activity;
 import android.view.MotionEvent;
@@ -526,9 +527,9 @@ public class Questionnaire extends AppCompatActivity {
 
         // sets up info button, builds dialog with instructions when clicked on
         Button bt = new Button(context);
-        bt.setText("?");
-        bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT));
+        Drawable help = ContextCompat.getDrawable(context, R.drawable.help_circle_outline);
+        bt.setBackground(help);
+        bt.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
 
         final AlertDialog.Builder bdr = builder;
 
@@ -543,11 +544,16 @@ public class Questionnaire extends AppCompatActivity {
         // sets up question linear layout and adds all component views
 
         qlayout.setOrientation(LinearLayout.VERTICAL);
-        qlayout.addView(text);
-        qlayout.addView(rg);
+        LinearLayout qh = new LinearLayout(context);
+        qh.setOrientation(LinearLayout.HORIZONTAL);
+        //qlayout.addView(text);
+        qh.addView(text);
         if(!hint.equals("")){
-            qlayout.addView(bt);
+            //qlayout.addView(bt);
+            qh.addView(bt);
         }
+        qlayout.addView(qh);
+        qlayout.addView(rg);
         bt.setTag("button");
         qlayout.setTag("SC");
         ArrayList views = new ArrayList();
@@ -588,11 +594,9 @@ public class Questionnaire extends AppCompatActivity {
 
         // sets up info button, builds dialog with instructions when clicked on
         Button bt = new Button(context);
-        bt.setText("?");
         Drawable help = ContextCompat.getDrawable(context, R.drawable.help_circle_outline);
-        //bt.setBackground(help);
-        bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT));
+        bt.setBackground(help);
+        bt.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
 
         final AlertDialog.Builder bdr = builder;
 
@@ -607,11 +611,16 @@ public class Questionnaire extends AppCompatActivity {
         // sets up question linear layout and adds all component views
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
-        qlayout.addView(text);
-        qlayout.addView(rg);
+        LinearLayout qh = new LinearLayout(context);
+        qh.setOrientation(LinearLayout.HORIZONTAL);
+        //qlayout.addView(text);
+        qh.addView(text);
         if(!hint.equals("")){
-            qlayout.addView(bt);
+            //qlayout.addView(bt);
+            qh.addView(bt);
         }
+        qlayout.addView(qh);
+        qlayout.addView(rg);
         bt.setTag("button");
         qlayout.setTag("SC");
 
