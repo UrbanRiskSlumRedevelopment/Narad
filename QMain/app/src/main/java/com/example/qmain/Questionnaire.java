@@ -905,16 +905,21 @@ class SumWatcher implements TextWatcher{
 
     public void afterTextChanged(Editable s) {
         int sum = 0;
+        boolean zero = false;
         for(int i = 0;i<factors.size();i++){
             String value = ((EditText)factors.get(i)).getText().toString();
+            if(value.equals("0")){
+                zero = true;
+            }
             try {
                 int v = Integer.parseInt(value);
                 sum += v;
             }catch(Exception e){
             }
         }
-        if(sum == 0){
-            tv.setText("Total: 0");
+        System.out.println(zero);
+        if(sum == 0 && !zero){
+            tv.setText("Total: ");
             tv.setTextSize(17);
         } else{
             String total = Integer.toString(sum);

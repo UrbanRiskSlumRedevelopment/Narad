@@ -179,7 +179,7 @@
             <factor>
                 <ftext>Female</ftext>
             </factor>
-            <req>F</req>
+            <req>T</req>
         </question>
         <question>
             <qtype>S</qtype>

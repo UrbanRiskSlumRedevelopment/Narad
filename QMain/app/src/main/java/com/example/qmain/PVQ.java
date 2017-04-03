@@ -78,6 +78,7 @@ public class PVQ extends AppCompatActivity {
     LinearLayout camera_question = null;
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String author = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,8 @@ public class PVQ extends AppCompatActivity {
 
         // Create and set up new questionnaire ViewPager
         //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
-        RelativeLayout form = (RelativeLayout) findViewById(R.id.activity_pvq);
+        LinearLayout form = (LinearLayout) findViewById(R.id.activity_pvq);
+        author = getIntent().getStringExtra("author");
 
         getSupportActionBar().setTitle("Questionnaire");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -164,12 +166,31 @@ public class PVQ extends AppCompatActivity {
         navbar.addView(menu_button);
         navbar.addView(scroll_up);
         navbar.addView(next);
+        navbar.setGravity(100);
         setupUI(navbar);
+        /*
         RelativeLayout.LayoutParams rLParams =
                 new RelativeLayout.LayoutParams(
                         LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         rLParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
+
         form.addView(navbar, rLParams);
+        */
+        form.addView(navbar);
+
+        LinearLayout.LayoutParams param1 = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                1.0f
+        );
+        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                12.0f
+        );
+
+        vp.setLayoutParams(param1);
+        navbar.setLayoutParams(param2);
 
         // Sets up an alert dialog builder for use when necessary
         builder = new AlertDialog.Builder(this);
@@ -332,56 +353,7 @@ public class PVQ extends AppCompatActivity {
                 // puts list of questions for current group in Groups dictionary with group name as key
                 Groups.put(g_name,Qs);
 
-                /*
-                // creates back to menu, previous, and next buttons
-                Button menu_button = new Button(this);
-                menu_button.setText("Menu");
-                menu_button.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        vp.setCurrentItem(0, false);
-                    }
-                });
-
-                Button prev = new Button(this);
-                prev.setText("Previous");
-                prev.setOnClickListener(new View.OnClickListener() {
-                                            public void onClick(View v) {
-                                                vp.setCurrentItem(g_button, false);
-                                            }
-                                        });
-
-                Button next = new Button(this);
-                next.setText("Next");
-                next.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        vp.setCurrentItem(g_button+2, false);
-                        update_answers();
-                    }
-                });
-                */
-
-                // creates a navigation bar at bottom of page, adds prev/next/menu buttons as appropriate
-                //LinearLayout navbar = new LinearLayout(this);
-                //navbar.setOrientation(LinearLayout.HORIZONTAL);
-                /*
-                if(g_button>0){
-                    navbar.addView(prev);
-                }
-
-                navbar.addView(menu_button);
-                navbar.addView(next);
-
-
-                ll.addView(navbar);
-                */
                 setupUI(ll);
-                //setupUI(menu_button);
-                //setupUI(navbar);
-                //setupUI(next);
-                //setupUI(prev);
-
-
-
             }
 
             // review page
@@ -520,8 +492,6 @@ public class PVQ extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK)  {
-
-
                 // Displays map and prompts user to place picker on location
                 Place place = PlacePicker.getPlace(this, data);
                 // Displays location in toast message after map activity is closed
@@ -574,6 +544,15 @@ public class PVQ extends AppCompatActivity {
         String total = ""; // string with all answers
         String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         Boolean use_un = false;
+        if (toFile) {
+            try {
+                // writes answers to file
+                String line = "Author: " + author + "\n";
+                f.write(line.getBytes());
+            } catch (Exception e) {
+                System.out.println("problem writing line");
+            }
+        }
         // set of group names
         Set<String> keys = qgs.keySet();
         // iterates through group names
@@ -588,6 +567,7 @@ public class PVQ extends AppCompatActivity {
                 LinearLayout q = (LinearLayout) qs.get(i);
                 // gets question text
                 TextView text = (TextView) q.findViewWithTag("text");
+                text.setTextColor(Color.GRAY);
                 String question = (String) text.getText();
                 String line = "";
                 String tag = "";
@@ -609,7 +589,7 @@ public class PVQ extends AppCompatActivity {
                         if (editText.getText().toString().equals("") && question.endsWith("*")) {
                             unanswered += "\n" + name+question + "\n";
                             use_un = true;
-                            question = question.toUpperCase();
+                            text.setTextColor(Color.RED);
                         }
                         line = question + ": " + editText.getText();
                     }
@@ -622,9 +602,12 @@ public class PVQ extends AppCompatActivity {
                     }else if(question.endsWith("*")&& at.equals("Total: ")){
                         unanswered += "\n" + name+question + "\n";
                         use_un = true;
-                        question = question.toUpperCase();
+                        text.setTextColor(Color.RED);
                     } else{
                         try {
+                            if(at.equals("Total: ")){
+                                at = " 0";
+                            }
                             line = question + ": " + at.substring(at.indexOf(" ") + 1);
                         }catch(Exception e){
                             line = question + ": ";
@@ -642,6 +625,7 @@ public class PVQ extends AppCompatActivity {
                             if (id == -1  && question.endsWith("*")) {
                                 unanswered += "\n" + name+question + "\n";
                                 use_un = true;
+                                text.setTextColor(Color.RED);
                                 line = line.toUpperCase();
                                 continue;
                             } else if(id == -1){
@@ -670,11 +654,9 @@ public class PVQ extends AppCompatActivity {
                 } else if (tag.equals("M")) {
                     line = question + ": " + LOCATION;
                 } else if (tag.equals("C")) {
-                    if(!toFile) {
-                        line = question + ": "; //+ mImageView.toString();
-                        if (mImageView!=null) {
-                            line += "JPEG_" + timeStamp + ".jpeg";
-                        }
+                    line = question + ": ";
+                    if (mImageView!=null) {
+                        line += "JPEG_" + timeStamp + ".jpeg";
                     }
                 }
                 if (toFile) {
@@ -901,6 +883,3 @@ class NumWatcher implements TextWatcher {
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
-
-
-        // iterates through questions and adds them to the linear layout

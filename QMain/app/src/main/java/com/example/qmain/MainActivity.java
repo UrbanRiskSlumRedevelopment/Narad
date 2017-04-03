@@ -14,7 +14,7 @@ import com.google.android.gms.auth.api.Auth;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
     int RC_SIGN_IN = 1;
 
     private void signIn() {
-        System.out.println("GOT HERE AT LEAST");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public static GoogleApiClient getClient(){
+        return mGoogleApiClient;
     }
 
     @Override
@@ -68,16 +71,19 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
+            String author = result.getSignInAccount().getEmail();
+            System.out.println(author);
             System.out.println("success");
-            start();
+            start(author);
         } else {
             // Signed out, show unauthenticated UI.
             System.out.println("fail");
         }
     }
 
-    public void start() {
+    public void start(String author) {
         Intent intent = new Intent(this, Home.class);
+        intent.putExtra("author", author);
         startActivity(intent);
     }
 

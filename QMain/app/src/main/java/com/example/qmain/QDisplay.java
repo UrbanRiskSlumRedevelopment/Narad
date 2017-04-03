@@ -38,4 +38,11 @@ public class QDisplay extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, PastQs.class);
+        startActivity(intent);
+
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.qmain;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -148,6 +150,13 @@ public class PastQs extends AppCompatActivity {
             });
             layout.addView(m);
         }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
 
     }
 
