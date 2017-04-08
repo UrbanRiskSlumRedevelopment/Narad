@@ -43,7 +43,7 @@ public class PastQs extends AppCompatActivity {
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
                 String month = files[i].substring(0,8);
-                if(!month.substring(0,4).equals("JPEG")){
+                if(!month.substring(0,4).equals("JPEG") && !files[i].endsWith("json")){
                     LinearLayout lo;
                     if(hm.containsKey(month)){
                         lo = hm.get(month);
@@ -75,6 +75,8 @@ public class PastQs extends AppCompatActivity {
                                                       System.out.println(b.getText());
                                                       String filename = b.getText() + ".txt";
                                                       String jpeg = b.getText() + ".jpeg";
+                                                      String jsonfile = b.getText() + ".json";
+                                                      String jsonstring = "";
                                                       jpeg = "JPEG_"+jpeg;
                                                       FileInputStream file = null;
                                                       try{
@@ -86,12 +88,19 @@ public class PastQs extends AppCompatActivity {
                                                       try{
                                                           img = openFileInput(jpeg);
                                                       }catch(Exception e){
-                                                          System.out.println("cannot open file");
+                                                          System.out.println("cannot open file/no img");
+                                                      }
+                                                      FileInputStream json = null;
+                                                      try{
+                                                          json = openFileInput(jsonfile);
+                                                      }catch(Exception e){
+                                                          System.out.println("cannot open file/no json");
                                                       }
                                                       Bitmap myBitmap = BitmapFactory.decodeStream(img);
                                                       StringBuilder sb = new StringBuilder();
                                                       try{
                                                           BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+                                                          BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
                                                           String line = null;
                                                           while ((line = reader.readLine()) != null) {
                                                               //sb.append(line).append("\n");
@@ -107,6 +116,8 @@ public class PastQs extends AppCompatActivity {
                                                               //System.out.println("i");
 
                                                           }
+                                                          jsonstring = jreader.readLine();
+                                                          json.close();
                                                           file.close();
                                                       }catch(Exception e){
                                                           e.printStackTrace();
@@ -116,6 +127,7 @@ public class PastQs extends AppCompatActivity {
                                                       intent.putExtra(RESULTS, result);
                                                       intent.putExtra("bitmap", myBitmap);
                                                       intent.putExtra("date", b.getText());
+                                                      intent.putExtra("json", jsonstring);
                                                       startActivity(intent);
                                                   }
                                               }

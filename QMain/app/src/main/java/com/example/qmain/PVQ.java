@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.graphics.Color;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -540,14 +541,19 @@ public class PVQ extends AppCompatActivity {
     // don't generate a picture when report has not been completed
 
     // writes current answers and returns them as one string; optionally writes them to file
-    public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete) {
+    public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf) {
         String total = ""; // string with all answers
         String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         Boolean use_un = false;
+        HashMap json = new HashMap();
+        HashMap groups = new HashMap();
+        json.put("Groups", groups);
         if (toFile) {
             try {
                 // writes answers to file
-                String line = "Author: " + author + "\n";
+                json.put("Author", author);
+                String line = "Author: " + author + "~~";
+                total += line;
                 f.write(line.getBytes());
             } catch (Exception e) {
                 System.out.println("problem writing line");
@@ -562,6 +568,10 @@ public class PVQ extends AppCompatActivity {
             //unanswered += "\n"+name;
             List qs = (List) qgs.get(key);
             // iterates through list of questions
+
+            HashMap questions = new HashMap();
+            groups.put(key, questions);
+
             for (int i = 0; i < qs.size(); i++) {
                 // gets question linear layout
                 LinearLayout q = (LinearLayout) qs.get(i);
@@ -571,6 +581,7 @@ public class PVQ extends AppCompatActivity {
                 String question = (String) text.getText();
                 String line = "";
                 String tag = "";
+                String qans = "";
                 try {
                     tag = (String) q.getTag();
                 } catch (Exception e) {
@@ -592,6 +603,7 @@ public class PVQ extends AppCompatActivity {
                             text.setTextColor(Color.RED);
                         }
                         line = question + ": " + editText.getText();
+                        qans = line.substring(line.indexOf(": ") + 2);
                     }
                 } else if (tag.equals("S")){
                     TextView answer_total = (TextView) q.findViewWithTag("answer");
@@ -609,6 +621,7 @@ public class PVQ extends AppCompatActivity {
                                 at = " 0";
                             }
                             line = question + ": " + at.substring(at.indexOf(" ") + 1);
+                            qans = at.substring(at.indexOf(" ") + 1);
                         }catch(Exception e){
                             line = question + ": ";
                         }
@@ -632,6 +645,7 @@ public class PVQ extends AppCompatActivity {
                                 continue;
                             }
                             line += rb.getText();
+                            qans = (String) rb.getText();
                         } catch (Exception e) {
                             System.out.println("something went wrong");
                             System.out.println(question);
@@ -651,14 +665,22 @@ public class PVQ extends AppCompatActivity {
                     if (line.length() > 20) {
                         line = line.substring(0, line.length() - 2);
                     }
+                    qans = line.substring(line.indexOf(": ") + 2);
                 } else if (tag.equals("M")) {
                     line = question + ": " + LOCATION;
+                    qans = LOCATION;
                 } else if (tag.equals("C")) {
                     line = question + ": ";
                     if (mImageView!=null) {
                         line += "JPEG_" + timeStamp + ".jpeg";
                     }
+                    qans = "JPEG_" + timeStamp + ".jpeg";
                 }
+                String jquestion = question;
+                if(question.endsWith("*")){
+                    jquestion = question.substring(0,question.length()-2);
+                }
+                questions.put(jquestion,qans);
                 if (toFile) {
                     try {
                         // writes answers to file
@@ -679,6 +701,17 @@ public class PVQ extends AppCompatActivity {
             // returns string of unanswered questions if any are present
             return unanswered;
         }
+
+        if(jf instanceof FileOutputStream) {
+            JSONObject j = new JSONObject(json);
+            String jstring = j.toString();
+            try {
+                jf.write(jstring.getBytes());
+            }catch(Exception e){
+                System.out.println("problem writing json");
+            }
+        }
+
         // returns total string of questions and answers
         return total;
     }
@@ -687,16 +720,19 @@ public class PVQ extends AppCompatActivity {
         // time stamp of submission -> filename for file in which data from form at time to be saved
         //String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename = timeStamp+".txt";
+        String jsonfilename = timeStamp + ".json";
         FileOutputStream fos = null;
+        FileOutputStream jfos = null;
         // opens file
         try{
             fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            jfos = openFileOutput(jsonfilename, Context.MODE_PRIVATE);
         }catch(Exception e){
             return "";
         }
 
         // calls writeAnswers first to check for unanswered required questions
-        String answers = writeAnswers(Groups, false, fos, false);
+        String answers = writeAnswers(Groups, false, fos, false, null);
         if (answers.equals("")) {
             AlertDialog.Builder bdr = builder;
             bdr.setMessage("Answer all required questions before submitting");
@@ -706,7 +742,7 @@ public class PVQ extends AppCompatActivity {
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
-            System.out.println(writeAnswers(Groups, true, fos, false));
+            System.out.println(writeAnswers(Groups, true, fos, false, jfos));
         }
         try {
             fos.close();
@@ -727,7 +763,7 @@ public class PVQ extends AppCompatActivity {
 
     // updates ans TextView on submit page with current answers
     public void update_answers(){
-        answers = writeAnswers(Groups, false, null, true);
+        answers = writeAnswers(Groups, false, null, true, null);
         ans.setText(answers);
     }
 
