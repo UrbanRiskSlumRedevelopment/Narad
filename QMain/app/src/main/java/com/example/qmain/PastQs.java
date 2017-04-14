@@ -2,6 +2,7 @@ package com.example.qmain;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import java.util.HashMap;
 import android.widget.TextView;
+import java.util.ArrayList;
 
 public class PastQs extends AppCompatActivity {
     public final static String RESULTS = "";
@@ -39,10 +41,26 @@ public class PastQs extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Past Questionnaires");
 
-        String[] files = fileList();
+        String[] fs = fileList();
+        ArrayList<String> fils = new ArrayList<String>();
+        for(int i = 0; i < fs.length; i++){
+            fils.add(fs[i]);
+        }
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] jfiles = storageDir.listFiles();
+        for(int i = 0; i<jfiles.length; i++){
+            String name = jfiles[i].getName();
+            fils.add(name);
+        }
+        String[] files = fils.toArray(new String[0]);
+
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
                 String month = files[i].substring(0,8);
+                if(!(files[i].endsWith("jpeg") || files[i].endsWith("json") || files[i].endsWith("txt"))){
+                    System.out.println(files[i]);
+                    continue;
+                }
                 if(!month.substring(0,4).equals("JPEG") && !files[i].endsWith("json")){
                     LinearLayout lo;
                     if(hm.containsKey(month)){
@@ -121,7 +139,13 @@ public class PastQs extends AppCompatActivity {
                                                           file.close();
                                                       }catch(Exception e){
                                                           e.printStackTrace();
+                                                          System.out.println("input stream didn't close");
                                                       }
+                                                      try{
+                                                          if(img != null){
+                                                              img.close();
+                                                          }
+                                                      }catch(Exception e){e.printStackTrace();}
                                                       String result = sb.toString();
                                                       Intent intent = new Intent(context, QDisplay.class);
                                                       intent.putExtra(RESULTS, result);

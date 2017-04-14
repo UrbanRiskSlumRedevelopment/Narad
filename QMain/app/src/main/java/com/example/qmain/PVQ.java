@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
@@ -25,8 +26,10 @@ import android.widget.LinearLayout;
 import android.content.DialogInterface;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.graphics.Color;
+import android.os.Environment;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -35,8 +38,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.FileOutputStream;
-import java.io.File;
-import android.os.Environment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,13 +62,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.games.quest.Quest;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 public class PVQ extends AppCompatActivity {
-    public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY"; // Data from completed questionnaire to be stored
-    LinearLayout layout = null;
     List Questions = new ArrayList(); // List of all questions
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
     String answers = "";
@@ -75,16 +74,18 @@ public class PVQ extends AppCompatActivity {
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
     public Context context = this; // For accessing context of the questionnaire
     public static String LOCATION = ""; // Location stored here
-    static ImageView mImageView = null;
+    ImageView mImageView = null;
     LinearLayout camera_question = null;
     LinearLayout map_question = null;
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String author = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pvq);
+
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Create and set up new questionnaire ViewPager
         //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
@@ -117,7 +118,7 @@ public class PVQ extends AppCompatActivity {
                     ans.setText("");
                 }
             }catch(Exception e){
-
+                System.out.println("no menu");
             }
             }
         });
@@ -130,6 +131,7 @@ public class PVQ extends AppCompatActivity {
                     ScrollView view = (ScrollView) vp.findViewWithTag("myview" + vp.getCurrentItem());
                     view.fullScroll(ScrollView.FOCUS_UP);
                 }catch(Exception e){
+                    System.out.println("scroll up error");
                 }
             }
         });
@@ -144,7 +146,9 @@ public class PVQ extends AppCompatActivity {
                     if(vp.getCurrentItem() != vp.getChildCount()-1){
                         ans.setText("");
                     }
-                }catch(Exception e){}
+                }catch(Exception e){
+                    System.out.println("prev button error");
+                }
             }
         });
 
@@ -155,7 +159,9 @@ public class PVQ extends AppCompatActivity {
                 try {
                     int gb = vp.getCurrentItem();
                     vp.setCurrentItem(gb + 1, false);
-                }catch(Exception e){}
+                }catch(Exception e){
+                    System.out.println("next button error");
+                }
             }
         });
 
@@ -205,6 +211,7 @@ public class PVQ extends AppCompatActivity {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(in);
             doc.getDocumentElement().normalize();
+            in.close();
 
             // Builds first page
             // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
@@ -482,10 +489,41 @@ public class PVQ extends AppCompatActivity {
         return qlayout;
     }
 
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String imageFileName = "JPEG_" + timeStamp;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpeg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            //startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.qmain.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
@@ -518,6 +556,7 @@ public class PVQ extends AppCompatActivity {
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(imageBitmap);
             camera_question.addView(mImageView);
+            /*
             FileOutputStream out = null;
             try {
                 String imageFileName = "JPEG_" + timeStamp + ".jpeg";
@@ -535,6 +574,7 @@ public class PVQ extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+            */
 
         }
     }
@@ -678,7 +718,7 @@ public class PVQ extends AppCompatActivity {
                 }
                 String jquestion = question;
                 if(question.endsWith("*")){
-                    jquestion = question.substring(0,question.length()-2);
+                    jquestion = question.substring(0,question.length()-1);
                 }
                 questions.put(jquestion,qans);
                 if (toFile) {
@@ -746,6 +786,7 @@ public class PVQ extends AppCompatActivity {
         }
         try {
             fos.close();
+            jfos.close();
         }catch(Exception e){}
 
         // goes back to main page of app
@@ -892,17 +933,16 @@ class NumWatcher implements TextWatcher {
 
     public void afterTextChanged(Editable s) {
         String value = s.toString();
-        if(value.equals("")){
-            for(int i = 0; i < view1.getChildCount(); i++){
-                for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
-                    System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
-                    System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
-                }
+        for(int i = 0; i < view1.getChildCount(); i++){
+            for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
+                System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
+                System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
             }
-            view1.removeAllViews();
-            return;
         }
         view1.removeAllViews();
+        if(value.equals("")){
+            return;
+        }
         int times = Integer.parseInt(value);
         for(int i = 0;i<times;i++){
             LinearLayout qchunk = new LinearLayout(context);
