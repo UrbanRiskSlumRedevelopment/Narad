@@ -1,6 +1,8 @@
 package com.example.qmain;
 
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,10 @@ import android.graphics.Bitmap;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ScrollView;
+import java.io.FileInputStream;
+import android.util.DisplayMetrics;
+import java.io.File;
+import android.app.Activity;
 
 public class QDisplay extends AppCompatActivity {
 
@@ -21,6 +27,8 @@ public class QDisplay extends AppCompatActivity {
         setContentView(R.layout.activity_qdisplay);
         final LinearLayout layout = (LinearLayout) findViewById(R.id.activity_qdisplay);
         final TextView displayText = new TextView(this);
+        DisplayMetrics dm = this.getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
 
         Intent intent = getIntent();
         String text = intent.getStringExtra(PastQs.RESULTS);
@@ -32,8 +40,6 @@ public class QDisplay extends AppCompatActivity {
         json_text.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        //layout.addView(json_text);
-        //layout.addView(displayText);
 
         final ScrollView sv = new ScrollView(this);
         sv.setLayoutParams(new ViewGroup.LayoutParams(
@@ -41,12 +47,25 @@ public class QDisplay extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT));
         sv.addView(displayText);
 
+        final ScrollView jsv = new ScrollView(this);
+        jsv.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        jsv.addView(json_text);
+
+        final ScrollView isv = new ScrollView(this);
+        isv.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
         Button t = new Button(this);
         Button j = new Button(this);
         t.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try{
-                    layout.removeView(json_text);
+                    layout.removeView(jsv);
+                    layout.removeView(sv);
+                    layout.removeView(isv);
                 }catch(Exception e){}
                 layout.addView(sv);
             }
@@ -57,23 +76,57 @@ public class QDisplay extends AppCompatActivity {
             public void onClick(View v) {
                 try{
                     layout.removeView(sv);
+                    layout.removeView(jsv);
+                    layout.removeView(isv);
                 }catch(Exception e){}
-                layout.addView(json_text);
+                layout.addView(jsv);
             }
         });
         layout.addView(t);
         layout.addView(j);
 
+        Button im = new Button(this);
+        im.setText("Image");
+        im.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try{
+                    layout.removeView(jsv);
+                    layout.removeView(sv);
+                    layout.removeView(isv);
+                }catch(Exception e){}
+                layout.addView(isv);
+            }
+        });
+
 
         getSupportActionBar().setTitle(intent.getStringExtra("date"));
-        System.out.println(text);
-        System.out.println("***");
-        if(text.substring(0,4).equals("JPEG") || true){
-            Bitmap myBitmap = (Bitmap) intent.getParcelableExtra("bitmap");
-            ImageView myImage = new ImageView(this);
-            myImage.setImageBitmap(myBitmap);
-            layout.addView(myImage);
 
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] images = storageDir.listFiles();
+        FileInputStream img = null;
+        Bitmap imgBitmap = null;
+        for(int i = 0; i < images.length; i++){
+            if(images[i].getName().contains(intent.getStringExtra("date"))){
+                try{
+                    imgBitmap = BitmapFactory.decodeFile(storageDir+"/"+images[i].getName());
+                    ImageView myImage = new ImageView(this);
+                    float w = imgBitmap.getWidth();
+                    float h = imgBitmap.getHeight();
+                    float hw_ratio = width/w;
+                    float new_h = hw_ratio*h;
+                    int nh = (int) new_h;
+                    Bitmap scaled = Bitmap.createScaledBitmap(imgBitmap, width, nh, true);
+                    myImage.setImageBitmap(scaled);
+                    myImage.setBackgroundColor(Color.CYAN);
+                    isv.addView(myImage);
+                }catch(Exception e){
+                    System.out.println("cannot open file/no img");
+                }
+            }
+        }
+
+        if(isv.getChildCount() > 0){
+            layout.addView(im);
         }
 
 

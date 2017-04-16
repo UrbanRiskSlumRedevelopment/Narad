@@ -6,14 +6,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -79,6 +83,10 @@ public class PVQ extends AppCompatActivity {
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String author = "";
+
+    DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
+    int width = dm.widthPixels;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -471,6 +479,7 @@ public class PVQ extends AppCompatActivity {
 
     public LinearLayout Camera(String questiontext, Context context){
         LinearLayout qlayout = new LinearLayout(context);
+        qlayout.setOrientation(LinearLayout.VERTICAL);
         TextView tv = new TextView(context);
         tv.setTag("text");
         tv.setText(questiontext);
@@ -489,7 +498,7 @@ public class PVQ extends AppCompatActivity {
         return qlayout;
     }
 
-    String mCurrentPhotoPath;
+    String mCurrentPhotoPath = "";
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -503,6 +512,8 @@ public class PVQ extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+        System.out.println(imageFileName);
+        System.out.println(mCurrentPhotoPath);
         return image;
     }
 
@@ -517,12 +528,15 @@ public class PVQ extends AppCompatActivity {
             } catch (IOException ex) {
             }
             // Continue only if the File was successfully created
+            System.out.println(getFilesDir());
+
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.qmain.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
             }
         }
     }
@@ -551,31 +565,34 @@ public class PVQ extends AppCompatActivity {
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // opens camera, saves image as bitmap
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            //Bundle extras = data.getExtras();
+            //Bitmap imageBitmap = (Bitmap) extras.get("data");
             mImageView = new ImageView(this);
-            mImageView.setImageBitmap(imageBitmap);
-            camera_question.addView(mImageView);
-            /*
-            FileOutputStream out = null;
+            File file = new File(mCurrentPhotoPath);
+            Uri uri = Uri.fromFile(file);
+            Bitmap imageBitmap;
             try {
-                String imageFileName = "JPEG_" + timeStamp + ".jpeg";
-                out = openFileOutput(imageFileName, Context.MODE_PRIVATE);
-                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                // PNG is a lossless format, the compression factor (100) is ignored
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            */
+                imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 
+                float w = imageBitmap.getWidth();
+                float h = imageBitmap.getHeight();
+                int width = 120;
+                float hw_ratio = width/w;
+                float new_h = hw_ratio*h;
+                int nh = (int) new_h;
+                Bitmap scaled = Bitmap.createScaledBitmap(imageBitmap, width, nh, true);
+
+                mImageView.setImageBitmap(scaled);
+                System.out.println("bitmap set");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.out.println("NO FILE");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("SOMETHING ELSE");
+            }
+            mImageView.setBackgroundColor(Color.CYAN);
+            camera_question.addView(mImageView);
         }
     }
     // don't generate a picture when report has not been completed
@@ -710,11 +727,16 @@ public class PVQ extends AppCompatActivity {
                     line = question + ": " + LOCATION;
                     qans = LOCATION;
                 } else if (tag.equals("C")) {
+                    int jstart = mCurrentPhotoPath.indexOf("JPEG_");
+                    String jfname = "";
+                    if(jstart != -1) {
+                        jfname = mCurrentPhotoPath.substring(jstart);
+                    }
                     line = question + ": ";
                     if (mImageView!=null) {
-                        line += "JPEG_" + timeStamp + ".jpeg";
+                        line += jfname;
                     }
-                    qans = "JPEG_" + timeStamp + ".jpeg";
+                    qans = jfname;
                 }
                 String jquestion = question;
                 if(question.endsWith("*")){
@@ -742,7 +764,7 @@ public class PVQ extends AppCompatActivity {
             return unanswered;
         }
 
-        if(jf instanceof FileOutputStream) {
+        if(jf != null) {
             JSONObject j = new JSONObject(json);
             String jstring = j.toString();
             try {

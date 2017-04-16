@@ -3,6 +3,7 @@ package com.example.qmain;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.service.carrier.CarrierMessagingService.ResultCallback;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.io.File;
 
 public class Home extends AppCompatActivity {
     String author = "";
@@ -47,6 +50,14 @@ public class Home extends AppCompatActivity {
             for(int i = 0; i<files.length; i++){
                 System.out.println(files[i]);
                 deleteFile(files[i]);
+            }
+        }
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] jfiles = storageDir.listFiles();
+        if(jfiles.length > 0){
+            for(int i = 0; i<jfiles.length; i++){
+                System.out.println(jfiles[i].getName());
+                jfiles[i].delete();
             }
         }
     }

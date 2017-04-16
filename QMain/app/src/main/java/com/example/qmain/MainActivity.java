@@ -87,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
 }
 
 class FailedConnection implements GoogleApiClient.OnConnectionFailedListener{
