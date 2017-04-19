@@ -128,7 +128,6 @@ public class QDisplay extends AppCompatActivity {
                     int nh = (int) new_h;
                     Bitmap scaled = Bitmap.createScaledBitmap(imgBitmap, width, nh, true);
                     myImage.setImageBitmap(scaled);
-                    myImage.setBackgroundColor(Color.CYAN);
                     isvll.addView(myImage);
                 }catch(Exception e){
                     System.out.println("cannot open file/no img");

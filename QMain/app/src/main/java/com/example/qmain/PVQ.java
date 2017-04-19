@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
@@ -359,10 +360,12 @@ public class PVQ extends AppCompatActivity {
                         EditText num_times = new EditText(this);
                         num_times.setHint(num);
                         num_times.setInputType(2);
+                        String limit = (chunkE.getElementsByTagName("rlimit").item(0).getTextContent());
+                        int max = Integer.parseInt(limit);
                         NodeList chqs = chunkE.getElementsByTagName("rquestion");
                         LinearLayout questions_here = new LinearLayout(this);
                         questions_here.setOrientation(LinearLayout.VERTICAL);
-                        num_times.addTextChangedListener(new NumWatcher(questions_here, chqs, this, Questions, Qs));
+                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Questions, Qs));
                         ll.addView(num_times);
                         ll.addView(questions_here);
                     }
@@ -432,6 +435,8 @@ public class PVQ extends AppCompatActivity {
                     }
                     return false;
                 }});
+
+            vp.setCurrentItem(1);
 
 
 
@@ -531,11 +536,7 @@ public class PVQ extends AppCompatActivity {
 
     private File createImageFile(String tag) throws IOException {
         // Create an image file name
-        try {
-            Image_Tags.add(tag);
-        }catch (Exception e){
-            System.out.println(tag);
-        }
+        Image_Tags.add(tag);
         System.out.println(Image_Tags);
         tag = tag.replaceAll(" ", "_");
         System.out.println(tag);
@@ -632,6 +633,9 @@ public class PVQ extends AppCompatActivity {
                 System.out.println("SOMETHING ELSE");
             }
             mImageView.setBackgroundColor(Color.CYAN);
+            TextView itag = new TextView(this);
+            itag.setText((String)Image_Tags.get(Image_Tags.size()-1));
+            camera_question.addView(itag);
             camera_question.addView(mImageView);
         }
     }
@@ -771,23 +775,12 @@ public class PVQ extends AppCompatActivity {
                     for(int t = 0; t<Image_Tags.size()-1; t++){
                         imtags += Image_Tags.get(t) + ", ";
                     }
-                    imtags += Image_Tags.get(Image_Tags.size()-1);
+                    if(Image_Tags.size() > 0) {
+                        imtags += Image_Tags.get(Image_Tags.size() - 1);
+                    }
                     line = question + ": ";
                     line += imtags;
                     qans = imtags;
-                    /*
-                    int jstart = mCurrentPhotoPath.indexOf("_t__")+4;
-                    int jend = mCurrentPhotoPath.indexOf("__t_");
-                    String jfname = "";
-                    if(jstart != -1) {
-                        jfname = mCurrentPhotoPath.substring(jstart, jend);
-                    }
-                    line = question + ": ";
-                    if (mImageView!=null) {
-                        line += jfname;
-                    }
-                    qans = jfname;
-                    */
                 }
                 String jquestion = question;
                 if(question.endsWith("*")){
@@ -996,12 +989,14 @@ class NumWatcher implements TextWatcher {
     private Context context;
     private List list1;
     private List list2;
-    NumWatcher(LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
+    private int max;
+    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
         this.view1 = ll;
         this.nodes = nodes;
         this.context = context;
         this.list1 = list1;
         this.list2 = list2;
+        this.max = max;
     }
 
     public void afterTextChanged(Editable s) {
@@ -1017,6 +1012,10 @@ class NumWatcher implements TextWatcher {
             return;
         }
         int times = Integer.parseInt(value);
+        if(times > max){
+            System.out.println("in here");
+            return;
+        }
         for(int i = 0;i<times;i++){
             LinearLayout qchunk = new LinearLayout(context);
             qchunk.setOrientation(LinearLayout.VERTICAL);

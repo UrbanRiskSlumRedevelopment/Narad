@@ -23,11 +23,17 @@
         </question>
     </group>
     <group name="Map">
-        <gtext>Map</gtext>
+        <gtext>Map and Camera</gtext>
         <repeatable>F</repeatable>
         <question name="Map">
             <qtext>Map</qtext>
             <qtype>M</qtype>
+            <qhint>None</qhint>
+            <req>F</req>
+        </question>
+        <question name="Camera">
+            <qtext>Camera</qtext>
+            <qtype>C</qtype>
             <qhint>None</qhint>
             <req>F</req>
         </question>
@@ -294,22 +300,13 @@
             <req>T</req>
         </question>
     </group>
-    <group name="Camera">
-        <gtext>Camera</gtext>
-        <repeatable>F</repeatable>
-        <question name="Camera">
-            <qtext>Camera</qtext>
-            <qtype>C</qtype>
-            <qhint>None</qhint>
-            <req>F</req>
-        </question>
-    </group>
     <group name="Test (repeatable)">
         <gtext>Details of Earning Members of the Household</gtext>
         <repeatable>T</repeatable>
         <rchunk>
             <rtext>Details of Earning Members of the Household</rtext>
             <rsize>Number of earning members</rsize>
+            <rlimit>20</rlimit>
             <rquestion name="test4">
                 <qtype>T</qtype>
                 <qtext>Name</qtext>
