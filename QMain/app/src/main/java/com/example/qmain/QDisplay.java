@@ -57,6 +57,9 @@ public class QDisplay extends AppCompatActivity {
         isv.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
+        LinearLayout isvll = new LinearLayout(this);
+        isvll.setOrientation(LinearLayout.VERTICAL);
+        isv.addView(isvll);
 
         Button t = new Button(this);
         Button j = new Button(this);
@@ -107,8 +110,16 @@ public class QDisplay extends AppCompatActivity {
         Bitmap imgBitmap = null;
         for(int i = 0; i < images.length; i++){
             if(images[i].getName().contains(intent.getStringExtra("date"))){
+                String iname = images[i].getName();
+                System.out.println(iname);
+                int istart = iname.indexOf("_t__") + 4;
+                int iend = iname.indexOf("__t_");
+                String itag = iname.substring(istart, iend).replace("_"," ");
+                TextView tagtext = new TextView(this);
+                tagtext.setText(itag);
+                isvll.addView(tagtext);
                 try{
-                    imgBitmap = BitmapFactory.decodeFile(storageDir+"/"+images[i].getName());
+                    imgBitmap = BitmapFactory.decodeFile(storageDir+"/"+iname);
                     ImageView myImage = new ImageView(this);
                     float w = imgBitmap.getWidth();
                     float h = imgBitmap.getHeight();
@@ -118,14 +129,14 @@ public class QDisplay extends AppCompatActivity {
                     Bitmap scaled = Bitmap.createScaledBitmap(imgBitmap, width, nh, true);
                     myImage.setImageBitmap(scaled);
                     myImage.setBackgroundColor(Color.CYAN);
-                    isv.addView(myImage);
+                    isvll.addView(myImage);
                 }catch(Exception e){
                     System.out.println("cannot open file/no img");
                 }
             }
         }
 
-        if(isv.getChildCount() > 0){
+        if(isvll.getChildCount() > 0){
             layout.addView(im);
         }
 

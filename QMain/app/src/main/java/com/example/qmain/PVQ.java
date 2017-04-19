@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -60,6 +61,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.text.InputFilter;
 
 import android.support.v4.view.PagerAdapter;
 import android.widget.Toast;
@@ -72,6 +74,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 public class PVQ extends AppCompatActivity {
     List Questions = new ArrayList(); // List of all questions
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
+    List Image_Tags = new ArrayList();
     String answers = "";
     TextView ans = null;
     static List Counter = new ArrayList();
@@ -487,9 +490,35 @@ public class PVQ extends AppCompatActivity {
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
+
+        final AlertDialog.Builder bdr = new AlertDialog.Builder(this);
+        final Context context1 = this;
+
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                dispatchTakePictureIntent();
+                final EditText input_tag = new EditText(context1);
+                input_tag.setInputType(InputType.TYPE_CLASS_TEXT);
+                input_tag.setHint("Enter a description (max 30 characters)");
+                int maxLength = 30;
+                input_tag.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+                bdr.setView(input_tag);
+                // Set up the buttons
+                bdr.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //tag = input_tag.getText().toString();
+                        dispatchTakePictureIntent(input_tag.getText().toString());
+                    }
+                });
+                bdr.setNegativeButton("No description", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dispatchTakePictureIntent("");
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = bdr.create();
+                alert.show();
             }
         });
         qlayout.addView(tv);
@@ -500,9 +529,17 @@ public class PVQ extends AppCompatActivity {
 
     String mCurrentPhotoPath = "";
 
-    private File createImageFile() throws IOException {
+    private File createImageFile(String tag) throws IOException {
         // Create an image file name
-        String imageFileName = "JPEG_" + timeStamp;
+        try {
+            Image_Tags.add(tag);
+        }catch (Exception e){
+            System.out.println(tag);
+        }
+        System.out.println(Image_Tags);
+        tag = tag.replaceAll(" ", "_");
+        System.out.println(tag);
+        String imageFileName = timeStamp+"_t__"+tag+"__t_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -517,14 +554,14 @@ public class PVQ extends AppCompatActivity {
         return image;
     }
 
-    private void dispatchTakePictureIntent() {
+    private void dispatchTakePictureIntent(String tag) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             //startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = createImageFile(tag);
             } catch (IOException ex) {
             }
             // Continue only if the File was successfully created
@@ -568,6 +605,9 @@ public class PVQ extends AppCompatActivity {
             //Bundle extras = data.getExtras();
             //Bitmap imageBitmap = (Bitmap) extras.get("data");
             mImageView = new ImageView(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT);
+            mImageView.setLayoutParams(lp);
             File file = new File(mCurrentPhotoPath);
             Uri uri = Uri.fromFile(file);
             Bitmap imageBitmap;
@@ -576,7 +616,7 @@ public class PVQ extends AppCompatActivity {
 
                 float w = imageBitmap.getWidth();
                 float h = imageBitmap.getHeight();
-                int width = 120;
+                int width = 480;
                 float hw_ratio = width/w;
                 float new_h = hw_ratio*h;
                 int nh = (int) new_h;
@@ -727,16 +767,27 @@ public class PVQ extends AppCompatActivity {
                     line = question + ": " + LOCATION;
                     qans = LOCATION;
                 } else if (tag.equals("C")) {
-                    int jstart = mCurrentPhotoPath.indexOf("JPEG_");
+                    String imtags = "";
+                    for(int t = 0; t<Image_Tags.size()-1; t++){
+                        imtags += Image_Tags.get(t) + ", ";
+                    }
+                    imtags += Image_Tags.get(Image_Tags.size()-1);
+                    line = question + ": ";
+                    line += imtags;
+                    qans = imtags;
+                    /*
+                    int jstart = mCurrentPhotoPath.indexOf("_t__")+4;
+                    int jend = mCurrentPhotoPath.indexOf("__t_");
                     String jfname = "";
                     if(jstart != -1) {
-                        jfname = mCurrentPhotoPath.substring(jstart);
+                        jfname = mCurrentPhotoPath.substring(jstart, jend);
                     }
                     line = question + ": ";
                     if (mImageView!=null) {
                         line += jfname;
                     }
                     qans = jfname;
+                    */
                 }
                 String jquestion = question;
                 if(question.endsWith("*")){

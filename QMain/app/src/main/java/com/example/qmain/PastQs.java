@@ -41,7 +41,8 @@ public class PastQs extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Past Questionnaires");
 
-        String[] fs = fileList();
+        String[] files = fileList();
+        /*
         ArrayList<String> fils = new ArrayList<String>();
         for(int i = 0; i < fs.length; i++){
             fils.add(fs[i]);
@@ -53,6 +54,7 @@ public class PastQs extends AppCompatActivity {
             fils.add(name);
         }
         String[] files = fils.toArray(new String[0]);
+        */
 
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
