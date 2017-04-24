@@ -6,11 +6,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +74,7 @@ public class PVQ extends AppCompatActivity {
     List Image_Tags = new ArrayList();
     String answers = "";
     TextView ans = null;
+    LinearLayout req_buttons;
     static List Counter = new ArrayList();
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
     public Context context = this; // For accessing context of the questionnaire
@@ -87,10 +84,8 @@ public class PVQ extends AppCompatActivity {
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String author = "";
-
-    DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
-    int width = dm.widthPixels;
-
+    List pages = new ArrayList();
+    ViewPager vp = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,11 +98,12 @@ public class PVQ extends AppCompatActivity {
         //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
         LinearLayout form = (LinearLayout) findViewById(R.id.activity_pvq);
         author = getIntent().getStringExtra("author");
-
-        getSupportActionBar().setTitle("Questionnaire");
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Questionnaire");
+        }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        final ViewPager vp = new ViewPager(this);
+        vp = new ViewPager(this);
         vp.setId(View.generateViewId());
         setupUI(vp);
         form.addView(vp);
@@ -121,7 +117,8 @@ public class PVQ extends AppCompatActivity {
 
         // creates back to menu, previous, and next buttons
         Button menu_button = new Button(this);
-        menu_button.setText("Menu");
+        String menu = "Menu";
+        menu_button.setText(menu);
         menu_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             try {
@@ -136,7 +133,8 @@ public class PVQ extends AppCompatActivity {
         });
 
         Button scroll_up = new Button(this);
-        scroll_up.setText("Back to Top");
+        String btt = "Back to Top";
+        scroll_up.setText(btt);
         scroll_up.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -149,7 +147,8 @@ public class PVQ extends AppCompatActivity {
         });
 
         Button prev = new Button(this);
-        prev.setText("Previous");
+        String pr = "Previous";
+        prev.setText(pr);
         prev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -165,7 +164,8 @@ public class PVQ extends AppCompatActivity {
         });
 
         Button next = new Button(this);
-        next.setText("Next");
+        String nxt = "Next";
+        next.setText(nxt);
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -243,6 +243,7 @@ public class PVQ extends AppCompatActivity {
             String sections = "Sections";
             title.setText(sections);
             p1.addView(title);
+            pages.add(sections);
 
 
             // iterates through all groups of questions in XML doc
@@ -258,6 +259,7 @@ public class PVQ extends AppCompatActivity {
                 Button p1_button = new Button(this);
                 p1.addView(p1_button);
                 p1_button.setText(g_name);
+                pages.add(g_name);
                 p1_button.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         vp.setCurrentItem(g_button+1, false);
@@ -332,7 +334,8 @@ public class PVQ extends AppCompatActivity {
                     if(num.equals("")) {
                         // question chunk button
                         Button rbt = new Button(this);
-                        rbt.setText(chunkE.getElementsByTagName("rtext").item(0).getTextContent() + " +");
+                        String rtext = chunkE.getElementsByTagName("rtext").item(0).getTextContent() + " +";
+                        rbt.setText(rtext);
                         ll.addView(rbt);
                         setupUI(rbt);
 
@@ -399,18 +402,6 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
-            /*
-            // menu button
-            Button menu_button = new Button(this);
-            String menu = "Menu";
-            menu_button.setText(menu);
-            menu_button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    vp.setCurrentItem(0, false);
-                }
-            });
-            */
-
             // submit button
             Button submit = new Button(this);
             String sub = "Submit";
@@ -423,18 +414,27 @@ public class PVQ extends AppCompatActivity {
 
             // blank text view to be updated
             ans = new TextView(this);
-            rv1.addView(ans);
-            //rv1.addView(menu_button);
+            req_buttons = new LinearLayout(this);
+            req_buttons.setOrientation(LinearLayout.VERTICAL);
             rv1.addView(review_button);
+            rv1.addView(ans);
+            rv1.addView(req_buttons);
             rv1.addView(submit);
 
-            vp.setOnTouchListener(new ViewPager.OnTouchListener(){
-                public boolean onTouch(View v,MotionEvent event) {
-                    if(vp.getCurrentItem() != vp.getChildCount()-1){
+            vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    if(vp.getCurrentItem() != vp.getChildCount()-1) {
+                        req_buttons.removeAllViews();
+                        req_buttons.setBackgroundColor(Color.TRANSPARENT);
                         ans.setText("");
                     }
-                    return false;
-                }});
+                }
+                @Override
+                public void onPageSelected(int position) {}
+                @Override
+                public void onPageScrollStateChanged(int state) {}
+            });
 
             vp.setCurrentItem(1);
 
@@ -564,6 +564,7 @@ public class PVQ extends AppCompatActivity {
             try {
                 photoFile = createImageFile(tag);
             } catch (IOException ex) {
+                System.out.println("filename creation error");
             }
             // Continue only if the File was successfully created
             System.out.println(getFilesDir());
@@ -644,7 +645,8 @@ public class PVQ extends AppCompatActivity {
     // writes current answers and returns them as one string; optionally writes them to file
     public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf) {
         String total = ""; // string with all answers
-        String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
+        //String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
+        String unanswered = "";
         Boolean use_un = false;
         HashMap json = new HashMap();
         HashMap groups = new HashMap();
@@ -668,6 +670,7 @@ public class PVQ extends AppCompatActivity {
             total += name;
             //unanswered += "\n"+name;
             List qs = (List) qgs.get(key);
+            boolean in_list = false;
             // iterates through list of questions
 
             HashMap questions = new HashMap();
@@ -699,7 +702,11 @@ public class PVQ extends AppCompatActivity {
                         return "";
                     } else {
                         if (editText.getText().toString().equals("") && question.endsWith("*")) {
-                            unanswered += "\n" + name+question + "\n";
+                            //unanswered += "\n" + name+question + "\n";
+                            if(! in_list){
+                                unanswered += key + ",, ";
+                                in_list = true;
+                            }
                             use_un = true;
                             text.setTextColor(Color.RED);
                         }
@@ -713,7 +720,11 @@ public class PVQ extends AppCompatActivity {
                         System.out.println("oops");
                         return "";
                     }else if(question.endsWith("*")&& at.equals("Total: ")){
-                        unanswered += "\n" + name+question + "\n";
+                        //unanswered += "\n" + name+question + "\n";
+                        if(! in_list){
+                            unanswered += key + ",, ";
+                            in_list = true;
+                        }
                         use_un = true;
                         text.setTextColor(Color.RED);
                     } else{
@@ -737,7 +748,11 @@ public class PVQ extends AppCompatActivity {
                         RadioButton rb = (RadioButton) rg.getChildAt(id);
                         try {
                             if (id == -1  && question.endsWith("*")) {
-                                unanswered += "\n" + name+question + "\n";
+                                //unanswered += "\n" + name+question + "\n";
+                                if(! in_list){
+                                    unanswered += key + ",, ";
+                                    in_list = true;
+                                }
                                 use_un = true;
                                 text.setTextColor(Color.RED);
                                 line = line.toUpperCase();
@@ -805,7 +820,7 @@ public class PVQ extends AppCompatActivity {
         }
         if(use_un){
             // returns string of unanswered questions if any are present
-            return unanswered;
+            return "!<!," + unanswered;
         }
 
         if(jf != null) {
@@ -871,7 +886,31 @@ public class PVQ extends AppCompatActivity {
     // updates ans TextView on submit page with current answers
     public void update_answers(){
         answers = writeAnswers(Groups, false, null, true, null);
-        ans.setText(answers);
+        //ans.setText(answers);
+        if(answers.substring(0,4).equals("!<!,")){
+            String req_msg = "The following sections have required questions that need to be answered:";
+            ans.setText(req_msg);
+            List rsects = new ArrayList();
+            String scts = answers.substring(4);
+            req_buttons.setBackgroundColor(Color.MAGENTA);
+            while(scts.length() > 3){
+                System.out.println(pages);
+                String sct = scts.substring(0, scts.indexOf(",, "));
+                scts = scts.substring(scts.indexOf(",, ") + 3);
+                Button br = new Button(this);
+                br.setText(sct);
+                br.setOnClickListener(new StringOnClickListener(sct) {
+                    public void onClick(View v) {
+                        vp.setCurrentItem(pages.indexOf(s));
+                        System.out.println(s+"   " + Integer.toString(pages.indexOf(s)));
+                    }
+                });
+                req_buttons.addView(br);
+            }
+            System.out.println(scts);
+        }else{
+            ans.setText(answers);
+        }
     }
 
     // hides soft keyboard
@@ -974,6 +1013,21 @@ class RepeatOnClickListener implements View.OnClickListener
         this.view1 = view1;
         this.nlist = nlist;
         this.context = context;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+    }
+
+}
+
+class StringOnClickListener implements View.OnClickListener
+{
+    String s;
+    // can take a linear layout, nodelist, and context as parameters
+    public StringOnClickListener(String str) {
+        this.s = str;
     }
 
     @Override
