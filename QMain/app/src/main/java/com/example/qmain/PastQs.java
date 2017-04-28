@@ -39,22 +39,11 @@ public class PastQs extends AppCompatActivity {
         sv.addView(layout);
         final HashMap<String,LinearLayout> hm = new HashMap<String,LinearLayout>();
 
-        getSupportActionBar().setTitle("Past Questionnaires");
+        String title = "Past Questionnaires";
+        getSupportActionBar().setTitle(title);
+
 
         String[] files = fileList();
-        /*
-        ArrayList<String> fils = new ArrayList<String>();
-        for(int i = 0; i < fs.length; i++){
-            fils.add(fs[i]);
-        }
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File[] jfiles = storageDir.listFiles();
-        for(int i = 0; i<jfiles.length; i++){
-            String name = jfiles[i].getName();
-            fils.add(name);
-        }
-        String[] files = fils.toArray(new String[0]);
-        */
 
         if(files.length > 0) {
             for (int i = 1; i < files.length; i++) {
@@ -104,19 +93,21 @@ public class PastQs extends AppCompatActivity {
                                                       }catch(Exception e){
                                                           System.out.println("cannot open file");
                                                       }
+                                                      /*
                                                       FileInputStream img = null;
                                                       try{
                                                           img = openFileInput(jpeg);
                                                       }catch(Exception e){
                                                           System.out.println("cannot open file/no img");
                                                       }
+                                                      */
                                                       FileInputStream json = null;
                                                       try{
                                                           json = openFileInput(jsonfile);
                                                       }catch(Exception e){
                                                           System.out.println("cannot open file/no json");
                                                       }
-                                                      Bitmap myBitmap = BitmapFactory.decodeStream(img);
+                                                      //Bitmap myBitmap = BitmapFactory.decodeStream(img);
                                                       StringBuilder sb = new StringBuilder();
                                                       try{
                                                           BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -143,15 +134,17 @@ public class PastQs extends AppCompatActivity {
                                                           e.printStackTrace();
                                                           System.out.println("input stream didn't close");
                                                       }
+                                                      /*
                                                       try{
                                                           if(img != null){
                                                               img.close();
                                                           }
                                                       }catch(Exception e){e.printStackTrace();}
+                                                      */
                                                       String result = sb.toString();
                                                       Intent intent = new Intent(context, QDisplay.class);
                                                       intent.putExtra(RESULTS, result);
-                                                      intent.putExtra("bitmap", myBitmap);
+                                                      //intent.putExtra("bitmap", myBitmap);
                                                       intent.putExtra("date", b.getText());
                                                       intent.putExtra("json", jsonstring);
                                                       startActivity(intent);

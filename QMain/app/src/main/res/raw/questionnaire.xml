@@ -23,7 +23,7 @@
         </question>
     </group>
     <group name="Map">
-        <gtext>Map and Camera</gtext>
+        <gtext>Location and Photos</gtext>
         <repeatable>F</repeatable>
         <question name="Map">
             <qtext>Map</qtext>

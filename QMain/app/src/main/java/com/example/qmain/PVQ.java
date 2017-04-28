@@ -7,14 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +37,7 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.widget.ImageButton;
 
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -50,6 +57,10 @@ import java.util.Locale;
 import java.util.Set;
 import java.io.File;
 import java.io.FileNotFoundException;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.util.AttributeSet;
+import android.support.v4.view.GravityCompat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,6 +70,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.text.InputFilter;
+import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.PagerAdapter;
 import android.widget.Toast;
@@ -67,6 +79,8 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import android.support.design.widget.NavigationView;
+import android.view.Menu;
 
 public class PVQ extends AppCompatActivity {
     List Questions = new ArrayList(); // List of all questions
@@ -86,21 +100,40 @@ public class PVQ extends AppCompatActivity {
     String author = "";
     List pages = new ArrayList();
     ViewPager vp = null;
+    DrawerLayout dl = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pvq);
 
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         // Create and set up new questionnaire ViewPager
         //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
+        //NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+        NavigationView nv = (NavigationView) findViewById(R.id.navigation);
+        dl = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         LinearLayout form = (LinearLayout) findViewById(R.id.activity_pvq);
         author = getIntent().getStringExtra("author");
         if(getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Questionnaire");
+            ImageButton hamburger = new ImageButton(this);
+            hamburger.setImageResource(R.drawable.hamburger);
+            int co = ContextCompat.getColor(context, R.color.colorPrimary);
+            hamburger.setBackgroundColor(co);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+            ActionBar.LayoutParams hl = new ActionBar.LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT, Gravity.END);
+            getSupportActionBar().setCustomView(hamburger, hl);
+            hamburger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dl.openDrawer(GravityCompat.END);
+                }
+            });
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         vp = new ViewPager(this);
@@ -113,7 +146,8 @@ public class PVQ extends AppCompatActivity {
 
         LinearLayout navbar = new LinearLayout(this);
         navbar.setOrientation(LinearLayout.HORIZONTAL);
-        navbar.setBackgroundColor(Color.WHITE);
+        navbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
 
         // creates back to menu, previous, and next buttons
         Button menu_button = new Button(this);
@@ -181,20 +215,13 @@ public class PVQ extends AppCompatActivity {
         setupUI(menu_button);
         setupUI(next);
         setupUI(scroll_up);
+
         navbar.addView(prev);
-        navbar.addView(menu_button);
         navbar.addView(scroll_up);
         navbar.addView(next);
-        navbar.setGravity(100);
+        navbar.setGravity(Gravity.CENTER);
         setupUI(navbar);
-        /*
-        RelativeLayout.LayoutParams rLParams =
-                new RelativeLayout.LayoutParams(
-                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        rLParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
 
-        form.addView(navbar, rLParams);
-        */
         form.addView(navbar);
 
         LinearLayout.LayoutParams param1 = new LinearLayout.LayoutParams(
@@ -437,7 +464,20 @@ public class PVQ extends AppCompatActivity {
             });
 
             vp.setCurrentItem(1);
-
+            Menu menu1 = nv.getMenu();
+            for(int i = 1; i < pages.size(); i++){
+                menu1.add((String)pages.get(i));
+            }
+            for(int i = 0; i < menu1.size(); i++){
+                menu1.getItem(i).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        vp.setCurrentItem(pages.indexOf(item.getTitle()));
+                        dl.closeDrawer(GravityCompat.END);
+                        return false;
+                    }
+                });
+            }
 
 
         }catch (Exception e){
@@ -955,6 +995,20 @@ public class PVQ extends AppCompatActivity {
         alert.show();
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+
+        }
+
+        return true;
+    }
 }
 
 // class used to create a PagerAdapter to work with ViewPager
@@ -1085,3 +1139,29 @@ class NumWatcher implements TextWatcher {
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
+
+class CustomDrawerLayout extends DrawerLayout {
+
+    public CustomDrawerLayout(Context context) {
+        super(context);
+    }
+
+    public CustomDrawerLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public CustomDrawerLayout(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        widthMeasureSpec = MeasureSpec.makeMeasureSpec(
+                MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY);
+        heightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.EXACTLY);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+}
+
