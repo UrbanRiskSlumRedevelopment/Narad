@@ -93,29 +93,18 @@ public class PastQs extends AppCompatActivity {
                                                       }catch(Exception e){
                                                           System.out.println("cannot open file");
                                                       }
-                                                      /*
-                                                      FileInputStream img = null;
-                                                      try{
-                                                          img = openFileInput(jpeg);
-                                                      }catch(Exception e){
-                                                          System.out.println("cannot open file/no img");
-                                                      }
-                                                      */
                                                       FileInputStream json = null;
                                                       try{
                                                           json = openFileInput(jsonfile);
                                                       }catch(Exception e){
                                                           System.out.println("cannot open file/no json");
                                                       }
-                                                      //Bitmap myBitmap = BitmapFactory.decodeStream(img);
                                                       StringBuilder sb = new StringBuilder();
                                                       try{
                                                           BufferedReader reader = new BufferedReader(new InputStreamReader(file));
                                                           BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
                                                           String line = null;
                                                           while ((line = reader.readLine()) != null) {
-                                                              //sb.append(line).append("\n");
-                                                              //System.out.println(line);
                                                               System.out.println(line);
 
                                                               while(line.contains("~~")){
@@ -123,9 +112,6 @@ public class PastQs extends AppCompatActivity {
                                                                   line = line.substring(line.indexOf("~~")+2);
                                                                   sb.append(nline).append("\n");
                                                               }
-                                                              //sb.append(line).append("\n");
-                                                              //System.out.println("i");
-
                                                           }
                                                           jsonstring = jreader.readLine();
                                                           json.close();
@@ -134,17 +120,10 @@ public class PastQs extends AppCompatActivity {
                                                           e.printStackTrace();
                                                           System.out.println("input stream didn't close");
                                                       }
-                                                      /*
-                                                      try{
-                                                          if(img != null){
-                                                              img.close();
-                                                          }
-                                                      }catch(Exception e){e.printStackTrace();}
-                                                      */
+
                                                       String result = sb.toString();
                                                       Intent intent = new Intent(context, QDisplay.class);
                                                       intent.putExtra(RESULTS, result);
-                                                      //intent.putExtra("bitmap", myBitmap);
                                                       intent.putExtra("date", b.getText());
                                                       intent.putExtra("json", jsonstring);
                                                       startActivity(intent);

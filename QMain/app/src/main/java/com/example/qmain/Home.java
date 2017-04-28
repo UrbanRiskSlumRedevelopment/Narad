@@ -13,14 +13,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.AuthFailureError;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
+import org.json.JSONObject;
+import java.util.HashMap;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.HttpURLConnection;
@@ -63,24 +70,63 @@ public class Home extends AppCompatActivity {
         //TestClass.make_post("http://18.111.31.12:4001/test");
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://18.111.31.12:4001/test";
+        String url = "http://10.0.2.2:8011/test";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        System.out.println("Response is: "+ response.substring(0,500));
-                    }
-                }, new Response.ErrorListener() {
+        JSONObject jo = null;
+        String jsonString = "";
+
+        for(int i = 0; i<fileList().length; i++){
+            if(fileList()[i].contains("json")){
+                String jsonfile = fileList()[i];
+                FileInputStream json = null;
+                try{
+                    json = openFileInput(jsonfile);
+                }catch(Exception e){
+                    System.out.println("cannot open file/no json");
+                }
+                BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
+                try {
+                    jsonString = jreader.readLine();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                /*
+                try {
+                    jo = new JSONObject(jsonString);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }*/
+                break;
+            }
+        }
+
+        //System.out.println(jo.toString());
+        final String jss = jsonString; //jo.toString();
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("data", jss);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, body, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println("Response: " + response.toString());
+            }
+        }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                System.out.println("That didn't work!");
+                // TODO Auto-generated method stub
+
             }
         });
 
-        queue.add(stringRequest);
+        queue.add(jsonRequest);
+
 
         /*
         String[] files = fileList();
