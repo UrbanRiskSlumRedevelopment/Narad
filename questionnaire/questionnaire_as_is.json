@@ -1,0 +1,1453 @@
+{
+  "groups" : {
+    "group": [
+      {
+        "-no": "I",
+        "-name": "general_info",
+        "gtext": "General Information",
+        "repeatable": "F",
+        "question": [
+          {
+            "-no": "1",
+            "-name": "name_of_slum",
+            "qtext": "Name of Slum",
+            "qtype": "T",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "2",
+            "-name": "location_ward_name",
+            "qtext": "Location - Ward No / Name",
+            "qtype": "T",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "3",
+            "-name": "house_flat_door_no",
+            "qtext": "House / Flat / Door No",
+            "qtype": "T",
+            "qhint": "",
+            "req": "T"
+          }
+        ]
+      },
+      {
+        "-no": "II",
+        "-name": "household_general_info",
+        "gtext": "Household level general information",
+        "repeatable": "F",
+        "question": [
+          {
+            "-no": "4",
+            "-name": "name_of_head",
+            "qtext": "Name of head of family",
+            "qtype": "T",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "5",
+            "-name": "fathers_name",
+            "qtext": "Father's name",
+            "qtype": "T",
+            "qhint": "Name of head of family's father",
+            "req": "F"
+          },
+          {
+            "-no": "6",
+            "-name": "sex",
+            "qtext": "Sex",
+            "qtype": "LC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Male",
+                  "ccode": "01",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Female",
+                  "ccode": "02",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "10",
+                      "-name": "female_head_status",
+                      "qtext": "If female headed household, status of female head",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Married",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "Widowed",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "Abandoned/Single",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "Divorced",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "Unwed mother",
+                            "ccode": "05"
+                          },
+                          {
+                            "ctext": "Other",
+                            "ccode": "49"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "03",
+                  "extra": "F"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "7",
+            "-name": "caste",
+            "qtext": "Caste",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "General",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "SC",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "ST",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "OBC",
+                  "ccode": "04"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "8",
+            "-name": "religion",
+            "qtext": "Religion",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Hindu",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Muslim",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Christian",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Sikh",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Jainism",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Buddhism",
+                  "ccode": "06"
+                },
+                {
+                  "ctext": "Zoroastrianism",
+                  "ccode": "07"
+                },
+                {
+                  "ctext": "Others",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "9",
+            "-name": "minority_status",
+            "qtext": "Minority status in State/UT",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Non-minority",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Minority",
+                  "ccode": "02"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "11a",
+            "-name": "male_family_members",
+            "qtext": "No of family members - male",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "11b",
+            "-name": "female_family_members",
+            "qtext": "No of family members - female",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "12a",
+            "-name": "male_illiterate_adult_members",
+            "qtext": "No of illiterate adult members - male",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "12b",
+            "-name": "female_illiterate adult_members",
+            "qtext": "No of illiterate adult members - female",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "13a",
+            "-name": "male_unattending_children",
+            "qtext": "No of children in age-group 6-14 not attending school - male",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "13b",
+            "-name": "female_unattending_children",
+            "qtext": "No of children in age-group 6-14 not attending school - female",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "14a",
+            "-name": "physically_disabled_members",
+            "qtext": "No of physically disabled members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "14b",
+            "-name": "mentally_family_members",
+            "qtext": "No of mentally disabled members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "15",
+            "-name": "earning_female_status",
+            "qtext": "If major earning member is female, whether",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "F",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Married",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Widowed",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Abandoned/Single",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Divorced",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Unwed mother",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "16",
+            "-name": "below_poverty_line",
+            "qtext": "Is your family below poverty line",
+            "qtype": "LC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Yes",
+                  "ccode": "01",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "17",
+                      "-name": "have_bpl_card",
+                      "qtext": "Does the family possess BPL card",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Yes",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "No",
+                            "ccode": "02"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "No",
+                  "ccode": "02",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Don't know",
+                  "ccode": "99",
+                  "extra": "F"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "-no": "III",
+        "-name": "household_detailed_info",
+        "gtext": "Household level detailed information",
+        "repeatable": "F",
+        "question": [
+          {
+            "-no": "18",
+            "-name": "tenure_status",
+            "qtext": "Land tenure status",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Patta",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Possession certificate / Occupancy right",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Private land encroached",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Public land encroached",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Rented",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "19",
+            "-name": "house_type",
+            "qtext": "Type / Structure of house",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Pucca",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Semi-pucca",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Katcha",
+                  "ccode": "03"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "20",
+            "-name": "roof_type",
+            "qtext": "Type of roof",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Grass / thatched",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Tarpaulin",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Wooden",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Asbestos",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Tiled",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Cement / concrete slab",
+                  "ccode": "06"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "21",
+            "-name": "floor_type",
+            "qtext": "Type of flooring",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Mud",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Brick",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Stone",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Cement",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Tiles",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "22",
+            "-name": "house_lighting",
+            "qtext": "House lighting",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Electricity connection",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Kerosene",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Firewood",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "23",
+            "-name": "cooking_fuel",
+            "qtext": "Fuel for cooking",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Gas",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Electricity",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Kerosene",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Charcoal",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Firewood",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "24a",
+            "-name": "drinking_water_source",
+            "qtext": "Source of drinking water",
+            "qtype": "LC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Tap within premises",
+                  "ccode": "01",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "24b",
+                      "-name": "water_supply_duration",
+                      "qtext": "Duration of water supply",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 1 hour daily",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "1 - 2 hrs daily",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "More than 2 hrs daily",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "Once a week",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "Twice a week",
+                            "ccode": "05"
+                          },
+                          {
+                            "ctext": "Not regular",
+                            "ccode": "06"
+                          },
+                          {
+                            "ctext": "No supply",
+                            "ccode": "99"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Tubewell / handpump within premises",
+                  "ccode": "02",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Open well within premises",
+                  "ccode": "03",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Public tap",
+                  "ccode": "04",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "25",
+                      "-name": "distance_from_source",
+                      "qtext": "Distance from drinking water source",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 0.5km",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "0.5 to 1km",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "1 to 2km",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "2 to 5km",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "More than 5km",
+                            "ccode": "05"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Tubewell / borewell / handpump outside premises",
+                  "ccode": "05",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "25",
+                      "-name": "distance_from_source",
+                      "qtext": "Distance from drinking water source",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 0.5km",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "0.5 to 1km",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "1 to 2km",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "2 to 5km",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "More than 5km",
+                            "ccode": "05"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Open well outside premises",
+                  "ccode": "06",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "25",
+                      "-name": "distance_from_source",
+                      "qtext": "Distance from drinking water source",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 0.5km",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "0.5 to 1km",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "1 to 2km",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "2 to 5km",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "More than 5km",
+                            "ccode": "05"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Tank / pond",
+                  "ccode": "07",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "25",
+                      "-name": "distance_from_source",
+                      "qtext": "Distance from drinking water source",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 0.5km",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "0.5 to 1km",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "1 to 2km",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "2 to 5km",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "More than 5km",
+                            "ccode": "05"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "River / canal / lake / spring",
+                  "ccode": "08",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "25",
+                      "-name": "distance_from_source",
+                      "qtext": "Distance from drinking water source",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Less than 0.5km",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "0.5 to 1km",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "1 to 2km",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "2 to 5km",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "More than 5km",
+                            "ccode": "05"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Water tanker",
+                  "ccode": "09",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49",
+                  "extra": "F"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "26",
+            "-name": "toilet_facility",
+            "qtext": "Existence of toilet facility",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Own septic tank / flush latrine",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Own dry latrine",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Shared septic tank / flush latrine",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Shared dry latrine",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Community septic tank / flush latrine",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Community dry latrine",
+                  "ccode": "06"
+                },
+                {
+                  "ctext": "Open defecation",
+                  "ccode": "07"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "27",
+            "-name": "bathroom_facility",
+            "qtext": "Existence of bathroom facility",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Within premises",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Outside premises",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Community bath",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "No bathroom",
+                  "ccode": "04"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "28",
+            "-name": "front_road",
+            "qtext": "Road in front of house",
+            "qtype": "SC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Motorable pucca",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Motorable katcha",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Non-motorable pucca",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Non-motorable katcha",
+                  "ccode": "04"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "29",
+            "-name": "pre_school_availability",
+            "qtext": "Type of pre-school available",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Municipal",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Government",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Private",
+                  "ccode": "03"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "30",
+            "-name": "primary_school_availability",
+            "qtext": "Type of primary school available",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Municipal",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Government",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Private",
+                  "ccode": "03"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "31",
+            "-name": "high_school_availability",
+            "qtext": "Type of high school available",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Municipal",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Government",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Private",
+                  "ccode": "03"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "32",
+            "-name": "health_facility_access",
+            "qtext": "Type of health facility access",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Primary health centre",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Government hospital",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Maternity centre",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Private clinic",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Rural medical practitioner (RMP)",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Ayurvedic doctor / Vaidya",
+                  "ccode": "06"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "33",
+            "-name": "welfare_benefits_access",
+            "qtext": "Access to welfare benefits by any family member",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Old age pension",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Widow pension",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Disabled pension",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Health insurance",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "General insurance",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "Other",
+                  "ccode": "49"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "34",
+            "-name": "consumer_durables",
+            "qtext": "Consumer durables",
+            "qtype": "MC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Electric fan",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Refrigerator",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Cooler",
+                  "ccode": "03"
+                },
+                {
+                  "ctext": "Residential telephone",
+                  "ccode": "04"
+                },
+                {
+                  "ctext": "Mobile phone",
+                  "ccode": "05"
+                },
+                {
+                  "ctext": "B/W television",
+                  "ccode": "06"
+                },
+                {
+                  "ctext": "Colour television",
+                  "ccode": "07"
+                },
+                {
+                  "ctext": "Sewing machine",
+                  "ccode": "08"
+                },
+                {
+                  "ctext": "Furniture",
+                  "ccode": "09"
+                },
+                {
+                  "ctext": "Bicycle",
+                  "ccode": "10"
+                },
+                {
+                  "ctext": "Rickshaw",
+                  "ccode": "11"
+                },
+                {
+                  "ctext": "Push cart",
+                  "ccode": "12"
+                },
+                {
+                  "ctext": "Bullock cart",
+                  "ccode": "13"
+                },
+                {
+                  "ctext": "Two wheeler",
+                  "ccode": "14"
+                },
+                {
+                  "ctext": "Three wheeler",
+                  "ccode": "15"
+                },
+                {
+                  "ctext": "Taxi",
+                  "ccode": "16"
+                },
+                {
+                  "ctext": "Car",
+                  "ccode": "17"
+                }
+              ]
+            }
+          },
+          {
+            "-no": "35a",
+            "-name": "live_stock",
+            "qtext": "Live stock",
+            "qtype": "LC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Yes",
+                  "ccode": "01",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "35b",
+                      "-name": "livestock_types",
+                      "qtext": "Type of livestock",
+                      "qtype": "MC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Buffalo",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "Cow",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "Sheep / Goat",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "Pig",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "Hen / Cock",
+                            "ccode": "05"
+                          },
+                          {
+                            "ctext": "Donkey",
+                            "ccode": "06"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "No",
+                  "ccode": "02",
+                  "extra": "F"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "-no": "IV",
+        "-name": "migration_details",
+        "gtext": "Migration details of household, if applicable",
+        "repeatable": "F",
+        "question": [
+          {
+            "-no": "36x",
+            "-name": "whether_migrated",
+            "qtext": "Whether the head of family migrated to city/town",
+            "qtype": "LC",
+            "qhint": "",
+            "req": "T",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Yes",
+                  "ccode": "01",
+                  "extra": "T",
+                  "equestion": [
+                    {
+                      "-no": "36",
+                      "-name": "years_of_stay",
+                      "qtext": "Number of years of stay in this town/city",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "0 - 1 year",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "1 - 3 years",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "3 - 5 years",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "More than 5 years",
+                            "ccode": "04"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "-no": "37",
+                      "-name": "migrated_from",
+                      "qtext": "Whether migrated from",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Rural to urban area",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "Urban to urban area",
+                            "ccode": "02"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "-no": "38",
+                      "-name": "migration_type",
+                      "qtext": "Type of migration",
+                      "qtype": "SC",
+                      "qhint": "",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Seasonal",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "Permanent",
+                            "ccode": "02"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "-no": "39",
+                      "-name": "reasons_for_migration",
+                      "qtext": "Reasons for migration",
+                      "qtype": "MC",
+                      "qhint": "Select all applicable",
+                      "req": "T",
+                      "choices": {
+                        "choice": [
+                          {
+                            "ctext": "Unemployment",
+                            "ccode": "01"
+                          },
+                          {
+                            "ctext": "Low wage",
+                            "ccode": "02"
+                          },
+                          {
+                            "ctext": "Debt",
+                            "ccode": "03"
+                          },
+                          {
+                            "ctext": "Drought",
+                            "ccode": "04"
+                          },
+                          {
+                            "ctext": "Conflict",
+                            "ccode": "05"
+                          },
+                          {
+                            "ctext": "Education",
+                            "ccode": "06"
+                          },
+                          {
+                            "ctext": "Marriage",
+                            "ccode": "07"
+                          },
+                          {
+                            "ctext": "Others",
+                            "ccode": "49"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "ctext": "No",
+                  "ccode": "02",
+                  "extra": "F"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "-no": "V",
+        "-name": "income_expenditure_details",
+        "gtext": "Income-expenditure details of household",
+        "repeatable": "F",
+        "question": [
+          {
+            "-no": "40a",
+            "-name": "no_earning_adults_male",
+            "qtext": "Number of earning male adult members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "40b",
+            "-name": "no_earning_adults_female",
+            "qtext": "Number of earning female adult members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "41a",
+            "-name": "no_earning_nonadults_male",
+            "qtext": "Number of earning male non-adult members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "41b",
+            "-name": "no_earning_nonadults_female",
+            "qtext": "Number of earning female non-adult members",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "42",
+            "-name": "avg_monthly_income",
+            "qtext": "Average monthly income of household (in Rs.)",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "43",
+            "-name": "avg_monthly_expenditure",
+            "qtext": "Average monthly expenditure of household (in Rs.)",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          },
+          {
+            "-no": "44",
+            "-name": "outstanding_debt",
+            "qtext": "Debt outstanding as on the date of survey (in Rs.)",
+            "qtype": "N",
+            "qhint": "",
+            "req": "T"
+          }
+        ]
+      },
+      {
+        "-no": "VI",
+        "-name": "earning_member_details",
+        "gtext": "Details of earning members of the household",
+        "repeatable": "T",
+        "question": [
+          {
+            "-name": "",
+            "qtext": "",
+            "qtype": "",
+            "qhint": "",
+            "req": ""
+          }
+        ]
+      }
+    ]
+  }
+}
