@@ -50,11 +50,6 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public void newQ(View view) {
-        Intent intent = new Intent(this, Questionnaire.class);
-        startActivity(intent);
-    }
-
     public void pastQ(View view){
         Intent intent = new Intent(this, PastQs.class);
         startActivity(intent);
@@ -90,18 +85,11 @@ public class Home extends AppCompatActivity {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                /*
-                try {
-                    jo = new JSONObject(jsonString);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }*/
                 break;
             }
         }
 
-        //System.out.println(jo.toString());
-        final String jss = jsonString; //jo.toString();
+        final String jss = jsonString;
 
         JSONObject body = new JSONObject();
         try {

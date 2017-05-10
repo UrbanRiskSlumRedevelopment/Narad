@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(String author) {
-        Intent intent = new Intent(this, Home.class);
+        Intent intent = new Intent(this, Projects.class);
         intent.putExtra("author", author);
         startActivity(intent);
     }

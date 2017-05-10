@@ -73,8 +73,8 @@ public class Questionnaire extends AppCompatActivity {
     public static AlertDialog.Builder builder = null;
     public Context context = this;
     public static String LOCATION = "";
-    HashMap<String, Button> RepeatButtons = new HashMap();
-    static ImageView mImageView = null;
+    HashMap<String, Button> RepeatButtons = new HashMap<>();
+    ImageView mImageView = null;
 
     public static LinearLayout build_question(Node nNode, List list1, List list2, LinearLayout layout1, Context context){
         LinearLayout q = null;

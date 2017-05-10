@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <metadata>
+        <title>Housing Survey</title>
+    </metadata>
 <groups>
     <group name="Slum">
         <gtext>General Information</gtext>
-        <repeatable>F</repeatable>
+        <question>
+            <qtext>City</qtext>
+            <qtype>T</qtype>
+            <qhint>Enter city</qhint>
+            <req>T</req>
+            <uid>T</uid>
+        </question>
+        <question>
+            <qtext>Location - Ward No/Name</qtext>
+            <qtype>T</qtype>
+            <req>T</req>
+            <qhint>Enter location</qhint>
+            <uid>T</uid>
+        </question>
         <question>
             <qtext>Name of Slum</qtext>
             <qtype>T</qtype>
             <qhint>Enter slum</qhint>
             <req>T</req>
-        </question>
-        <question>
-            <qtext>Location - Ward No/Name</qtext>
-            <qtype>T</qtype>
-            <req>F</req>
-            <qhint>Enter location</qhint>
+            <uid>T</uid>
         </question>
         <question>
             <qtext>House/Flat/Door No.</qtext>
             <qtype>N</qtype>
             <qhint>Enter number</qhint>
-            <req>F</req>
+            <req>T</req>
+            <uid>T</uid>
         </question>
     </group>
     <group name="Map">
         <gtext>Location and Photos</gtext>
-        <repeatable>F</repeatable>
         <question name="Map">
             <qtext>Map</qtext>
             <qtype>M</qtype>
@@ -40,7 +52,6 @@
     </group>
     <group name="Family">
         <gtext>Household Level General Information</gtext>
-        <repeatable>F</repeatable>
         <question name="Head of Family">
             <qtext>Name of Head of the Family</qtext>
             <qtype>T</qtype>
@@ -302,7 +313,6 @@
     </group>
     <group name="Test (repeatable)">
         <gtext>Details of Earning Members of the Household</gtext>
-        <repeatable>T</repeatable>
         <rchunk>
             <rtext>Details of Earning Members of the Household</rtext>
             <rsize>Number of earning members</rsize>
@@ -343,3 +353,4 @@
     </group>
 
 </groups>
+</resources>

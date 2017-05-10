@@ -5,9 +5,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,11 +13,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.json.JSONException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,10 +54,9 @@ import java.util.Locale;
 import java.util.Set;
 import java.io.File;
 import java.io.FileNotFoundException;
-import android.util.TypedValue;
 import android.view.Gravity;
-import android.util.AttributeSet;
 import android.support.v4.view.GravityCompat;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,7 +66,6 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.text.InputFilter;
-import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.PagerAdapter;
 import android.widget.Toast;
@@ -83,9 +78,9 @@ import android.support.design.widget.NavigationView;
 import android.view.Menu;
 
 public class PVQ extends AppCompatActivity {
-    List Questions = new ArrayList(); // List of all questions
+    List<Object> Questions = new ArrayList<>(); // List of all questions
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
-    List Image_Tags = new ArrayList();
+    List<String> Image_Tags = new ArrayList<>();
     String answers = "";
     TextView ans = null;
     LinearLayout req_buttons;
@@ -98,9 +93,10 @@ public class PVQ extends AppCompatActivity {
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String author = "";
-    List pages = new ArrayList();
+    List<Object> pages = new ArrayList<>();
     ViewPager vp = null;
     DrawerLayout dl = null;
+    HashMap<String, Object> RCs = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,7 +305,7 @@ public class PVQ extends AppCompatActivity {
 
                 // iterates through all questions in group
                 NodeList nList = eE.getElementsByTagName("question");
-                List Qs = new ArrayList();
+                List<Object> Qs = new ArrayList<>();
                 System.out.println(nList.getLength());
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
@@ -349,7 +345,7 @@ public class PVQ extends AppCompatActivity {
 
                 // Iterates through all repeatable chunks in the group
                 NodeList nList2 = eE.getElementsByTagName("rchunk");
-                String num = "";
+                String num;
                 try{
                     num = eE.getElementsByTagName("rsize").item(0).getTextContent();
                 }catch(Exception e){
@@ -380,7 +376,7 @@ public class PVQ extends AppCompatActivity {
                                     Node question = nlist.item(y);
                                     if (question.getNodeType() == Node.ELEMENT_NODE) {
                                         String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
-                                        LinearLayout qu = Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context);
+                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context);
                                     }
                                 }
                                 view1.addView(qchunk, view1.getChildCount() - 1);
@@ -675,7 +671,7 @@ public class PVQ extends AppCompatActivity {
             }
             mImageView.setBackgroundColor(Color.CYAN);
             TextView itag = new TextView(this);
-            itag.setText((String)Image_Tags.get(Image_Tags.size()-1));
+            itag.setText(Image_Tags.get(Image_Tags.size()-1));
             camera_question.addView(itag);
             camera_question.addView(mImageView);
         }
@@ -683,13 +679,13 @@ public class PVQ extends AppCompatActivity {
     // don't generate a picture when report has not been completed
 
     // writes current answers and returns them as one string; optionally writes them to file
-    public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf) {
+    public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf, boolean rj) {
         String total = ""; // string with all answers
         //String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         String unanswered = "";
         Boolean use_un = false;
-        HashMap json = new HashMap();
-        HashMap groups = new HashMap();
+        HashMap<String,Object> json = new HashMap<>();
+        HashMap<String,Object> groups = new HashMap<>();
         json.put("Groups", groups);
         if (toFile) {
             try {
@@ -703,9 +699,9 @@ public class PVQ extends AppCompatActivity {
             }
         }
         // set of group names
-        Set<String> keys = qgs.keySet();
+        Set keys = qgs.keySet();
         // iterates through group names
-        for(String key:keys) {
+        for(Object key:keys) {
             String name = "Section: "+key + "\n";
             total += name;
             //unanswered += "\n"+name;
@@ -713,8 +709,8 @@ public class PVQ extends AppCompatActivity {
             boolean in_list = false;
             // iterates through list of questions
 
-            HashMap questions = new HashMap();
-            groups.put(key, questions);
+            HashMap<String, Object> questions = new HashMap<>();
+            groups.put((String)key, questions);
 
             for (int i = 0; i < qs.size(); i++) {
                 // gets question linear layout
@@ -735,7 +731,7 @@ public class PVQ extends AppCompatActivity {
                 // based on question tag (type), completes question line with answer in appropriate fashion
                 // if for submission, returns "" if any required (*) questions don't have answers
                 // otherwise adds unanswered required questions to unanswered string
-                if (tag.equals("T") || tag.equals("N")) {
+                if(tag.equals("T") || tag.equals("N")) {
                     EditText editText = (EditText) q.findViewWithTag("answer");
                     if (editText.getText().toString().equals("") && question.endsWith("*") && !incomplete) {
                         System.out.println("oops");
@@ -841,7 +837,20 @@ public class PVQ extends AppCompatActivity {
                 if(question.endsWith("*")){
                     jquestion = question.substring(0,question.length()-1);
                 }
-                questions.put(jquestion,qans);
+                if(questions.containsKey(jquestion)){
+                    if(questions.get(jquestion) instanceof ArrayList){
+                        ((ArrayList<Object>)questions.get(jquestion)).add(qans);
+                    }else{
+                        String first_elem = (String)questions.get(jquestion);
+                        questions.remove(jquestion);
+                        ArrayList<Object> elems = new ArrayList<>();
+                        elems.add(first_elem);
+                        elems.add(qans);
+                        questions.put(jquestion, elems);
+                    }
+                }else {
+                    questions.put(jquestion, qans);
+                }
                 if (toFile) {
                     try {
                         // writes answers to file
@@ -861,6 +870,10 @@ public class PVQ extends AppCompatActivity {
         if(use_un){
             // returns string of unanswered questions if any are present
             return "!<!," + unanswered;
+        }
+
+        if(rj){
+            return json.toString();
         }
 
         if(jf != null) {
@@ -893,7 +906,7 @@ public class PVQ extends AppCompatActivity {
         }
 
         // calls writeAnswers first to check for unanswered required questions
-        String answers = writeAnswers(Groups, false, fos, false, null);
+        String answers = writeAnswers(Groups, false, fos, false, null, false);
         if (answers.equals("")) {
             AlertDialog.Builder bdr = builder;
             bdr.setMessage("Answer all required questions before submitting");
@@ -903,7 +916,7 @@ public class PVQ extends AppCompatActivity {
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
-            System.out.println(writeAnswers(Groups, true, fos, false, jfos));
+            System.out.println(writeAnswers(Groups, true, fos, false, jfos, false));
         }
         try {
             fos.close();
@@ -925,7 +938,7 @@ public class PVQ extends AppCompatActivity {
 
     // updates ans TextView on submit page with current answers
     public void update_answers(){
-        answers = writeAnswers(Groups, false, null, true, null);
+        answers = writeAnswers(Groups, false, null, true, null, false);
         //ans.setText(answers);
         if(answers.substring(0,4).equals("!<!,")){
             String req_msg = "The following sections have required questions that need to be answered:";
@@ -1008,6 +1021,22 @@ public class PVQ extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public static HashMap<String, String> jsonToMap(String t) throws JSONException {
+
+        HashMap<String, String> map = new HashMap<>();
+        JSONObject jObject = new JSONObject(t);
+        Iterator<?> keys = jObject.keys();
+
+        while( keys.hasNext() ){
+            String key = (String)keys.next();
+            String value = jObject.getString(key);
+            map.put(key, value);
+
+        }
+
+        return map;
     }
 }
 
@@ -1097,6 +1126,7 @@ class NumWatcher implements TextWatcher {
     private Context context;
     private List list1;
     private List list2;
+    private List list3;
     private int max;
     NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
         this.view1 = ll;
@@ -1113,6 +1143,7 @@ class NumWatcher implements TextWatcher {
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
                 System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
                 System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
+                System.out.println(list3.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
             }
         }
         view1.removeAllViews();
@@ -1138,30 +1169,5 @@ class NumWatcher implements TextWatcher {
     }
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
-}
-
-class CustomDrawerLayout extends DrawerLayout {
-
-    public CustomDrawerLayout(Context context) {
-        super(context);
-    }
-
-    public CustomDrawerLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public CustomDrawerLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        widthMeasureSpec = MeasureSpec.makeMeasureSpec(
-                MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY);
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
 }
 
