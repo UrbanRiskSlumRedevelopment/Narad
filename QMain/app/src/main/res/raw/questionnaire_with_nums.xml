@@ -1,0 +1,228 @@
+<resources>
+    <metadata>
+        <title>Housing Survey</title>
+        <idfield>City</idfield>
+        <idfield>Location - Ward No/Name</idfield>
+        <idfield>Name of Slum</idfield>
+        <idfield>House/Flat/Door No.</idfield>
+    </metadata>
+    <groups>
+        <group no="I" name="general_info">
+            <gtext>General Information</gtext>
+            <question>
+                <q>1</q>
+                <qtext>City</qtext>
+                <qtype>T</qtype>
+                <qhint>Enter city</qhint>
+                <req>T</req>
+                <uid>T</uid>
+            </question>
+            <question>
+                <q>2</q>
+                <qtext>Location - Ward No/Name</qtext>
+                <qtype>T</qtype>
+                <req>T</req>
+                <qhint>Enter location</qhint>
+                <uid>T</uid>
+            </question>
+            <question>
+                <q>3</q>
+                <qtext>Name of Slum</qtext>
+                <qtype>T</qtype>
+                <qhint>Enter slum</qhint>
+                <req>T</req>
+                <uid>T</uid>
+            </question>
+            <question>
+                <q>4</q>
+                <qtext>House/Flat/Door No.</qtext>
+                <qtype>N</qtype>
+                <qhint>Enter number</qhint>
+                <req>T</req>
+                <uid>T</uid>
+            </question>
+        </group>
+        <group no="II" name="family">
+            <gtext>Household Level General Information</gtext>
+            <question name="Head of Family">
+                <q>5</q>
+                <qtext>Name of Head of the Family</qtext>
+                <qtype>T</qtype>
+                <qhint>Enter text</qhint>
+                <req>T</req>
+            </question>
+            <question name="Minority Status">
+                <q>6</q>
+                <qtext>Minority Status</qtext>
+                <qtype>SC</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Non-Minority</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Minority</ctext>
+                    </choice>
+                </choices>
+            </question>
+            <question name="Female-headed">
+                <q>7</q>
+                <qtext>Female-headed Household?</qtext>
+                <qtype>LC</qtype>
+                <qhint>Select one</qhint>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                        <extra>T</extra>
+                        <dependents>8</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                        <extra>F</extra>
+                    </choice>
+                </choices>
+                <req>T</req>
+            </question>
+            <question>
+                <q>8</q>
+                <inv>T</inv>
+                <qtext>Status of female head?</qtext>
+                <qhint>Select one</qhint>
+                <qtype>SC</qtype>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Married</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Widowed</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Abandoned/Single</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Divorced</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Unwed Mother</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>9</q>
+                <qtype>S</qtype>
+                <qtext>Number of family members</qtext>
+                <qhint>Enter number</qhint>
+                <factor>
+                    <ftext>Male</ftext>
+                </factor>
+                <factor>
+                    <ftext>Female</ftext>
+                </factor>
+                <req>T</req>
+            </question>
+            <question name="Poverty Line">
+                <q>10</q>
+                <qtext>Is your family below the poverty line?</qtext>
+                <qtype>LC</qtype>
+                <qhint>Select one</qhint>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                        <extra>T</extra>
+                        <dependents>11</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                        <extra>F</extra>
+                    </choice>
+                    <choice>
+                        <ctext>Don't know</ctext>
+                        <extra>F</extra>
+                    </choice>
+                </choices>
+                <req>T</req>
+            </question>
+            <question>
+                <q>11</q>
+                <inv>T</inv>
+                <qtext>Does the family possess BPL card?</qtext>
+                <qhint>Select one</qhint>
+                <qtype>SC</qtype>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>12</q>
+                <qtext>Household Appliances</qtext>
+                <qhint>Select all that apply</qhint>
+                <qtype>MC</qtype>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Cell Phone</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Refrigerator</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Television</ctext>
+                    </choice>
+                </choices>
+            </question>
+        </group>
+        <group no="III" name="earning_members">
+            <gtext>Details of Earning Members of the Household</gtext>
+            <rchunk>
+                <q>13</q>
+                <rtext>Details of Earning Members of the Household</rtext>
+                <rsize>Number of earning members</rsize>
+                <rlimit>20</rlimit>
+                <rquestion name="test4">
+                    <qtype>T</qtype>
+                    <qtext>Name</qtext>
+                    <qhint>Enter name</qhint>
+                    <req>T</req>
+                </rquestion>
+                <rquestion name="test5">
+                    <qtype>T</qtype>
+                    <qtext>Relation to head of family</qtext>
+                    <qhint>Enter relation</qhint>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <qtype>N</qtype>
+                    <qtext>Age</qtext>
+                    <qhint>Enter age</qhint>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <qtype>SC</qtype>
+                    <qtext>Sex</qtext>
+                    <qhint>Select one</qhint>
+                    <req>F</req>
+                    <choices>
+                        <choice>
+                            <ctext>Male</ctext>
+                        </choice>
+                        <choice>
+                            <ctext>Female</ctext>
+                        </choice>
+                    </choices>
+                </rquestion>
+            </rchunk>
+        </group>
+
+    </groups>
+</resources>

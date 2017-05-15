@@ -1,0 +1,1218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<groups>
+		<group no="I" name="general_info">
+			<gtext>General Information</gtext>
+			<repeatable>F</repeatable>
+			<question no="1" name="name_of_slum">
+				<qtext>Name of Slum</qtext>
+				<qtype>T</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="2" name="location_ward_name">
+				<qtext>Location - Ward No / Name</qtext>
+				<qtype>T</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="3" name="house_flat_door_no">
+				<qtext>House / Flat / Door No</qtext>
+				<qtype>T</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+		</group>
+		<group no="II" name="household_general_info">
+			<gtext>Household level general information</gtext>
+			<repeatable>F</repeatable>
+			<question no="4" name="name_of_head">
+				<qtext>Name of head of family</qtext>
+				<qtype>T</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="5" name="fathers_name">
+				<qtext>Father's name</qtext>
+				<qtype>T</qtype>
+				<qhint>Name of head of family's father</qhint>
+				<req>F</req>
+			</question>
+			<question no="6" name="sex">
+				<qtext>Sex</qtext>
+				<qtype>LC</qtype>
+				<qhint></qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Male</ctext>
+						<ccode>01</ccode>
+						<extra>F</extra>
+					</choice>
+					<choice>
+						<ctext>Female</ctext>
+						<ccode>02</ccode>
+						<extra>T</extra>
+						<equestion no="10" name="female_head_status">
+							<qtext>If female headed household, status of female head</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Married</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>Widowed</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>Abandoned/Single</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>Divorced</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>Unwed mother</ctext>
+									<ccode>05</ccode>
+								</choice>
+								<choice>
+									<ctext>Other</ctext>
+									<ccode>49</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>03</ccode>
+						<extra>F</extra>
+					</choice>
+				</choices>
+			</question>
+			<question no="7" name="caste">
+				<qtext>Caste</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>General</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>SC</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>ST</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>OBC</ctext>
+						<ccode>04</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="8" name="religion">
+				<qtext>Religion</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Hindu</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Muslim</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Christian</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Sikh</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Jainism</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Buddhism</ctext>
+						<ccode>06</ccode>
+					</choice>
+					<choice>
+						<ctext>Zoroastrianism</ctext>
+						<ccode>07</ccode>
+					</choice>
+					<choice>
+						<ctext>Others</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="9" name="minority_status">
+				<qtext>Minority status in State/UT</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Non-minority</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Minority</ctext>
+						<ccode>02</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="11a" name="male_family_members">
+				<qtext>No of family members - male</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="11b" name="female_family_members">
+				<qtext>No of family members - female</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="12a" name="male_illiterate_adult_members">
+				<qtext>No of illiterate adult members - male</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="12b" name="female_illiterate adult_members">
+				<qtext>No of illiterate adult members - female</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="13a" name="male_unattending_children">
+				<qtext>No of children in age-group 6-14 not attending school - male</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="13b" name="female_unattending_children">
+				<qtext>No of children in age-group 6-14 not attending school - female</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="14a" name="physically_disabled_members">
+				<qtext>No of physically disabled members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="14b" name="mentally_family_members">
+				<qtext>No of mentally disabled members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="15" name="earning_female_status">
+				<qtext>If major earning member is female, whether</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Married</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Widowed</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Abandoned/Single</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Divorced</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Unwed mother</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="16" name="below_poverty_line">
+				<qtext>Is your family below poverty line</qtext>
+				<qtype>LC</qtype>
+				<qhint></qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Yes</ctext>
+						<ccode>01</ccode>
+						<extra>T</extra>
+						<equestion no="17" name="have_bpl_card">
+							<qtext>Does the family possess BPL card</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Yes</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>No</ctext>
+									<ccode>02</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>No</ctext>
+						<ccode>02</ccode>
+						<extra>F</extra>
+					</choice>
+					<choice>
+						<ctext>Don't know</ctext>
+						<ccode>99</ccode>
+						<extra>F</extra>
+					</choice>
+				</choices>
+			</question>
+		</group>
+		<group no="III" name="household_detailed_info">
+			<gtext>Household level detailed information</gtext>
+			<repeatable>F</repeatable>
+			<question no="18" name="tenure_status">
+				<qtext>Land tenure status</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Patta</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Possession certificate / Occupancy right</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Private land encroached</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Public land encroached</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Rented</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="19" name="house_type">
+				<qtext>Type / Structure of house</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Pucca</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Semi-pucca</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Katcha</ctext>
+						<ccode>03</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="20" name="roof_type">
+				<qtext>Type of roof</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Grass / thatched</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Tarpaulin</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Wooden</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Asbestos</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Tiled</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Cement / concrete slab</ctext>
+						<ccode>06</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="21" name="floor_type">
+				<qtext>Type of flooring</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Mud</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Brick</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Stone</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Cement</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Tiles</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="22" name="house_lighting">
+				<qtext>House lighting</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Electricity connection</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Kerosene</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Firewood</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="23" name="cooking_fuel">
+				<qtext>Fuel for cooking</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Gas</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Electricity</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Kerosene</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Charcoal</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Firewood</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="24a" name="drinking_water_source">
+				<qtext>Source of drinking water</qtext>
+				<qtype>LC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Tap within premises</ctext>
+						<ccode>01</ccode>
+						<extra>T</extra>
+						<equestion no="24b" name="water_supply_duration">
+							<qtext>Duration of water supply</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 1 hour daily</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>1 - 2 hrs daily</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 2 hrs daily</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>Once a week</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>Twice a week</ctext>
+									<ccode>05</ccode>
+								</choice>
+								<choice>
+									<ctext>Not regular</ctext>
+									<ccode>06</ccode>
+								</choice>
+								<choice>
+									<ctext>No supply</ctext>
+									<ccode>99</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Tubewell / handpump within premises</ctext>
+						<ccode>02</ccode>
+						<extra>F</extra>
+					</choice>
+					<choice>
+						<ctext>Open well within premises</ctext>
+						<ccode>03</ccode>
+						<extra>F</extra>
+					</choice>
+					<choice>
+						<ctext>Public tap</ctext>
+						<ccode>04</ccode>
+						<extra>T</extra>
+						<equestion no="25" name="distance_from_source">
+							<qtext>Distance from drinking water source</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 0.5km</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>0.5 to 1km</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>1 to 2km</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>2 to 5km</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5km</ctext>
+									<ccode>05</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Tubewell / borewell / handpump outside premises</ctext>
+						<ccode>05</ccode>
+						<extra>T</extra>
+						<equestion no="25" name="distance_from_source">
+							<qtext>Distance from drinking water source</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 0.5km</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>0.5 to 1km</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>1 to 2km</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>2 to 5km</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5km</ctext>
+									<ccode>05</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Open well outside premises</ctext>
+						<ccode>06</ccode>
+						<extra>T</extra>
+						<equestion no="25" name="distance_from_source">
+							<qtext>Distance from drinking water source</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 0.5km</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>0.5 to 1km</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>1 to 2km</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>2 to 5km</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5km</ctext>
+									<ccode>05</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Tank / pond</ctext>
+						<ccode>07</ccode>
+						<extra>T</extra>
+						<equestion no="25" name="distance_from_source">
+							<qtext>Distance from drinking water source</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 0.5km</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>0.5 to 1km</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>1 to 2km</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>2 to 5km</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5km</ctext>
+									<ccode>05</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>River / canal / lake / spring</ctext>
+						<ccode>08</ccode>
+						<extra>T</extra>
+						<equestion no="25" name="distance_from_source">
+							<qtext>Distance from drinking water source</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Less than 0.5km</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>0.5 to 1km</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>1 to 2km</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>2 to 5km</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5km</ctext>
+									<ccode>05</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>Water tanker</ctext>
+						<ccode>09</ccode>
+						<extra>F</extra>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+						<extra>F</extra>
+					</choice>
+				</choices>
+			</question>
+			<question no="26" name="toilet_facility">
+				<qtext>Existence of toilet facility</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Own septic tank / flush latrine</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Own dry latrine</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Shared septic tank / flush latrine</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Shared dry latrine</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Community septic tank / flush latrine</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Community dry latrine</ctext>
+						<ccode>06</ccode>
+					</choice>
+					<choice>
+						<ctext>Open defecation</ctext>
+						<ccode>07</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="27" name="bathroom_facility">
+				<qtext>Existence of bathroom facility</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Within premises</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Outside premises</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Community bath</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>No bathroom</ctext>
+						<ccode>04</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="28" name="front_road">
+				<qtext>Road in front of house</qtext>
+				<qtype>SC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Motorable pucca</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Motorable katcha</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Non-motorable pucca</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Non-motorable katcha</ctext>
+						<ccode>04</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="29" name="pre_school_availability">
+				<qtext>Type of pre-school available</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Municipal</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Government</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Private</ctext>
+						<ccode>03</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="30" name="primary_school_availability">
+				<qtext>Type of primary school available</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Municipal</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Government</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Private</ctext>
+						<ccode>03</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="31" name="high_school_availability">
+				<qtext>Type of high school available</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Municipal</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Government</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Private</ctext>
+						<ccode>03</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="32" name="health_facility_access">
+				<qtext>Type of health facility access</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Primary health centre</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Government hospital</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Maternity centre</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Private clinic</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Rural medical practitioner (RMP)</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Ayurvedic doctor / Vaidya</ctext>
+						<ccode>06</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="33" name="welfare_benefits_access">
+				<qtext>Access to welfare benefits by any family member</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Old age pension</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Widow pension</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Disabled pension</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Health insurance</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>General insurance</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>Other</ctext>
+						<ccode>49</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="34" name="consumer_durables">
+				<qtext>Consumer durables</qtext>
+				<qtype>MC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Electric fan</ctext>
+						<ccode>01</ccode>
+					</choice>
+					<choice>
+						<ctext>Refrigerator</ctext>
+						<ccode>02</ccode>
+					</choice>
+					<choice>
+						<ctext>Cooler</ctext>
+						<ccode>03</ccode>
+					</choice>
+					<choice>
+						<ctext>Residential telephone</ctext>
+						<ccode>04</ccode>
+					</choice>
+					<choice>
+						<ctext>Mobile phone</ctext>
+						<ccode>05</ccode>
+					</choice>
+					<choice>
+						<ctext>B/W television</ctext>
+						<ccode>06</ccode>
+					</choice>
+					<choice>
+						<ctext>Colour television</ctext>
+						<ccode>07</ccode>
+					</choice>
+					<choice>
+						<ctext>Sewing machine</ctext>
+						<ccode>08</ccode>
+					</choice>
+					<choice>
+						<ctext>Furniture</ctext>
+						<ccode>09</ccode>
+					</choice>
+					<choice>
+						<ctext>Bicycle</ctext>
+						<ccode>10</ccode>
+					</choice>
+					<choice>
+						<ctext>Rickshaw</ctext>
+						<ccode>11</ccode>
+					</choice>
+					<choice>
+						<ctext>Push cart</ctext>
+						<ccode>12</ccode>
+					</choice>
+					<choice>
+						<ctext>Bullock cart</ctext>
+						<ccode>13</ccode>
+					</choice>
+					<choice>
+						<ctext>Two wheeler</ctext>
+						<ccode>14</ccode>
+					</choice>
+					<choice>
+						<ctext>Three wheeler</ctext>
+						<ccode>15</ccode>
+					</choice>
+					<choice>
+						<ctext>Taxi</ctext>
+						<ccode>16</ccode>
+					</choice>
+					<choice>
+						<ctext>Car</ctext>
+						<ccode>17</ccode>
+					</choice>
+				</choices>
+			</question>
+			<question no="35a" name="live_stock">
+				<qtext>Live stock</qtext>
+				<qtype>LC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Yes</ctext>
+						<ccode>01</ccode>
+						<extra>T</extra>
+						<equestion no="35b" name="livestock_types">
+							<qtext>Type of livestock</qtext>
+							<qtype>MC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Buffalo</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>Cow</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>Sheep / Goat</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>Pig</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>Hen / Cock</ctext>
+									<ccode>05</ccode>
+								</choice>
+								<choice>
+									<ctext>Donkey</ctext>
+									<ccode>06</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>No</ctext>
+						<ccode>02</ccode>
+						<extra>F</extra>
+					</choice>
+				</choices>
+			</question>
+		</group>
+		<group no="IV" name="migration_details">
+			<gtext>Migration details of household, if applicable</gtext>
+			<repeatable>F</repeatable>
+			<question no="36x" name="whether_migrated">
+				<qtext>Whether the head of family migrated to city/town</qtext>
+				<qtype>LC</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+				<choices>
+					<choice>
+						<ctext>Yes</ctext>
+						<ccode>01</ccode>
+						<extra>T</extra>
+						<equestion no="36" name="years_of_stay">
+							<qtext>Number of years of stay in this town/city</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>0 - 1 year</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>1 - 3 years</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>3 - 5 years</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>More than 5 years</ctext>
+									<ccode>04</ccode>
+								</choice>
+							</choices>
+						</equestion>
+						<equestion no="37" name="migrated_from">
+							<qtext>Whether migrated from</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Rural to urban area</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>Urban to urban area</ctext>
+									<ccode>02</ccode>
+								</choice>
+							</choices>
+						</equestion>
+						<equestion no="38" name="migration_type">
+							<qtext>Type of migration</qtext>
+							<qtype>SC</qtype>
+							<qhint>None</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Seasonal</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>Permanent</ctext>
+									<ccode>02</ccode>
+								</choice>
+							</choices>
+						</equestion>
+						<equestion no="39" name="reasons_for_migration">
+							<qtext>Reasons for migration</qtext>
+							<qtype>MC</qtype>
+							<qhint>Select all applicable</qhint>
+							<req>F</req>
+							<choices>
+								<choice>
+									<ctext>Unemployment</ctext>
+									<ccode>01</ccode>
+								</choice>
+								<choice>
+									<ctext>Low wage</ctext>
+									<ccode>02</ccode>
+								</choice>
+								<choice>
+									<ctext>Debt</ctext>
+									<ccode>03</ccode>
+								</choice>
+								<choice>
+									<ctext>Drought</ctext>
+									<ccode>04</ccode>
+								</choice>
+								<choice>
+									<ctext>Conflict</ctext>
+									<ccode>05</ccode>
+								</choice>
+								<choice>
+									<ctext>Education</ctext>
+									<ccode>06</ccode>
+								</choice>
+								<choice>
+									<ctext>Marriage</ctext>
+									<ccode>07</ccode>
+								</choice>
+								<choice>
+									<ctext>Others</ctext>
+									<ccode>49</ccode>
+								</choice>
+							</choices>
+						</equestion>
+					</choice>
+					<choice>
+						<ctext>No</ctext>
+						<ccode>02</ccode>
+						<extra>F</extra>
+					</choice>
+				</choices>
+			</question>
+		</group>
+		<group no="V" name="income_expenditure_details">
+			<gtext>Income-expenditure details of household</gtext>
+			<repeatable>F</repeatable>
+			<question no="40a" name="no_earning_adults_male">
+				<qtext>Number of earning male adult members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="40b" name="no_earning_adults_female">
+				<qtext>Number of earning female adult members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="41a" name="no_earning_nonadults_male">
+				<qtext>Number of earning male non-adult members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="41b" name="no_earning_nonadults_female">
+				<qtext>Number of earning female non-adult members</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="42" name="avg_monthly_income">
+				<qtext>Average monthly income of household (in Rs.)</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="43" name="avg_monthly_expenditure">
+				<qtext>Average monthly expenditure of household (in Rs.)</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+			<question no="44" name="outstanding_debt">
+				<qtext>Debt outstanding as on the date of survey (in Rs.)</qtext>
+				<qtype>N</qtype>
+				<qhint>None</qhint>
+				<req>F</req>
+			</question>
+		</group>
+		<group no="VI" name="earning_member_details">
+			<gtext>Details of earning members of the household</gtext>
+			<repeatable>T</repeatable>
+			<question name="">
+				<qtext>aldkjfad</qtext>
+				<qtype>T</qtype>
+				<qhint></qhint>
+				<req>F</req>
+			</question>
+		</group>
+	</groups>
+	

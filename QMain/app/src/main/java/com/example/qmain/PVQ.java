@@ -79,6 +79,7 @@ import android.view.Menu;
 
 public class PVQ extends AppCompatActivity {
     List<Object> Questions = new ArrayList<>(); // List of all questions
+    HashMap<String,Object> NumQuestions = new HashMap<>();
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
     List<String> Image_Tags = new ArrayList<>();
     String answers = "";
@@ -96,7 +97,9 @@ public class PVQ extends AppCompatActivity {
     List<Object> pages = new ArrayList<>();
     ViewPager vp = null;
     DrawerLayout dl = null;
-    HashMap<String, Object> RCs = new HashMap<>();
+    List<String> Identifiers = new ArrayList<>();
+    String uid = "";
+    Boolean uid_set = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,7 +243,7 @@ public class PVQ extends AppCompatActivity {
         // Builds Questionnaire
         try{
             // Parses XML doc so code can read it
-            InputStream in = getResources().openRawResource(R.raw.questionnaire);
+            InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -253,6 +256,10 @@ public class PVQ extends AppCompatActivity {
             ScrollView sv1 = new ScrollView(this);
             LinearLayout p1 = new LinearLayout(this);
             p1.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0,10,0,10);
+            p1.setLayoutParams(lp);
 
             // Adds first page to ViewPager
             pg.addView(sv1,0);
@@ -268,6 +275,14 @@ public class PVQ extends AppCompatActivity {
             p1.addView(title);
             pages.add(sections);
 
+            NodeList ids = doc.getElementsByTagName("idfield");
+            for(int d=0; d<ids.getLength();d++){
+                Node idf = ids.item(d);
+                Element idfe = (Element) idf;
+                String idstring = idfe.getTextContent();
+                Identifiers.add(idstring);
+            }
+
 
             // iterates through all groups of questions in XML doc
             NodeList groups = doc.getElementsByTagName("group");
@@ -276,7 +291,7 @@ public class PVQ extends AppCompatActivity {
                 Node gr = groups.item(g);
                 Element eE = (Element) gr;
                 final int g_button = g; // number of group, counting from 0
-                String g_name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent(); // group name
+                String g_name = eE.getElementsByTagName("gtext").item(0).getTextContent(); // group name
 
                 // creates button on menu page linked to group page
                 Button p1_button = new Button(this);
@@ -310,7 +325,7 @@ public class PVQ extends AppCompatActivity {
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this);
+                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this, NumQuestions);
                         if(null == qu){
                             Element eElement = (Element) nNode;
                             // Obtains question type, hint, and text; adds * to question text if required
@@ -376,7 +391,7 @@ public class PVQ extends AppCompatActivity {
                                     Node question = nlist.item(y);
                                     if (question.getNodeType() == Node.ELEMENT_NODE) {
                                         String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
-                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context);
+                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context, null);
                                     }
                                 }
                                 view1.addView(qchunk, view1.getChildCount() - 1);
@@ -721,7 +736,7 @@ public class PVQ extends AppCompatActivity {
                 String question = (String) text.getText();
                 String line = "";
                 String tag = "";
-                String qans = "";
+                Object qans = "";
                 try {
                     tag = (String) q.getTag();
                 } catch (Exception e) {
@@ -804,6 +819,7 @@ public class PVQ extends AppCompatActivity {
                         }
                     }
                 } else if (tag.equals("MC")) {
+                    qans = new ArrayList<>();
                     line = question + ": ";
                     for (int j = 0; j < q.getChildCount(); j++) {
                         String ctag = (String) q.getChildAt(j).getTag();
@@ -811,13 +827,13 @@ public class PVQ extends AppCompatActivity {
                             CheckBox cb = (CheckBox) q.getChildAt(j);
                             if (cb.isChecked()) {
                                 line += cb.getText() + ", ";
+                                ((ArrayList) qans).add(cb.getText());
                             }
                         }
                     }
                     if (line.length() > 20) {
                         line = line.substring(0, line.length() - 2);
                     }
-                    qans = line.substring(line.indexOf(": ") + 2);
                 } else if (tag.equals("M")) {
                     line = question + ": " + LOCATION;
                     qans = LOCATION;
@@ -851,6 +867,18 @@ public class PVQ extends AppCompatActivity {
                 }else {
                     questions.put(jquestion, qans);
                 }
+                System.out.println(Identifiers);
+                if(Identifiers.contains(jquestion) && !uid_set && !qans.equals("") && !qans.equals(" ")){
+                    if(!Identifiers.get(0).equals(jquestion)){
+                        break;
+                    }
+                    String uids = ((String)qans).replace(" ","_");
+                    uids.replace("/","_");
+                    uid += uids + "_";
+                    System.out.println(Identifiers.get(0)+qans);
+                    Identifiers.remove(jquestion);
+                }
+
                 if (toFile) {
                     try {
                         // writes answers to file
@@ -874,6 +902,10 @@ public class PVQ extends AppCompatActivity {
 
         if(rj){
             return json.toString();
+        }
+        if(Identifiers.size() == 0){
+            uid_set = true;
+            timeStamp = uid+"_"+timeStamp;
         }
 
         if(jf != null) {
@@ -902,6 +934,8 @@ public class PVQ extends AppCompatActivity {
             fos = openFileOutput(filename, Context.MODE_PRIVATE);
             jfos = openFileOutput(jsonfilename, Context.MODE_PRIVATE);
         }catch(Exception e){
+            System.out.println(filename);
+            System.out.println(jsonfilename);
             return "";
         }
 
@@ -946,19 +980,21 @@ public class PVQ extends AppCompatActivity {
             List rsects = new ArrayList();
             String scts = answers.substring(4);
             req_buttons.setBackgroundColor(Color.MAGENTA);
-            while(scts.length() > 3){
-                System.out.println(pages);
-                String sct = scts.substring(0, scts.indexOf(",, "));
-                scts = scts.substring(scts.indexOf(",, ") + 3);
-                Button br = new Button(this);
-                br.setText(sct);
-                br.setOnClickListener(new StringOnClickListener(sct) {
-                    public void onClick(View v) {
-                        vp.setCurrentItem(pages.indexOf(s));
-                        System.out.println(s+"   " + Integer.toString(pages.indexOf(s)));
-                    }
-                });
-                req_buttons.addView(br);
+            if(req_buttons.getChildCount() == 0) {
+                while (scts.length() > 3) {
+                    System.out.println(pages);
+                    String sct = scts.substring(0, scts.indexOf(",, "));
+                    scts = scts.substring(scts.indexOf(",, ") + 3);
+                    Button br = new Button(this);
+                    br.setText(sct);
+                    br.setOnClickListener(new StringOnClickListener(sct) {
+                        public void onClick(View v) {
+                            vp.setCurrentItem(pages.indexOf(s));
+                            System.out.println(s + "   " + Integer.toString(pages.indexOf(s)));
+                        }
+                    });
+                    req_buttons.addView(br);
+                }
             }
             System.out.println(scts);
         }else{
@@ -1126,7 +1162,6 @@ class NumWatcher implements TextWatcher {
     private Context context;
     private List list1;
     private List list2;
-    private List list3;
     private int max;
     NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
         this.view1 = ll;
@@ -1143,7 +1178,6 @@ class NumWatcher implements TextWatcher {
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
                 System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
                 System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
-                System.out.println(list3.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
             }
         }
         view1.removeAllViews();
@@ -1161,7 +1195,7 @@ class NumWatcher implements TextWatcher {
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
-                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context);
+                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context, null);
                 }
             }
             view1.addView(qchunk, view1.getChildCount() - 1);
@@ -1171,3 +1205,5 @@ class NumWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
 
+// slider/ratings
+// \/

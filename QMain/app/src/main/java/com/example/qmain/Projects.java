@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
 import java.lang.reflect.Field;
+import java.io.File;
 
 import android.view.View;
 import android.widget.Button;
@@ -19,15 +20,22 @@ public class Projects extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projects);
+        /*
+        something something querying database for different questionnaire versions
+         */
+        // dummy stand-in
+        ArrayList<Object> files = new ArrayList<>();
         LinearLayout layout = (LinearLayout) findViewById(R.id.activity_projects);
+        /*
         Field[] fields = R.raw.class.getFields();
         ArrayList files = new ArrayList();
         System.out.println(fields.length);
-        for(int i = 0; i < fields.length; i++){
-            files.add(fields[i].getName());
+        */
+        files.add("questionnaire");
+        for(int i = 0; i < files.size(); i++){
             System.out.println(files.get(i));
             Button b = new Button(this);
-            b.setText(fields[i].getName());
+            b.setText(files.get(i).toString());
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

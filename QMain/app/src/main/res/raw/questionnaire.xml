@@ -2,9 +2,13 @@
 <resources>
     <metadata>
         <title>Housing Survey</title>
+        <idfield>City</idfield>
+        <idfield>Location - Ward No/Name</idfield>
+        <idfield>Name of Slum</idfield>
+        <idfield>House/Flat/Door No.</idfield>
     </metadata>
 <groups>
-    <group name="Slum">
+    <group no="I" name="general_info">
         <gtext>General Information</gtext>
         <question>
             <qtext>City</qtext>
@@ -35,7 +39,7 @@
             <uid>T</uid>
         </question>
     </group>
-    <group name="Map">
+    <group no="II" name="location_and_photos">
         <gtext>Location and Photos</gtext>
         <question name="Map">
             <qtext>Map</qtext>
@@ -50,7 +54,7 @@
             <req>F</req>
         </question>
     </group>
-    <group name="Family">
+    <group no="III" name="family">
         <gtext>Household Level General Information</gtext>
         <question name="Head of Family">
             <qtext>Name of Head of the Family</qtext>
@@ -311,7 +315,7 @@
             <req>T</req>
         </question>
     </group>
-    <group name="Test (repeatable)">
+    <group no="IV" name="earning_members">
         <gtext>Details of Earning Members of the Household</gtext>
         <rchunk>
             <rtext>Details of Earning Members of the Household</rtext>

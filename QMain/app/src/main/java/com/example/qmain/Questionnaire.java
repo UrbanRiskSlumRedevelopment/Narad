@@ -36,12 +36,10 @@ import android.content.Intent;
 import android.app.AlertDialog;
 import android.widget.CheckBox;
 import android.view.ViewGroup;
-import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.graphics.drawable.ScaleDrawable;
 
 import android.app.Activity;
 import android.view.MotionEvent;
@@ -52,9 +50,7 @@ import android.content.SharedPreferences;
 
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-import android.content.res.Resources;
 
-import com.google.android.gms.games.quest.Quest;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
@@ -76,117 +72,146 @@ public class Questionnaire extends AppCompatActivity {
     HashMap<String, Button> RepeatButtons = new HashMap<>();
     ImageView mImageView = null;
 
-    public static LinearLayout build_question(Node nNode, List list1, List list2, LinearLayout layout1, Context context){
+    public static LinearLayout build_question(Node nNode, List list1, List list2,
+                                              LinearLayout layout1, Context context, HashMap qns){
         LinearLayout q = null;
-            Element eElement = (Element) nNode;
-            String text = "";
-            String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-            String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
-            if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
-                text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
-            }
-            else{
-                text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
-            }
-            List extras = new ArrayList();
-            if (type.equals("T")) {
-                q = TextQ(text, hint, context);
-            } else if (type.equals("N")) {
-                q = NumQ(text, hint, context);
-            } else if (type.equals("SC")) {
-                List c = new ArrayList();
-                NodeList choices = eElement.getElementsByTagName("choice");
-                for (int i = 0; i < choices.getLength(); i++) {
-                    Node choice = choices.item(i);
-                    Element e = (Element) choice;
-                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                    c.add(x);
-                }
-                builder = PVQ.builder;
-                q = SingleChoice(text, c, hint, context, builder);
-            } else if (type.equals("MC")) {
-                List c = new ArrayList();
-                NodeList choices = eElement.getElementsByTagName("choice");
-                for (int i = 0; i < choices.getLength(); i++) {
-                    Node choice = choices.item(i);
-                    Element e = (Element) choice;
-                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                    c.add(x);
-                }
-                builder = PVQ.builder;
-                q = MultipleChoice(text, c, hint, context, builder);
-            } else if (type.equals("M")){
-                return null;
-            } else if (type.equals("C")){
-                return null;
-            } else if (type.equals("S")){
-                NodeList factors = eElement.getElementsByTagName("factor");
-                q = SumQ(text,hint,context,factors);
-            }
-            else if (type.equals("LC")){
-                List c = new ArrayList(); // initializes then fills list of choices
-                NodeList choices = eElement.getElementsByTagName("choice");
-                Node choice = eElement.getElementsByTagName("choice").item(0);
-                //for (int i = 0; i < choices.getLength(); i++) {
-                    //Node choice = choices.item(i);
-                while(choice != null){
-                    Element e;
-                    try{
-                        e = (Element) choice;
-                    }catch(Exception exception){
-                        choice = choice.getNextSibling();
-                        if(choice==null){
-                            break;
-                        }
-                        continue;
-                    }
+        Element eElement = (Element) nNode;
 
-                    //Element e = (Element) choice;
-                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                    String extra = e.getElementsByTagName("extra").item(0).getTextContent();
-                    List extra_questions = new ArrayList();
-                    if(extra.equals("T")){
-                        // loop through list if multiple questions
-                        NodeList questions = eElement.getElementsByTagName("equestion");
-                        for(int k=0; k<questions.getLength();k++){
-                            Node question = questions.item(k);
-                            extra_questions.add(question);
-                        }
-
-                    }
-
-                    List stuff = new ArrayList();
-                    stuff.add(x);
-                    stuff.add(extra);
-                    stuff.add(extra_questions);
-                    c.add(stuff);
+        String text;
+        String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
+        String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
+        if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
+            text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
+        }
+        else{
+            text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
+        }
+        List extras = new ArrayList();
+        if (type.equals("T")) {
+            q = TextQ(text, hint, context);
+        } else if (type.equals("N")) {
+            q = NumQ(text, hint, context);
+        } else if (type.equals("SC")) {
+            List c = new ArrayList();
+            NodeList choices = eElement.getElementsByTagName("choice");
+            for (int i = 0; i < choices.getLength(); i++) {
+                Node choice = choices.item(i);
+                Element e = (Element) choice;
+                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                c.add(x);
+            }
+            builder = PVQ.builder;
+            q = SingleChoice(text, c, hint, context, builder);
+        } else if (type.equals("MC")) {
+            List c = new ArrayList();
+            NodeList choices = eElement.getElementsByTagName("choice");
+            for (int i = 0; i < choices.getLength(); i++) {
+                Node choice = choices.item(i);
+                Element e = (Element) choice;
+                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                c.add(x);
+            }
+            builder = PVQ.builder;
+            q = MultipleChoice(text, c, hint, context, builder);
+        } else if (type.equals("M")){
+            return null;
+        } else if (type.equals("C")){
+            return null;
+        } else if (type.equals("S")){
+            NodeList factors = eElement.getElementsByTagName("factor");
+            q = SumQ(text,hint,context,factors);
+        }
+        else if (type.equals("LC")){
+            List c = new ArrayList(); // initializes then fills list of choices
+            NodeList choices = eElement.getElementsByTagName("choice");
+            Node choice = eElement.getElementsByTagName("choice").item(0);
+            //for (int i = 0; i < choices.getLength(); i++) {
+                //Node choice = choices.item(i);
+            while(choice != null){
+                Element e;
+                try{
+                    e = (Element) choice;
+                }catch(Exception exception){
                     choice = choice.getNextSibling();
-                    if(choice.equals(null)){
+                    if(choice==null){
                         break;
                     }
+                    continue;
                 }
 
-                List q_and_eqs = LinkedQuestion(text, c, hint, context, builder);
-                q = (LinearLayout) q_and_eqs.get(0);
-                for(int o = 0;o<q_and_eqs.size();o++){
-                    if(o>0){
-                        extras.add(q_and_eqs.get(o));
+                //Element e = (Element) choice;
+                String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                String extra = e.getElementsByTagName("extra").item(0).getTextContent();
+                List extra_questions = new ArrayList();
+                if(extra.equals("T")){
+                    // loop through list if multiple questions
+                    /*
+                    NodeList questions = eElement.getElementsByTagName("equestion");
+                    for(int k=0; k<questions.getLength();k++){
+                        Node question = questions.item(k);
+                        extra_questions.add(question);
                     }
+                    */
+                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
+                    String[] deps = dependents.split(",");
+                    for(int d = 0; d<deps.length; d++){
+                        extra_questions.add(deps[d]);
+                    }
+
                 }
 
+                List stuff = new ArrayList();
+                stuff.add(x);
+                stuff.add(extra);
+                stuff.add(extra_questions);
+                System.out.println(extra_questions);
+                System.out.println("!!!!!!!!!");
+                c.add(stuff);
+                choice = choice.getNextSibling();
+                if(choice.equals(null)){
+                    break;
+                }
             }
-            if(layout1 != null){
-                layout1.addView(q);
-            }
-            list1.add(q);
-            list2.add(q);
 
-            for(int o=0;o<extras.size();o++){
-                // Adds question to group LinearLayout, overall list of questions,
-                // and list of questions to be mapped to group name in hash map of questions to groups
-                list1.add((LinearLayout)extras.get(o));
-                list2.add((LinearLayout)extras.get(o));
+            List q_and_eqs = LinkedQuestion(text, c, hint, context, builder, qns);
+            q = (LinearLayout) q_and_eqs.get(0);
+            for(int o = 0;o<q_and_eqs.size();o++){
+                if(o>0){
+                    extras.add(q_and_eqs.get(o));
+                }
             }
+
+        }
+
+        String inv;
+        try{
+            inv = eElement.getElementsByTagName("inv").item(0).getTextContent();
+        }catch(Exception e){
+            inv = "F";
+        }
+
+        if(inv.equals("T")){
+            q.setVisibility(View.GONE);
+        }
+
+        if(layout1 != null){
+            layout1.addView(q);
+        }
+        list1.add(q);
+        list2.add(q);
+
+        for(int o=0;o<extras.size();o++){
+            // Adds question to group LinearLayout, overall list of questions,
+            // and list of questions to be mapped to group name in hash map of questions to groups
+            list1.add((LinearLayout)extras.get(o));
+            list2.add((LinearLayout)extras.get(o));
+        }
+
+        if(qns != null){
+            String num = eElement.getElementsByTagName("q").item(0).getTextContent();
+            qns.put(num, q);
+        }
+
         return q;
     }
 
@@ -446,6 +471,9 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public static LinearLayout SumQ(String questiontext,String hint,Context context,NodeList factors){
+        // store only factors and not total;
+        // if total is a restrictive total should be set as restriction on further ones
+
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
@@ -485,12 +513,17 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public static List LinkedQuestion(String questiontext, List choices, final String hint,
-                                       Context context, AlertDialog.Builder builder){
+                                       Context context, AlertDialog.Builder builder, HashMap qnums){
         LinearLayout qlayout = new LinearLayout(context);
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0,10,0,10);
+        text.setLayoutParams(lp);
+
         // creates group of radio buttons, each button being a choice from choices
         RadioGroup rg = new RadioGroup(context);
         HashMap extras = new HashMap();
@@ -503,16 +536,27 @@ public class Questionnaire extends AppCompatActivity {
             rb.setText(btext);
             extras.put(i, new ArrayList());
             if(choice.get(1).equals("T")){
+                /*
                 for(int h=0; h<((List)choice.get(2)).size(); h++){
                     Node question = (Node)((List)choice.get(2)).get(h);
                     List filler1 = new ArrayList();
                     List filler2 = new ArrayList();
-                    LinearLayout filler3 = null;
-                    LinearLayout q = build_question(question, filler1, filler2, filler3, context);
+                    LinearLayout q = build_question(question, filler1, filler2, null, context, null);
                     ((List)extras.get(i)).add(q);
                     questions.add(q);
 
                 }
+                */
+                /*
+                String dependents = (String)choice.get(2);
+                dependents = dependents.replace(" ","");
+                String[] deps = dependents.split(",");
+                for(int j = 0; j<deps.length; j++){
+                    ((List)extras.get(i)).add(deps[j]);
+                }
+                */
+                System.out.println(choice.get(2));
+                extras.put(i, choice.get(2));
 
             }
 
@@ -521,7 +565,7 @@ public class Questionnaire extends AppCompatActivity {
             System.out.println(rb.getId());
         }
 
-        rg.setOnCheckedChangeListener(new onCheckedChanged(extras, qlayout, context));
+        rg.setOnCheckedChangeListener(new onCheckedChanged(extras, qlayout, context, qnums));
         text.setTag("text");
         rg.setTag("choices");
 
@@ -546,10 +590,8 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.setOrientation(LinearLayout.VERTICAL);
         LinearLayout qh = new LinearLayout(context);
         qh.setOrientation(LinearLayout.HORIZONTAL);
-        //qlayout.addView(text);
         qh.addView(text);
         if(!hint.equals("")){
-            //qlayout.addView(bt);
             qh.addView(bt);
         }
         qlayout.addView(qh);
@@ -579,6 +621,7 @@ public class Questionnaire extends AppCompatActivity {
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+
         // creates group of radio buttons, each button being a choice from choices
         RadioGroup rg = new RadioGroup(context);
         for (int i=0; i<choices.size(); i++) {
@@ -721,10 +764,16 @@ public class Questionnaire extends AppCompatActivity {
         text.setTextSize(20);
         text.setText(questiontext);
 
+        // fix info button
+
         // sets up question linear layout, adds question text
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
-        qlayout.addView(text);
+        //qlayout.addView(text);
+        LinearLayout qh = new LinearLayout(context);
+        qh.setOrientation(LinearLayout.HORIZONTAL);
+        qlayout.addView(qh);
+
 
         // for each question choice, adds checkbox to question linear layout
         for (int i=0; i<choices.size(); i++) {
@@ -741,9 +790,9 @@ public class Questionnaire extends AppCompatActivity {
 
         // sets up info button
         Button bt = new Button(context);
-        bt.setText("?");
-        bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT));
+        Drawable help = ContextCompat.getDrawable(context, R.drawable.help_circle_outline);
+        bt.setBackground(help);
+        bt.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
 
         final AlertDialog.Builder bdr = builder;
 
@@ -754,11 +803,16 @@ public class Questionnaire extends AppCompatActivity {
                 dialog.show();
             }
         });
-
-        if(!hint.equals("")){
-            qlayout.addView(bt);
-        }
         bt.setTag("button");
+
+        //qlayout.addView(text);
+        qh.addView(text);
+        if(!hint.equals("")){
+            //qlayout.addView(bt);
+            qh.addView(bt);
+        }
+        qh.setTag("qh");
+
         qlayout.setTag("MC");
         return qlayout;
     }
@@ -935,16 +989,33 @@ class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
     private LinearLayout ll;
     private HashMap questions;
     private Context context;
+    private HashMap qnums;
     // can take a linear layout, nodelist, and context as parameters
-    public onCheckedChanged(HashMap questions, LinearLayout ll, Context context) {
+    public onCheckedChanged(HashMap questions, LinearLayout ll, Context context, HashMap qnums) {
         this.questions = questions;
         this.context = context;
         this.ll = ll;
+        this.qnums = qnums;
     }
 
     @Override
     public void onCheckedChanged(RadioGroup rg, int p)
     {
+        for(int i=0;i<questions.size();i++){
+            List qs = (List)questions.get(i);
+            if(i==p){
+                for(int h = 0; h<qs.size(); h++) {
+                    String key = (String) qs.get(h);
+                    ((LinearLayout) qnums.get(key)).setVisibility(View.VISIBLE);
+                }
+            }else{
+                for(int h = 0; h<qs.size(); h++) {
+                    String key = (String) qs.get(h);
+                    ((LinearLayout) qnums.get(key)).setVisibility(View.GONE);
+                }
+            }
+        }
+        /*
         for(int i=0; i<questions.size();i++){
             List qs = (List)questions.get(i);
             System.out.println(qs);
@@ -968,7 +1039,7 @@ class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
                     }
                 }
             }
-        }
+        } */
 
 
     }
