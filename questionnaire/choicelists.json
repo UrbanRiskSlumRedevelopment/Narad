@@ -1,0 +1,53 @@
+{
+  "choicelists": {
+    "choicelist": [
+      {
+        "-name": "occupation",
+        "choices": {
+          "choice": [
+            {
+              "ctext": "",
+              "ccode": "01"
+            },
+            {
+              "ctext": "",
+              "ccode": "02"
+            },
+            {
+              "ctext": "",
+              "ccode": "03"
+            },
+            {
+              "ctext": "",
+              "ccode": "04"
+            },
+            {
+              "ctext": "",
+              "ccode": "05"
+            },
+            {
+              "ctext": "",
+              "ccode": "06"
+            },
+            {
+              "ctext": "",
+              "ccode": "07"
+            },
+            {
+              "ctext": "",
+              "ccode": "08"
+            },
+            {
+              "ctext": "",
+              "ccode": "09"
+            },
+            {
+              "ctext": "",
+              "ccode": "10"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
