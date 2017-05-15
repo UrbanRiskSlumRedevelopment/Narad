@@ -1,0 +1,165 @@
+{
+  "groups" : {
+    "group": [
+      {
+        "_COMMENT": "Leave blank, Use following as template to add more groups / questions"
+      },
+      {
+        "-name": "",
+        "gtext": "",
+        "repeatable": "",
+        "question": [
+          {
+            "-name": "",
+            "qtext": "",
+            "qtype": "",
+            "qhint": "",
+            "req": ""
+          }
+        ]
+      },
+      {
+        "_COMMENT": "Use following for reference about question types"
+      },
+      {
+        "-name": "group_name_property",
+        "gtext": "Section title | Question types reference - Non-repeatable",
+        "repeatable": "T or F",
+        "question": [
+          {
+            "-name": "text",
+            "qtext": "Input answer in a text field",
+            "qtype": "T",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F"
+          },
+          {
+            "-name": "number",
+            "qtext": "Input answer in a number only text field",
+            "qtype": "N",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F"
+          },
+          {
+            "-name": "single_choice",
+            "qtext": "Single choice question, radio buttons",
+            "qtype": "SC",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Choice 1",
+                  "ccode": "01"
+                },
+                {
+                  "ctext": "Choice 2",
+                  "ccode": "02"
+                },
+                {
+                  "ctext": "Choice ..n",
+                  "ccode": "n"
+                }
+              ]
+            }
+          },
+          {
+            "-name": "linked_single_choice",
+            "qtext": "Linked questions appear based on selection",
+            "qtype": "LC",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F",
+            "choices": {
+              "choice": [
+                {
+                  "ctext": "Choice 1",
+                  "extra": "MANDATORY | Follow up question? T or F",
+                  "equestion": [
+                    {
+                      "-name": "",
+                      "qtext": "First follow up question, if extra = T",
+                      "qtype": "",
+                      "qhint": "",
+                      "req": ""
+                    },
+                    {
+                      "-name": "",
+                      "qtext": "Next follow up questions, if extra = T",
+                      "qtype": "",
+                      "qhint": "",
+                      "req": ""
+                    }
+                  ]
+                },
+                {
+                  "ctext": "Choice 2",
+                  "extra": "F"
+                },
+                {
+                  "ctext": "Choice ..n",
+                  "extra": "F"
+                }
+              ]
+            }
+          },
+          {
+            "-name": "multiple_values_&_sum",
+            "qtext": "Multiple number fields with key, input",
+            "qtype": "S",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F",
+            "factor": [
+              {
+                "ftext": "Factor text 1",
+                "fcode": "01"
+              },
+              {
+                "ftext": "Factor text 2 OR ..n?",
+                "fcode": "n"
+              }
+            ]
+          },
+          {
+            "-name": "upload_picture",
+            "qtext": "Launch camera to take & include photo",
+            "qtype": "C",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F"
+          },
+          {
+            "-name": "pick_location",
+            "qtext": "Launch map to tag geolocation",
+            "qtype": "M",
+            "qhint": "Provide hint or leave blank",
+            "req": "Required? T or F"
+          }
+        ]
+      },
+      {
+        "-name": "group_name_property",
+        "gtext": "Section title | Question types reference - Repeatable",
+        "repeatable": "T",
+        "rchunk": {
+          "rtext": "Repeatable chunk title",
+          "rsize": "Question phrase, with answer as a number | determines repeatable instances of chunk",
+          "rquestion": [
+            {
+              "-name": "repeatable_chunk_question_1",
+              "qtext": "",
+              "qtype": "",
+              "qhint": "",
+              "req": ""
+            },
+            {
+              "-name": "repeatable_chunk_question_n",
+              "qtext": "",
+              "qtype": "",
+              "qhint": "",
+              "req": ""
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
