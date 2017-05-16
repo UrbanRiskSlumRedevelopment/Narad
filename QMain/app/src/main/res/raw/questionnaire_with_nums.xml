@@ -69,12 +69,11 @@
             <question name="Female-headed">
                 <q>7</q>
                 <qtext>Female-headed Household?</qtext>
-                <qtype>LC</qtype>
+                <qtype>SC</qtype>
                 <qhint>Select one</qhint>
                 <choices>
                     <choice>
                         <ctext>Yes</ctext>
-                        <extra>T</extra>
                         <dependents>8</dependents>
                     </choice>
                     <choice>
@@ -128,21 +127,18 @@
             <question name="Poverty Line">
                 <q>10</q>
                 <qtext>Is your family below the poverty line?</qtext>
-                <qtype>LC</qtype>
+                <qtype>SC</qtype>
                 <qhint>Select one</qhint>
                 <choices>
                     <choice>
                         <ctext>Yes</ctext>
-                        <extra>T</extra>
                         <dependents>11</dependents>
                     </choice>
                     <choice>
                         <ctext>No</ctext>
-                        <extra>F</extra>
                     </choice>
                     <choice>
                         <ctext>Don't know</ctext>
-                        <extra>F</extra>
                     </choice>
                 </choices>
                 <req>T</req>
@@ -172,20 +168,33 @@
                 <choices>
                     <choice>
                         <ctext>Cell Phone</ctext>
+                        <dependents>13</dependents>
                     </choice>
                     <choice>
                         <ctext>Refrigerator</ctext>
                     </choice>
                     <choice>
                         <ctext>Television</ctext>
+                        <dependents>13</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Washing Machine</ctext>
                     </choice>
                 </choices>
+            </question>
+            <question>
+                <q>13</q>
+                <inv>T</inv>
+                <qtext>Service Provider?</qtext>
+                <qhint>Enter TV/phone service provider</qhint>
+                <qtype>T</qtype>
+                <req>F</req>
             </question>
         </group>
         <group no="III" name="earning_members">
             <gtext>Details of Earning Members of the Household</gtext>
             <rchunk>
-                <q>13</q>
+                <q>14</q>
                 <rtext>Details of Earning Members of the Household</rtext>
                 <rsize>Number of earning members</rsize>
                 <rlimit>20</rlimit>
@@ -223,6 +232,88 @@
                 </rquestion>
             </rchunk>
         </group>
-
+        <group no="IV" name="household_detail">
+            <gtext>Household Level Detailed Information</gtext>
+            <question>
+                <q>24</q>
+                <qtext>Source of drinking water</qtext>
+                <qhint></qhint>
+                <qtype>SC</qtype>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Tap</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Tubewell/handpump</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Open well</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Public tap</ctext>
+                        <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Tank/pond</ctext>
+                        <dependents>25</dependents>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>25</q>
+                <qtext>If outside premises, then distance from drinking water source</qtext>
+                <qtype>SC</qtype>
+                <qhint></qhint>
+                <req>F</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>Less than 0.5 kms</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>0.5 to 1.0 km</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>1.0 to 2.0 km</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>2.0 to 5.0 km</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>More than 5.0 km</ctext>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>26</q>
+                <qtype>SC</qtype>
+                <qhint></qhint>
+                <qtext>Existence of toilet facility</qtext>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Own septic tank/flush latrine</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Own dry latrine</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Shared septic tank/flush latrine</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Shared dry latrine</ctext>
+                    </choice>
+                    <choice>
+                        <ctext>Community septic tank/flush latrine</ctext>
+                        <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Community dry latrine</ctext>
+                        <dependents>25</dependents>
+                    </choice>
+                </choices>
+            </question>
+        </group>
     </groups>
 </resources>

@@ -165,7 +165,9 @@ public class Home extends AppCompatActivity {
                     try {
                         city = city.substring(0, city.lastIndexOf("  "));
                     }catch(StringIndexOutOfBoundsException e){
-                        city = city.substring(city.indexOf(" ")+1);
+                        if(city.substring(0,1).equals(" ")){
+                            city = city.substring(1);
+                        }
                     }
                     city_hm.put(city,bt);
                 }
@@ -365,3 +367,5 @@ public class Home extends AppCompatActivity {
     }
 }
 
+
+// onBackPressed doesn't go anywhere -- leaves city only on button press (create button)

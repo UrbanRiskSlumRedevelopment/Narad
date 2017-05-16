@@ -17,6 +17,7 @@ import org.w3c.dom.Element;
 
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.text.Editable;
@@ -69,11 +70,10 @@ public class Questionnaire extends AppCompatActivity {
     public static AlertDialog.Builder builder = null;
     public Context context = this;
     public static String LOCATION = "";
-    HashMap<String, Button> RepeatButtons = new HashMap<>();
     ImageView mImageView = null;
 
     public static LinearLayout build_question(Node nNode, List list1, List list2,
-                                              LinearLayout layout1, Context context, HashMap qns){
+                                              LinearLayout layout1, Context context, HashMap qns, HashMap ds){
         LinearLayout q = null;
         Element eElement = (Element) nNode;
 
@@ -94,25 +94,52 @@ public class Questionnaire extends AppCompatActivity {
         } else if (type.equals("SC")) {
             List c = new ArrayList();
             NodeList choices = eElement.getElementsByTagName("choice");
+            HashMap<String, ArrayList> dependencies = new HashMap<>();
             for (int i = 0; i < choices.getLength(); i++) {
                 Node choice = choices.item(i);
                 Element e = (Element) choice;
                 String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                 c.add(x);
+                try {
+                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
+                    dependents.replace(" ","");
+                    String[] deps = dependents.split(",");
+                    ArrayList dps = new ArrayList();
+                    for(int d = 0; d < deps.length; d++){
+                        dps.add(deps[d]);
+                    }
+                    dependencies.put(x, dps);
+                }catch(Exception ex){
+                    System.out.println("no dependencies");
+                }
             }
             builder = PVQ.builder;
-            q = SingleChoice(text, c, hint, context, builder);
+            q = SingleChoice(text, c, hint, context, builder, qns, ds, dependencies);
         } else if (type.equals("MC")) {
             List c = new ArrayList();
             NodeList choices = eElement.getElementsByTagName("choice");
+            HashMap<String, ArrayList> dependencies = new HashMap<>();
             for (int i = 0; i < choices.getLength(); i++) {
                 Node choice = choices.item(i);
                 Element e = (Element) choice;
                 String x = e.getElementsByTagName("ctext").item(0).getTextContent();
                 c.add(x);
+                try {
+                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
+                    dependents.replace(" ","");
+                    String[] deps = dependents.split(",");
+                    ArrayList dps = new ArrayList();
+                    for(int d = 0; d < deps.length; d++){
+                        dps.add(deps[d]);
+                    }
+                    dependencies.put(x, dps);
+                }catch(Exception ex){
+                    System.out.println("no dependencies");
+                }
+
             }
             builder = PVQ.builder;
-            q = MultipleChoice(text, c, hint, context, builder);
+            q = MultipleChoice(text, c, hint, context, builder, qns, ds, dependencies);
         } else if (type.equals("M")){
             return null;
         } else if (type.equals("C")){
@@ -121,6 +148,7 @@ public class Questionnaire extends AppCompatActivity {
             NodeList factors = eElement.getElementsByTagName("factor");
             q = SumQ(text,hint,context,factors);
         }
+        /*
         else if (type.equals("LC")){
             List c = new ArrayList(); // initializes then fills list of choices
             NodeList choices = eElement.getElementsByTagName("choice");
@@ -144,14 +172,6 @@ public class Questionnaire extends AppCompatActivity {
                 String extra = e.getElementsByTagName("extra").item(0).getTextContent();
                 List extra_questions = new ArrayList();
                 if(extra.equals("T")){
-                    // loop through list if multiple questions
-                    /*
-                    NodeList questions = eElement.getElementsByTagName("equestion");
-                    for(int k=0; k<questions.getLength();k++){
-                        Node question = questions.item(k);
-                        extra_questions.add(question);
-                    }
-                    */
                     String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
                     String[] deps = dependents.split(",");
                     for(int d = 0; d<deps.length; d++){
@@ -173,7 +193,7 @@ public class Questionnaire extends AppCompatActivity {
                 }
             }
 
-            List q_and_eqs = LinkedQuestion(text, c, hint, context, builder, qns);
+            List q_and_eqs = LinkedQuestion(text, c, hint, context, builder, qns, ds);
             q = (LinearLayout) q_and_eqs.get(0);
             for(int o = 0;o<q_and_eqs.size();o++){
                 if(o>0){
@@ -181,7 +201,7 @@ public class Questionnaire extends AppCompatActivity {
                 }
             }
 
-        }
+        }*/
 
         String inv;
         try{
@@ -210,6 +230,7 @@ public class Questionnaire extends AppCompatActivity {
         if(qns != null){
             String num = eElement.getElementsByTagName("q").item(0).getTextContent();
             qns.put(num, q);
+            ds.put(num, 0);
         }
 
         return q;
@@ -230,176 +251,6 @@ public class Questionnaire extends AppCompatActivity {
 
         AlertDialog.Builder newbuilder = new AlertDialog.Builder(this);
         builder = newbuilder;
-
-        // parsing question
-        try {
-            InputStream in = getResources().openRawResource(R.raw.questions);
-            DocumentBuilderFactory dbFactory
-                    = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(in);
-            doc.getDocumentElement().normalize();
-            NodeList groups = doc.getElementsByTagName("group");
-            Questions = new ArrayList();
-            Questions2 = new ArrayList();
-            for(int g = 0; g<groups.getLength();g++){
-                LinearLayout layout1 = new LinearLayout(context);
-                Node gr = groups.item(g);
-                Element eE = (Element) gr;
-                NodeList nList = eE.getElementsByTagName("question");
-                final ArrayList xx = new ArrayList();
-                for(int i = 0; i<100; i++){
-                    xx.add(i);
-                }
-                if(eE.getElementsByTagName("repeatable").item(0).getTextContent().equals("T")){
-                    final ViewGroup chunk = new LinearLayout(context);
-                    /*
-                    chunk.setLayoutParams(new ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                    chunk.setBackgroundColor(Color.BLUE);
-                    */
-                    Button bt = new Button(this);
-                    final String name = ((Element) gr).getElementsByTagName("gtext").item(0).getTextContent();
-                    String textset = "Add new " + name;
-                    bt.setText(textset);
-                    bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                            ActionBar.LayoutParams.WRAP_CONTENT));
-
-
-                    bt.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-
-                            Intent intent = new Intent(context, Repeat.class);
-                            Bundle bundle = new Bundle();
-                            try {
-                                bundle.putString("group name", name);
-                            } catch(Exception e){
-                                System.out.println(name);
-                            }
-                            intent.putExtras(bundle);
-                            hideSoftKeyboard(a);
-                            startActivity(intent);
-                            Counter.add(1);
-
-                            Button b = new Button(context);
-                            String bname = name + Integer.toString(Counter.size());
-                            b.setText(bname);
-                            System.out.println(bname);
-                            /*
-                            b.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                                    ActionBar.LayoutParams.WRAP_CONTENT));
-                            */
-                            LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            int i = layout.indexOfChild(RepeatButtons.get(name));
-
-
-                            b.setOnClickListener(new View.OnClickListener(){
-                                public void onClick(View v){
-                                    String display = Repeat.ANSWERS;
-                                    System.out.println(display);
-                                    Intent in = new Intent(context, Display.class);
-                                    Bundle bun = new Bundle();
-                                    bun.putString("answers", display);
-                                    in.putExtras(bun);
-                                    startActivity(in);
-                                }
-                            });
-                            System.out.println("here");
-                            RepeatButtons.put(name, b);
-                            System.out.println("and here");
-                            layout.addView(b, i+1, params);
-
-
-
-                        }
-                    }
-                    );
-                    /*
-                    final TextView tv = new TextView(this);
-                    tv.setText("chunk answers");
-                    tv.setTextSize(20);
-                    tv.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                            ActionBar.LayoutParams.WRAP_CONTENT));
-                            */
-                    RepeatButtons.put(name, bt);
-                    //chunk.addView(bt);
-                    //chunk.addView(tv);
-                    layout.addView(bt);
-
-                }
-                else {
-                    for (int temp = 0; temp < nList.getLength(); temp++) {
-                        Node nNode = nList.item(temp);
-                        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                            LinearLayout q = null;
-                            Element eElement = (Element) nNode;
-                            String text = "";
-                            String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-                            String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
-                            if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
-                                text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
-                            }
-                            else{
-                                text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
-                            }
-                            if (type.equals("T")) {
-                                q = TextQ(text, hint, context);
-                            } else if (type.equals("N")) {
-                                q = NumQ(text, hint, context);
-                            } else if (type.equals("SC")) {
-                                List c = new ArrayList();
-                                NodeList choices = eElement.getElementsByTagName("choice");
-                                for (int i = 0; i < choices.getLength(); i++) {
-                                    Node choice = choices.item(i);
-                                    Element e = (Element) choice;
-                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                    c.add(x);
-                                }
-                                q = SingleChoice(text, c, hint, context, builder);
-                            } else if (type.equals("MC")) {
-                                List c = new ArrayList();
-                                NodeList choices = eElement.getElementsByTagName("choice");
-                                for (int i = 0; i < choices.getLength(); i++) {
-                                    Node choice = choices.item(i);
-                                    Element e = (Element) choice;
-                                    String x = e.getElementsByTagName("ctext").item(0).getTextContent();
-                                    c.add(x);
-                                }
-                                q = MultipleChoice(text, c, hint, context, builder);
-                            } else if (type.equals("M")){
-                                q = Map(text, context);
-                            } else if (type.equals("C")){
-                                q = Camera(text, context);
-                            }
-                            setupUI(q);
-                            layout.addView(q);
-                            Questions.add(q);
-                        }
-                    }
-                }
-            }
-
-            Button bt = new Button(this);
-            String submit = "Submit";
-            bt.setText(submit);
-            bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,
-                    ActionBar.LayoutParams.WRAP_CONTENT));
-
-            bt.setOnClickListener(new View.OnClickListener() {
-                                      public void onClick(View v) {
-                                          Button b = (Button) v;
-                                          hideSoftKeyboard(a);
-                                          submit();
-                                      }
-                                  }
-            );
-
-            layout.addView(bt);
-        } catch (Exception e) {
-            e.printStackTrace();}
-
 
     }
 
@@ -511,9 +362,9 @@ public class Questionnaire extends AppCompatActivity {
         qlayout.setTag("S");
         return qlayout;
     }
-
+    /*
     public static List LinkedQuestion(String questiontext, List choices, final String hint,
-                                       Context context, AlertDialog.Builder builder, HashMap qnums){
+                                       Context context, AlertDialog.Builder builder, HashMap qnums, HashMap ds){
         LinearLayout qlayout = new LinearLayout(context);
         // sets up question text
         TextView text = new TextView(context);
@@ -534,27 +385,9 @@ public class Questionnaire extends AppCompatActivity {
             String btext = choice.get(0).toString();
             rb.setId(i);
             rb.setText(btext);
+
             extras.put(i, new ArrayList());
             if(choice.get(1).equals("T")){
-                /*
-                for(int h=0; h<((List)choice.get(2)).size(); h++){
-                    Node question = (Node)((List)choice.get(2)).get(h);
-                    List filler1 = new ArrayList();
-                    List filler2 = new ArrayList();
-                    LinearLayout q = build_question(question, filler1, filler2, null, context, null);
-                    ((List)extras.get(i)).add(q);
-                    questions.add(q);
-
-                }
-                */
-                /*
-                String dependents = (String)choice.get(2);
-                dependents = dependents.replace(" ","");
-                String[] deps = dependents.split(",");
-                for(int j = 0; j<deps.length; j++){
-                    ((List)extras.get(i)).add(deps[j]);
-                }
-                */
                 System.out.println(choice.get(2));
                 extras.put(i, choice.get(2));
 
@@ -562,10 +395,10 @@ public class Questionnaire extends AppCompatActivity {
 
 
             rg.addView(rb);
-            System.out.println(rb.getId());
+            rb.setOnCheckedChangeListener(new onCheckedChangedB(qnums,ds,(ArrayList<String>)choice.get(2)));
         }
 
-        rg.setOnCheckedChangeListener(new onCheckedChanged(extras, qlayout, context, qnums));
+        //rg.setOnCheckedChangeListener(new onCheckedChanged(extras, qlayout, context, qnums));
         text.setTag("text");
         rg.setTag("choices");
 
@@ -612,11 +445,12 @@ public class Questionnaire extends AppCompatActivity {
         }
 
         return views;
-    }
+    } */
 
 
     public static LinearLayout SingleChoice(String questiontext, List choices,
-                                            final String hint, Context context, AlertDialog.Builder builder){
+                                            final String hint, Context context, AlertDialog.Builder builder,
+                                            HashMap qns, HashMap ds, HashMap lds){
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
@@ -630,7 +464,11 @@ public class Questionnaire extends AppCompatActivity {
             rb.setId(i);
             rb.setText(btext);
             rg.addView(rb);
-            System.out.println(rb.getId());
+            ArrayList<String> options = (ArrayList<String>)lds.get(btext);
+            if(options == null){
+                options = new ArrayList<String>();
+            }
+            rb.setOnCheckedChangeListener(new onCheckedChangedB(qns, ds, options));
         }
         text.setTag("text");
         rg.setTag("choices");
@@ -758,13 +596,14 @@ public class Questionnaire extends AppCompatActivity {
 
 
     public static LinearLayout MultipleChoice(String questiontext, List choices,
-                                              final String hint, Context context, AlertDialog.Builder builder){
+                                              final String hint, Context context, AlertDialog.Builder builder,
+                                              HashMap qnums, HashMap ds, HashMap localds){
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
 
-        // fix info button
+        System.out.println(localds.keySet());
 
         // sets up question linear layout, adds question text
         LinearLayout qlayout = new LinearLayout(context);
@@ -783,6 +622,11 @@ public class Questionnaire extends AppCompatActivity {
             cb.setText(ctext);
             cb.setTag("choice");
             cb.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            ArrayList<String> options = (ArrayList<String>)localds.get(ctext);
+            if(options == null){
+                options = new ArrayList<String>();
+            }
+            cb.setOnCheckedChangeListener(new onCheckedChangedB(qnums, ds, options));
             qlayout.addView(cb);
         }
 
@@ -985,6 +829,40 @@ class SumWatcher implements TextWatcher{
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
 
+class onCheckedChangedB implements RadioButton.OnCheckedChangeListener{
+    private HashMap questions;
+    private HashMap dependents_map;
+    private ArrayList<String> dependents;
+
+    public onCheckedChangedB(HashMap qns, HashMap deps, ArrayList dependents){
+        this.questions = qns;
+        this.dependents_map = deps;
+        this.dependents = dependents;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton b, boolean isChecked){
+        if(isChecked){
+            for(String dependent: dependents){
+                System.out.println(dependents_map.keySet());
+                System.out.println(dependent);
+                System.out.println(dependents_map.containsKey(dependent));
+                int u = (int)dependents_map.get(dependent);
+                dependents_map.put(dependent, u+1);
+                ((LinearLayout)questions.get(dependent)).setVisibility(View.VISIBLE);
+            }
+        }else{
+            for(String dependent: dependents){
+                int u = (int)dependents_map.get(dependent);
+                dependents_map.put(dependent, u-1);
+                if(dependents_map.get(dependent).equals(0)) {
+                    ((LinearLayout) questions.get(dependent)).setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+}
+
 class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
     private LinearLayout ll;
     private HashMap questions;
@@ -1015,32 +893,6 @@ class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
                 }
             }
         }
-        /*
-        for(int i=0; i<questions.size();i++){
-            List qs = (List)questions.get(i);
-            System.out.println(qs);
-            if(i==p){
-                for(int j = 0; j<qs.size(); j++){
-                    System.out.println(((LinearLayout)qs.get(j)).getChildCount());
-                    ((LinearLayout)qs.get(j)).setVisibility(View.VISIBLE);
-                }
-            }else{
-                for(int j = 0; j<qs.size(); j++){
-                    LinearLayout l = (LinearLayout)qs.get(j);
-                    (l).setVisibility(View.GONE);
-                    for(int c = 0; c<l.getChildCount();c++){
-                        if(l.getChildAt(c) instanceof EditText){
-                            ((EditText)l.getChildAt(c)).setText("");
-                        } else if(l.getChildAt(c) instanceof RadioGroup){
-                            ((RadioGroup) l.getChildAt(c)).clearCheck();
-                        } else if(l.getChildAt(c) instanceof CheckBox){
-                            ((CheckBox)l.getChildAt(c)).setChecked(false);
-                        }
-                    }
-                }
-            }
-        } */
-
 
     }
 };

@@ -80,6 +80,7 @@ import android.view.Menu;
 public class PVQ extends AppCompatActivity {
     List<Object> Questions = new ArrayList<>(); // List of all questions
     HashMap<String,Object> NumQuestions = new HashMap<>();
+    HashMap<String,Integer> Dependents = new HashMap<>();
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
     List<String> Image_Tags = new ArrayList<>();
     String answers = "";
@@ -93,6 +94,7 @@ public class PVQ extends AppCompatActivity {
     LinearLayout camera_question = null;
     LinearLayout map_question = null;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+    String ogTimeStamp = timeStamp;
     String author = "";
     List<Object> pages = new ArrayList<>();
     ViewPager vp = null;
@@ -325,7 +327,8 @@ public class PVQ extends AppCompatActivity {
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this, NumQuestions);
+                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this, NumQuestions,
+                                Dependents);
                         if(null == qu){
                             Element eElement = (Element) nNode;
                             // Obtains question type, hint, and text; adds * to question text if required
@@ -391,7 +394,8 @@ public class PVQ extends AppCompatActivity {
                                     Node question = nlist.item(y);
                                     if (question.getNodeType() == Node.ELEMENT_NODE) {
                                         String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
-                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context, null);
+                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context, null,
+                                                Dependents);
                                     }
                                 }
                                 view1.addView(qchunk, view1.getChildCount() - 1);
@@ -698,6 +702,9 @@ public class PVQ extends AppCompatActivity {
         String total = ""; // string with all answers
         //String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         String unanswered = "";
+        uid = "";
+        uid_set = false;
+        timeStamp = ogTimeStamp;
         Boolean use_un = false;
         HashMap<String,Object> json = new HashMap<>();
         HashMap<String,Object> groups = new HashMap<>();
@@ -716,6 +723,7 @@ public class PVQ extends AppCompatActivity {
         // set of group names
         Set keys = qgs.keySet();
         // iterates through group names
+        int idp = 0;
         for(Object key:keys) {
             String name = "Section: "+key + "\n";
             total += name;
@@ -809,10 +817,11 @@ public class PVQ extends AppCompatActivity {
                                 line = line.toUpperCase();
                                 continue;
                             } else if(id == -1){
-                                continue;
+                                qans = "";
+                            } else {
+                                line += rb.getText();
+                                qans = (String) rb.getText();
                             }
-                            line += rb.getText();
-                            qans = (String) rb.getText();
                         } catch (Exception e) {
                             System.out.println("something went wrong");
                             System.out.println(question);
@@ -869,14 +878,14 @@ public class PVQ extends AppCompatActivity {
                 }
                 System.out.println(Identifiers);
                 if(Identifiers.contains(jquestion) && !uid_set && !qans.equals("") && !qans.equals(" ")){
-                    if(!Identifiers.get(0).equals(jquestion)){
+                    if(!Identifiers.get(idp).equals(jquestion)){
                         break;
                     }
                     String uids = ((String)qans).replace(" ","_");
-                    uids.replace("/","_");
+                    uids = uids.replace("/","_");
                     uid += uids + "_";
-                    System.out.println(Identifiers.get(0)+qans);
-                    Identifiers.remove(jquestion);
+                    System.out.println(Identifiers.get(idp)+qans);
+                    idp += 1;
                 }
 
                 if (toFile) {
@@ -903,9 +912,9 @@ public class PVQ extends AppCompatActivity {
         if(rj){
             return json.toString();
         }
-        if(Identifiers.size() == 0){
-            uid_set = true;
+        if(Identifiers.size() == idp){
             timeStamp = uid+"_"+timeStamp;
+            uid_set = true;
         }
 
         if(jf != null) {
@@ -925,37 +934,41 @@ public class PVQ extends AppCompatActivity {
     public String submit(){
         // time stamp of submission -> filename for file in which data from form at time to be saved
         //String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
-        String filename = timeStamp+".txt";
-        String jsonfilename = timeStamp + ".json";
-        FileOutputStream fos = null;
-        FileOutputStream jfos = null;
-        // opens file
-        try{
-            fos = openFileOutput(filename, Context.MODE_PRIVATE);
-            jfos = openFileOutput(jsonfilename, Context.MODE_PRIVATE);
-        }catch(Exception e){
-            System.out.println(filename);
-            System.out.println(jsonfilename);
-            return "";
-        }
+        String filename;
 
         // calls writeAnswers first to check for unanswered required questions
-        String answers = writeAnswers(Groups, false, fos, false, null, false);
+        String answers = writeAnswers(Groups, false, null, false, null, false);
         if (answers.equals("")) {
             AlertDialog.Builder bdr = builder;
             bdr.setMessage("Answer all required questions before submitting");
             AlertDialog dialog = bdr.create();
             dialog.show();
-            this.deleteFile(filename);
+            uid = "";
+            uid_set = false;
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
+            filename = timeStamp+".txt";
+            String jsonfilename = timeStamp + ".json";
+            FileOutputStream fos = null;
+            FileOutputStream jfos = null;
+            // opens file
+            try{
+                fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                jfos = openFileOutput(jsonfilename, Context.MODE_PRIVATE);
+            }catch(Exception e){
+                System.out.println(filename);
+                System.out.println(jsonfilename);
+                return "";
+            }
+            uid = "";
+            uid_set = false;
             System.out.println(writeAnswers(Groups, true, fos, false, jfos, false));
+            try {
+                fos.close();
+                jfos.close();
+            }catch(Exception e){}
         }
-        try {
-            fos.close();
-            jfos.close();
-        }catch(Exception e){}
 
         // goes back to main page of app
         Intent intent = new Intent(this, Home.class);
@@ -1195,7 +1208,8 @@ class NumWatcher implements TextWatcher {
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
-                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context, null);
+                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context, null,
+                            null);
                 }
             }
             view1.addView(qchunk, view1.getChildCount() - 1);
@@ -1207,3 +1221,14 @@ class NumWatcher implements TextWatcher {
 
 // slider/ratings
 // \/
+
+// drop down
+// nested questions/classes; possible multiple nesting
+// repeatable numbering
+
+// sum q -> more general, multiple types, sum becomes a feature
+// spacing between question layouts
+// navbar to end of groups
+// number of questions answered at end
+// list unanswered questions
+// submit slider instead of button

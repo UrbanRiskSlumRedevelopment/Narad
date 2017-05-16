@@ -56,9 +56,6 @@
             android:name=".QDisplay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Repeat"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Display"
             android:screenOrientation="portrait" />
         <activity
