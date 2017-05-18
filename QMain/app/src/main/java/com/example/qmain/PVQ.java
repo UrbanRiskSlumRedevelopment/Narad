@@ -78,7 +78,6 @@ import android.support.design.widget.NavigationView;
 import android.view.Menu;
 
 public class PVQ extends AppCompatActivity {
-    List<Object> Questions = new ArrayList<>(); // List of all questions
     HashMap<String,Object> NumQuestions = new HashMap<>();
     HashMap<String,Integer> Dependents = new HashMap<>();
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
@@ -327,7 +326,7 @@ public class PVQ extends AppCompatActivity {
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        LinearLayout qu = Questionnaire.build_question(nNode, Questions, Qs, ll, this, NumQuestions,
+                        LinearLayout qu = Questionnaire.build_question(nNode, Qs, ll, this, NumQuestions,
                                 Dependents);
                         if(null == qu){
                             Element eElement = (Element) nNode;
@@ -338,22 +337,20 @@ public class PVQ extends AppCompatActivity {
                                 // Map question
                                 qu = Map(text, context);
                                 map_question = qu;
-                                Questions.add(qu);
                                 Qs.add(qu);
                                 ll.addView(qu);
                             } else if (type.equals("C")) {
                                 // Camera question; still being worked out
                                 qu = Camera(text, context);
                                 camera_question = qu;
-                                Questions.add(qu);
                                 Qs.add(qu);
                                 ll.addView(qu);
                             }
                         }
                     }
                 }
-                for(int qn = 0; qn < Questions.size(); qn++){
-                    LinearLayout q = (LinearLayout) Questions.get(qn);
+                for(int qn = 0; qn < Qs.size(); qn++){
+                    LinearLayout q = (LinearLayout) Qs.get(qn);
                     setupUI(q);
                     int x = q.getChildCount();
                     for(int qi = 0; qi < x; qi++){
@@ -394,7 +391,7 @@ public class PVQ extends AppCompatActivity {
                                     Node question = nlist.item(y);
                                     if (question.getNodeType() == Node.ELEMENT_NODE) {
                                         String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
-                                        Questionnaire.build_question(question, Questions, Groups.get(g_name), qchunk, context, null,
+                                        Questionnaire.build_question(question, Groups.get(g_name), qchunk, context, null,
                                                 Dependents);
                                     }
                                 }
@@ -410,7 +407,7 @@ public class PVQ extends AppCompatActivity {
                         NodeList chqs = chunkE.getElementsByTagName("rquestion");
                         LinearLayout questions_here = new LinearLayout(this);
                         questions_here.setOrientation(LinearLayout.VERTICAL);
-                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Questions, Qs));
+                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs));
                         ll.addView(num_times);
                         ll.addView(questions_here);
                     }
@@ -700,7 +697,6 @@ public class PVQ extends AppCompatActivity {
     // writes current answers and returns them as one string; optionally writes them to file
     public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf, boolean rj) {
         String total = ""; // string with all answers
-        //String unanswered = "REQUIRED QUESTIONS MUST BE FILLED OUT \n"; // string with all blank required questions
         String unanswered = "";
         uid = "";
         uid_set = false;
@@ -745,10 +741,25 @@ public class PVQ extends AppCompatActivity {
                 String line = "";
                 String tag = "";
                 Object qans = "";
+
+                String parent_text = "";
+                try{
+                    TextView pt = (TextView) q.findViewWithTag("parent text");
+                    parent_text = (String) pt.getText();
+                } catch(Exception e){
+                    System.out.println("no parent");
+                }
+
+                question = parent_text+question;
+
                 try {
                     tag = (String) q.getTag();
                 } catch (Exception e) {
                     System.out.println("there's no tag?");
+                }
+
+                if(tag.equals("P")){
+                    continue;
                 }
 
                 // based on question tag (type), completes question line with answer in appropriate fashion
@@ -1173,14 +1184,12 @@ class NumWatcher implements TextWatcher {
     private LinearLayout view1;
     private NodeList nodes;
     private Context context;
-    private List list1;
     private List list2;
     private int max;
-    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list1, List list2){
+    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2){
         this.view1 = ll;
         this.nodes = nodes;
         this.context = context;
-        this.list1 = list1;
         this.list2 = list2;
         this.max = max;
     }
@@ -1189,7 +1198,6 @@ class NumWatcher implements TextWatcher {
         String value = s.toString();
         for(int i = 0; i < view1.getChildCount(); i++){
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
-                System.out.println(list1.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
                 System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
             }
         }
@@ -1208,7 +1216,7 @@ class NumWatcher implements TextWatcher {
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
-                    LinearLayout qu = Questionnaire.build_question(question, list1, list2, qchunk, context, null,
+                    LinearLayout qu = Questionnaire.build_question(question, list2, qchunk, context, null,
                             null);
                 }
             }

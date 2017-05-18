@@ -315,5 +315,63 @@
                 </choices>
             </question>
         </group>
+        <group no="V" name="livelihood">
+            <gtext>Livelihood Surveys</gtext>
+            <question>
+                <q>40</q>
+                <qtype>P</qtype>
+                <qhint>Enter primary and secondary occupations held by family members</qhint>
+                <qtext>Source of earning/livelihood</qtext>
+                <req>F</req>
+            </question>
+            <question>
+                <q>40a</q>
+                <qtype>P</qtype>
+                <qhint></qhint>
+                <qtext>Male</qtext>
+                <parent>40</parent>
+                <req>F</req>
+            </question>
+            <question>
+                <q>40b</q>
+                <qtype>P</qtype>
+                <qhint></qhint>
+                <qtext>Female</qtext>
+                <req>F</req>
+                <parent>40</parent>
+            </question>
+            <question>
+                <q>40a1</q>
+                <qtype>T</qtype>
+                <qhint>Enter occupation</qhint>
+                <qtext>Primary occupation</qtext>
+                <req>F</req>
+                <parent>40a</parent>
+            </question>
+            <question>
+                <q>40a2</q>
+                <qtype>T</qtype>
+                <qhint>Enter occupation</qhint>
+                <qtext>Secondary occupation</qtext>
+                <req>F</req>
+                <parent>40a</parent>
+            </question>
+            <question>
+                <q>40b1</q>
+                <qtype>T</qtype>
+                <qhint>Enter occupation</qhint>
+                <qtext>Primary occupation</qtext>
+                <req>F</req>
+                <parent>40b</parent>
+            </question>
+            <question>
+                <q>40b2</q>
+                <qtype>T</qtype>
+                <qhint>Enter occupation</qhint>
+                <qtext>Secondary occupation</qtext>
+                <parent>40b</parent>
+                <req>F</req>
+            </question>
+        </group>
     </groups>
 </resources>

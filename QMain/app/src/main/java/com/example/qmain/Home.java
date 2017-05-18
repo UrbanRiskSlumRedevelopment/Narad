@@ -159,7 +159,6 @@ public class Home extends AppCompatActivity {
                     System.out.println(date);
                     date = date.replace(" ","");
                     System.out.println(date);
-                    //int dn = Integer.parseInt(date);
                     date_hm.put(date,bt);
                     String city = (String) bt.getText();
                     try {
@@ -169,7 +168,7 @@ public class Home extends AppCompatActivity {
                             city = city.substring(1);
                         }
                     }
-                    city_hm.put(city,bt);
+                    city_hm.put(city.toLowerCase(),bt);
                 }
             }
         }
