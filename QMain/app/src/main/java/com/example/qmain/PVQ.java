@@ -407,7 +407,7 @@ public class PVQ extends AppCompatActivity {
                         NodeList chqs = chunkE.getElementsByTagName("rquestion");
                         LinearLayout questions_here = new LinearLayout(this);
                         questions_here.setOrientation(LinearLayout.VERTICAL);
-                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs));
+                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents));
                         ll.addView(num_times);
                         ll.addView(questions_here);
                     }
@@ -750,7 +750,15 @@ public class PVQ extends AppCompatActivity {
                     System.out.println("no parent");
                 }
 
-                question = parent_text+question;
+                String outer_parent_text = "";
+                try{
+                    TextView opt = (TextView) q.findViewWithTag("outer parent text");
+                    outer_parent_text = (String) opt.getText();
+                } catch(Exception e){
+                    System.out.println("no outer parent");
+                }
+
+                question = outer_parent_text+parent_text+question;
 
                 try {
                     tag = (String) q.getTag();
@@ -1001,7 +1009,6 @@ public class PVQ extends AppCompatActivity {
         if(answers.substring(0,4).equals("!<!,")){
             String req_msg = "The following sections have required questions that need to be answered:";
             ans.setText(req_msg);
-            List rsects = new ArrayList();
             String scts = answers.substring(4);
             req_buttons.setBackgroundColor(Color.MAGENTA);
             if(req_buttons.getChildCount() == 0) {
@@ -1186,12 +1193,16 @@ class NumWatcher implements TextWatcher {
     private Context context;
     private List list2;
     private int max;
-    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2){
+    private HashMap NumQuestions;
+    private HashMap ds;
+    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2, HashMap nq, HashMap deps){
         this.view1 = ll;
         this.nodes = nodes;
         this.context = context;
         this.list2 = list2;
         this.max = max;
+        this.NumQuestions = nq;
+        this.ds = deps;
     }
 
     public void afterTextChanged(Editable s) {
@@ -1207,7 +1218,6 @@ class NumWatcher implements TextWatcher {
         }
         int times = Integer.parseInt(value);
         if(times > max){
-            System.out.println("in here");
             return;
         }
         for(int i = 0;i<times;i++){
@@ -1216,8 +1226,13 @@ class NumWatcher implements TextWatcher {
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
-                    LinearLayout qu = Questionnaire.build_question(question, list2, qchunk, context, null,
-                            null);
+                    LinearLayout qu = Questionnaire.build_question(question, list2, qchunk, context, NumQuestions,
+                            ds);
+                    TextView pt = new TextView(context);
+                    pt.setText(Integer.toString(i+1)+": ");
+                    pt.setTag("outer parent text");
+                    pt.setVisibility(View.GONE);
+                    qu.addView(pt);
                 }
             }
             view1.addView(qchunk, view1.getChildCount() - 1);

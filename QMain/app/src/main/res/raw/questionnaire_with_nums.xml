@@ -199,24 +199,28 @@
                 <rsize>Number of earning members</rsize>
                 <rlimit>20</rlimit>
                 <rquestion name="test4">
+                    <q>14a</q>
                     <qtype>T</qtype>
                     <qtext>Name</qtext>
                     <qhint>Enter name</qhint>
                     <req>T</req>
                 </rquestion>
                 <rquestion name="test5">
+                    <q>14b</q>
                     <qtype>T</qtype>
                     <qtext>Relation to head of family</qtext>
                     <qhint>Enter relation</qhint>
                     <req>F</req>
                 </rquestion>
                 <rquestion>
+                    <q>14c</q>
                     <qtype>N</qtype>
                     <qtext>Age</qtext>
                     <qhint>Enter age</qhint>
                     <req>F</req>
                 </rquestion>
                 <rquestion>
+                    <q>14d</q>
                     <qtype>SC</qtype>
                     <qtext>Sex</qtext>
                     <qhint>Select one</qhint>
@@ -229,6 +233,29 @@
                             <ctext>Female</ctext>
                         </choice>
                     </choices>
+                </rquestion>
+                <rquestion>
+                    <q>15</q>
+                    <qtype>P</qtype>
+                    <qhint></qhint>
+                    <qtext>Siblings</qtext>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <q>15a</q>
+                    <qtype>N</qtype>
+                    <qtext>Brothers</qtext>
+                    <qhint>Enter number of brothers</qhint>
+                    <req>F</req>
+                    <parent>15</parent>
+                </rquestion>
+                <rquestion>
+                    <q>15b</q>
+                    <qtype>N</qtype>
+                    <qtext>Sisters</qtext>
+                    <qhint>Enter number of sisters</qhint>
+                    <req>F</req>
+                    <parent>15</parent>
                 </rquestion>
             </rchunk>
         </group>
