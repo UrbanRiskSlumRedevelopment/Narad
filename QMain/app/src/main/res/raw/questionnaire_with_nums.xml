@@ -400,5 +400,85 @@
                 <req>F</req>
             </question>
         </group>
+        <group no="V" name="livelihoods">
+            <gtext>Details of Earning Members of the Household</gtext>
+            <rchunk>
+                <q>45</q>
+                <rtext>Details of Earning Members of the Household</rtext>
+                <rsize>Number of earning members</rsize>
+                <rlimit>20</rlimit>
+                <rquestion>
+                    <q>45.1</q>
+                    <qtype>P</qtype>
+                    <qhint></qhint>
+                    <qtext>General Details</qtext>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <q>45.2</q>
+                    <qtype>P</qtype>
+                    <qhint></qhint>
+                    <qtext>Education and Training</qtext>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <q>45.3</q>
+                    <qtype>P</qtype>
+                    <qhint></qhint>
+                    <qtext>Employment and Earnings</qtext>
+                    <req>F</req>
+                </rquestion>
+                <rquestion>
+                    <q>45.1a</q>
+                    <qtype>T</qtype>
+                    <req>T</req>
+                    <qtext>Name</qtext>
+                    <qhint></qhint>
+                    <parent>45.1</parent>
+                </rquestion>
+                <rquestion>
+                    <q>45.1b</q>
+                    <qtype>T</qtype>
+                    <req>T</req>
+                    <qtext>Relation to Head of Family</qtext>
+                    <qhint></qhint>
+                    <parent>45.1</parent>
+                </rquestion>
+                <rquestion>
+                    <q>45.2a</q>
+                    <qtype>T</qtype>
+                    <req>F</req>
+                    <qtext>Educational Qualification</qtext>
+                    <qhint></qhint>
+                    <parent>45.2</parent>
+                </rquestion>
+                <rquestion>
+                    <q>45.2b</q>
+                    <qtype>T</qtype>
+                    <req>F</req>
+                    <qtext>Type of Institution</qtext>
+                    <qhint></qhint>
+                    <parent>45.2</parent>
+                </rquestion>
+                <rquestion>
+                    <q>45.3a</q>
+                    <qtype>T</qtype>
+                    <req>F</req>
+                    <qtext>Employment Status</qtext>
+                    <qhint></qhint>
+                    <parent>45.3</parent>
+                </rquestion>
+                <rquestion>
+                    <q>45.3b</q>
+                    <qtype>T</qtype>
+                    <req>F</req>
+                    <qtext>Place of work</qtext>
+                    <qhint></qhint>
+                    <parent>45.3</parent>
+                </rquestion>
+            </rchunk>
+        </group>
     </groups>
 </resources>
+<!-- json just question numbers -->
+<!-- ccode; dictionaries, question numbers, ccode answers -->

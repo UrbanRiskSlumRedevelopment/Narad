@@ -77,6 +77,9 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import android.support.design.widget.NavigationView;
 import android.view.Menu;
 
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 public class PVQ extends AppCompatActivity {
     HashMap<String,Object> NumQuestions = new HashMap<>();
     HashMap<String,Integer> Dependents = new HashMap<>();
@@ -244,13 +247,25 @@ public class PVQ extends AppCompatActivity {
         // Builds Questionnaire
         try{
             // Parses XML doc so code can read it
-            InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
+
+            File xml_file = new File("questions_from_url.xml");
+            FileInputStream fis;
+            try{
+                fis = context.openFileInput("questions_from_url.xml");
+                //InputStreamReader in = new InputStreamReader(fis);
+            }catch(Exception e){
+                System.out.println("nope");
+                fis = null;
+            }
+
+
+            //InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(in);
+            Document doc = dBuilder.parse(fis);
             doc.getDocumentElement().normalize();
-            in.close();
+            fis.close();
 
             // Builds first page
             // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
@@ -758,7 +773,7 @@ public class PVQ extends AppCompatActivity {
                     System.out.println("no outer parent");
                 }
 
-                question = outer_parent_text+parent_text+question;
+                question = parent_text+question+outer_parent_text;
 
                 try {
                     tag = (String) q.getTag();

@@ -28,6 +28,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONObject;
+
+import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import java.io.BufferedReader;
@@ -304,6 +306,40 @@ public class Home extends AppCompatActivity {
 
         queue.add(jsonRequest);
         */
+
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //String url = "http://10.0.2.2:8011/test";
+        String url =  "https://raw.githubusercontent.com/UrbanRiskSlumRedevelopment/Narad/master/QMain/app/src/main/res/raw/questionnaire_with_nums.xml";
+
+        StringRequest req = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println(response);
+                        String filename = "questions_from_url.xml";
+                        FileOutputStream fos = null;
+                        try{
+                            fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                            fos.write(response.getBytes());
+                        }catch(Exception e){
+                            System.out.println(filename);
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // handle error response
+                    }
+                }
+        );
+
+        queue.add(req);
+
+
 
 
         String[] files = fileList();
