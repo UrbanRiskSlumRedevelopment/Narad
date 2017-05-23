@@ -165,7 +165,7 @@
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
                 <inv>T</inv>
-                <req>T</req>
+                <req>C</req>
                 <choices>
                     <choice>
                         <ctext>Married</ctext>
@@ -574,7 +574,7 @@
                 <qtext>Duration of water supply</qtext>
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -612,7 +612,7 @@
                 <qtext>Distance from drinking water source</qtext>
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -957,7 +957,7 @@
                 <qtext>Type of livestock</qtext>
                 <qtype>MC</qtype>
                 <qhint>Select all applicable</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -1016,7 +1016,7 @@
                 <qtext>Number of years of stay in this town/city</qtext>
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -1042,7 +1042,7 @@
                 <qtext>Whether migrated from</qtext>
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -1060,7 +1060,7 @@
                 <qtext>Type of migration</qtext>
                 <qtype>SC</qtype>
                 <qhint>Select one</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
@@ -1078,7 +1078,7 @@
                 <qtext>Reasons for migration</qtext>
                 <qtype>MC</qtype>
                 <qhint>Select all applicable</qhint>
-                <req>T</req>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
