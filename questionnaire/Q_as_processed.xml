@@ -999,10 +999,7 @@
                     <choice>
                         <ctext>Yes</ctext>
                         <ccode>01</ccode>
-                        <dependents>36</dependents>
-                        <dependents>37</dependents>
-                        <dependents>38</dependents>
-                        <dependents>39</dependents>
+                        <dependents>36, 37, 38, 39</dependents>
                     </choice>
                     <choice>
                         <ctext>No</ctext>
