@@ -1180,6 +1180,7 @@
                     <q>45</q>
                     <qtext>General details</qtext>
                     <qtype>P</qtype>
+                    <req>F</req>
                 </rquestion>
                 <rquestion name="earning_member_name">
                     <q>45.a</q>
@@ -1299,6 +1300,7 @@
                     <q>46</q>
                     <qtext>Education &amp; training details</qtext>
                     <qtype>P</qtype>
+                    <req>F</req>
                 </rquestion>
                 <rquestion name="education_qualification">
                     <q>46.g</q>
@@ -1430,6 +1432,7 @@
                     <q>47</q>
                     <qtext>Employment &amp; earning details</qtext>
                     <qtype>P</qtype>
+                    <req>F</req>
                 </rquestion>
                 <rquestion name="employment_status">
                     <q>47.j</q>
@@ -1571,12 +1574,14 @@
                 <q>48</q>
                 <qtext>Source of earning/livelihood</qtext>
                 <qtype>P</qtype>
+                <req>F</req>
             </question>
             <question name="male_earners">
                 <q>48.1</q>
                 <qtext>Male earners</qtext>
                 <qtype>P</qtype>
                 <parent>48</parent>
+                <req>F</req>
             </question>
             <question>
                 <q>48.1.a</q>
@@ -2008,6 +2013,7 @@
                 <q>48.2</q>
                 <qtext>Female earners</qtext>
                 <qtype>P</qtype>
+                <req>F</req>
                 <parent>48</parent>
             </question>
             <question>
@@ -2505,11 +2511,13 @@
                 <q>50</q>
                 <qtext>Preferred area for training / skill enhancement</qtext>
                 <qtype>P</qtype>
+                <req>F</req>
             </question>
             <question name="male_earners">
                 <q>50.1</q>
                 <qtext>Male earners</qtext>
                 <qtype>P</qtype>
+                <req>F</req>
                 <parent>50</parent>
             </question>
             <question>
@@ -2726,6 +2734,7 @@
                 <q>50.2</q>
                 <qtext>Female earners</qtext>
                 <qtype>P</qtype>
+                <req>F</req>
                 <parent>50</parent>
             </question>
             <question>
