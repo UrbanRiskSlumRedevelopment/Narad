@@ -80,11 +80,14 @@ import android.view.Menu;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import android.view.LayoutInflater;
+
 public class PVQ extends AppCompatActivity {
     HashMap<String,Object> NumQuestions = new HashMap<>();
     HashMap<String,Integer> Dependents = new HashMap<>();
     HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
     List<String> Image_Tags = new ArrayList<>();
+    HashMap<String, String> Images = new HashMap<>();
     String answers = "";
     TextView ans = null;
     LinearLayout req_buttons;
@@ -104,6 +107,7 @@ public class PVQ extends AppCompatActivity {
     List<String> Identifiers = new ArrayList<>();
     String uid = "";
     Boolean uid_set = false;
+    String project;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +140,8 @@ public class PVQ extends AppCompatActivity {
             });
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        project = getIntent().getStringExtra("project");
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -248,24 +254,22 @@ public class PVQ extends AppCompatActivity {
         try{
             // Parses XML doc so code can read it
 
-            File xml_file = new File("questions_from_url.xml");
             FileInputStream fis;
             try{
                 fis = context.openFileInput("questions_from_url.xml");
-                //InputStreamReader in = new InputStreamReader(fis);
             }catch(Exception e){
                 System.out.println("nope");
                 fis = null;
             }
 
 
-            //InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
+            InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
             DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fis);
+            Document doc = dBuilder.parse(in);
             doc.getDocumentElement().normalize();
-            fis.close();
+            in.close();
 
             // Builds first page
             // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
@@ -290,15 +294,6 @@ public class PVQ extends AppCompatActivity {
             title.setText(sections);
             p1.addView(title);
             pages.add(sections);
-
-            NodeList ids = doc.getElementsByTagName("idfield");
-            for(int d=0; d<ids.getLength();d++){
-                Node idf = ids.item(d);
-                Element idfe = (Element) idf;
-                String idstring = idfe.getTextContent();
-                Identifiers.add(idstring);
-            }
-
 
             // iterates through all groups of questions in XML doc
             NodeList groups = doc.getElementsByTagName("group");
@@ -350,16 +345,30 @@ public class PVQ extends AppCompatActivity {
                             String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
                             if (type.equals("M")){
                                 // Map question
+                                String qid = eElement.getElementsByTagName("q").item(0).getTextContent();
                                 qu = Map(text, context);
                                 map_question = qu;
                                 Qs.add(qu);
                                 ll.addView(qu);
+                                TextView tq = new TextView(this);
+                                tq.setText(qid);
+                                tq.setVisibility(View.GONE);
+                                tq.setTag("qid");
+                                qu.addView(tq);
+                                NumQuestions.put(qid, qu);
                             } else if (type.equals("C")) {
                                 // Camera question; still being worked out
+                                String qid = eElement.getElementsByTagName("q").item(0).getTextContent();
                                 qu = Camera(text, context);
                                 camera_question = qu;
                                 Qs.add(qu);
                                 ll.addView(qu);
+                                TextView tq = new TextView(this);
+                                tq.setText(qid);
+                                tq.setVisibility(View.GONE);
+                                tq.setTag("qid");
+                                qu.addView(tq);
+                                NumQuestions.put(qid, qu);
                             }
                         }
                     }
@@ -435,6 +444,15 @@ public class PVQ extends AppCompatActivity {
                 setupUI(ll);
             }
 
+            NodeList ids = doc.getElementsByTagName("idfield");
+            for(int d=0; d<ids.getLength();d++){
+                Node idf = ids.item(d);
+                Element idfe = (Element) idf;
+                String idstring = idfe.getTextContent();
+                Identifiers.add(idstring);
+            }
+            System.out.println(Identifiers);
+
             // review page
             ScrollView rv = new ScrollView(this);
             LinearLayout rv1 = new LinearLayout(this);
@@ -492,6 +510,7 @@ public class PVQ extends AppCompatActivity {
 
             vp.setCurrentItem(1);
             Menu menu1 = nv.getMenu();
+            pages.add("Review ");
             for(int i = 1; i < pages.size(); i++){
                 menu1.add((String)pages.get(i));
             }
@@ -619,6 +638,7 @@ public class PVQ extends AppCompatActivity {
         mCurrentPhotoPath = image.getAbsolutePath();
         System.out.println(imageFileName);
         System.out.println(mCurrentPhotoPath);
+        Images.put(image.getAbsolutePath(), tag);
         return image;
     }
 
@@ -659,7 +679,7 @@ public class PVQ extends AppCompatActivity {
                 System.out.println(toastMsg);
                 System.out.println(PlacePicker.getLatLngBounds(data));
                 // saves location
-                LOCATION = toastMsg.substring(7);
+                LOCATION = toastMsg.substring(16);
                 TextView update_loc = new TextView(this);
                 update_loc.setText(LOCATION);
                 if(map_question.getChildCount() > 2){
@@ -724,6 +744,9 @@ public class PVQ extends AppCompatActivity {
             try {
                 // writes answers to file
                 json.put("Author", author);
+                json.put("Project", getIntent().getStringExtra("project_name"));
+                json.put("City", getIntent().getStringExtra("city"));
+                json.put("Organization", getIntent().getStringExtra("org"));
                 String line = "Author: " + author + "~~";
                 total += line;
                 f.write(line.getBytes());
@@ -747,6 +770,7 @@ public class PVQ extends AppCompatActivity {
             groups.put((String)key, questions);
 
             for (int i = 0; i < qs.size(); i++) {
+                System.out.println(i);
                 // gets question linear layout
                 LinearLayout q = (LinearLayout) qs.get(i);
                 // gets question text
@@ -755,6 +779,14 @@ public class PVQ extends AppCompatActivity {
                 String question = (String) text.getText();
                 String line = "";
                 String tag = "";
+                System.out.println(question);
+                String qid;
+                try {
+                    qid = ((TextView) q.findViewWithTag("qid")).getText().toString();
+                }catch(NullPointerException n){
+                    qid = "";
+                    n.printStackTrace();
+                }
                 Object qans = "";
 
                 String parent_text = "";
@@ -773,7 +805,7 @@ public class PVQ extends AppCompatActivity {
                     System.out.println("no outer parent");
                 }
 
-                question = parent_text+question+outer_parent_text;
+                question = parent_text+question + outer_parent_text;
 
                 try {
                     tag = (String) q.getTag();
@@ -809,6 +841,14 @@ public class PVQ extends AppCompatActivity {
                 } else if (tag.equals("S")){
                     TextView answer_total = (TextView) q.findViewWithTag("answer");
                     String at = answer_total.getText().toString();
+
+                    ArrayList<View> factors = new ArrayList<View>();
+                    for(int v = 0; v<q.getChildCount(); v++){
+                        if(q.getChildAt(v).getTag().equals("factor")){
+                            factors.add(q.getChildAt(v));
+                        }
+                    }
+
                     if(question.endsWith("*") && !incomplete && at.equals("Total: ")){
                         System.out.println("oops");
                         return "";
@@ -822,12 +862,33 @@ public class PVQ extends AppCompatActivity {
                         text.setTextColor(Color.RED);
                     } else{
                         try {
+                            /*
                             if(at.equals("Total: ")){
                                 at = " 0";
                             }
                             line = question + ": " + at.substring(at.indexOf(" ") + 1);
                             qans = at.substring(at.indexOf(" ") + 1);
+                            */
+
+                            line = question + ": ";
+                            HashMap<String, Integer> fqas = new HashMap();
+
+                            for(View factor : factors){
+                                TextView ftext = (TextView) factor.findViewWithTag("ftext");
+                                EditText fans = (EditText) factor.findViewWithTag("fanswer");
+                                String fa = "";
+                                if(fans.getText().toString().equals("")){
+                                    fa = "0 ";
+                                }else{
+                                    fa = fans.getText().toString() + " ";
+                                }
+                                line += ftext.getText()+": "+fa;
+                                fqas.put(ftext.getText().toString(), Integer.parseInt(fa.substring(0,fa.length()-1)));
+                            }
+                            qans = fqas;
+
                         }catch(Exception e){
+                            e.printStackTrace();
                             line = question + ": ";
                         }
                     }
@@ -854,7 +915,7 @@ public class PVQ extends AppCompatActivity {
                                 qans = "";
                             } else {
                                 line += rb.getText();
-                                qans = (String) rb.getText();
+                                qans = (String) rb.getTag();
                             }
                         } catch (Exception e) {
                             System.out.println("something went wrong");
@@ -866,11 +927,12 @@ public class PVQ extends AppCompatActivity {
                     line = question + ": ";
                     for (int j = 0; j < q.getChildCount(); j++) {
                         String ctag = (String) q.getChildAt(j).getTag();
-                        if (ctag.equals("choice")) {
+                        if (ctag.contains("choice")) {
                             CheckBox cb = (CheckBox) q.getChildAt(j);
                             if (cb.isChecked()) {
+                                String tt = ctag.substring(ctag.indexOf("~~")+2);
                                 line += cb.getText() + ", ";
-                                ((ArrayList) qans).add(cb.getText());
+                                ((ArrayList) qans).add(tt);
                             }
                         }
                     }
@@ -890,12 +952,15 @@ public class PVQ extends AppCompatActivity {
                     }
                     line = question + ": ";
                     line += imtags;
-                    qans = imtags;
+                    qans = Images;
+                    // qans = hashmap of image file:imtag
                 }
+
                 String jquestion = question;
                 if(question.endsWith("*")){
                     jquestion = question.substring(0,question.length()-1);
                 }
+
                 if(questions.containsKey(jquestion)){
                     if(questions.get(jquestion) instanceof ArrayList){
                         ((ArrayList<Object>)questions.get(jquestion)).add(qans);
@@ -910,17 +975,20 @@ public class PVQ extends AppCompatActivity {
                 }else {
                     questions.put(jquestion, qans);
                 }
-                System.out.println(Identifiers);
-                if(Identifiers.contains(jquestion) && !uid_set && !qans.equals("") && !qans.equals(" ")){
-                    if(!Identifiers.get(idp).equals(jquestion)){
-                        break;
+
+                // change to refer to question numbers
+
+                if(Identifiers.contains(qid) && !uid_set && !qans.equals("") && !qans.equals(" ")){
+                    if(Identifiers.get(idp).equals(qid)){
+                        String uids = ((String) qans).replace(" ", "_");
+                        uids = uids.replace("/", "_");
+                        uid += uids + "_";
+                        System.out.println(Identifiers.get(idp) + qans);
+                        idp += 1;
                     }
-                    String uids = ((String)qans).replace(" ","_");
-                    uids = uids.replace("/","_");
-                    uid += uids + "_";
-                    System.out.println(Identifiers.get(idp)+qans);
-                    idp += 1;
                 }
+                System.out.println(i);
+
 
                 if (toFile) {
                     try {
@@ -977,13 +1045,11 @@ public class PVQ extends AppCompatActivity {
             bdr.setMessage("Answer all required questions before submitting");
             AlertDialog dialog = bdr.create();
             dialog.show();
-            uid = "";
-            uid_set = false;
             return "";
         } else{
             // if all required questions answered, writes questions and answers to file
-            filename = timeStamp+".txt";
-            String jsonfilename = timeStamp + ".json";
+            filename = timeStamp+"hc*"+project+".txt";
+            String jsonfilename = timeStamp + "hc*"+project+".json";
             FileOutputStream fos = null;
             FileOutputStream jfos = null;
             // opens file
@@ -991,21 +1057,26 @@ public class PVQ extends AppCompatActivity {
                 fos = openFileOutput(filename, Context.MODE_PRIVATE);
                 jfos = openFileOutput(jsonfilename, Context.MODE_PRIVATE);
             }catch(Exception e){
+                e.printStackTrace();
                 System.out.println(filename);
                 System.out.println(jsonfilename);
                 return "";
             }
-            uid = "";
-            uid_set = false;
             System.out.println(writeAnswers(Groups, true, fos, false, jfos, false));
             try {
                 fos.close();
                 jfos.close();
-            }catch(Exception e){}
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
 
         // goes back to main page of app
         Intent intent = new Intent(this, Home.class);
+        intent.putExtra("project", project);
+        intent.putExtra("city", getIntent().getStringExtra("city"));
+        intent.putExtra("org", getIntent().getStringExtra("org"));
+        intent.putExtra("action_bar", getIntent().getStringExtra("project_name"));
         startActivity(intent);
 
         // resets values for new questionnaire
@@ -1028,7 +1099,6 @@ public class PVQ extends AppCompatActivity {
             req_buttons.setBackgroundColor(Color.MAGENTA);
             if(req_buttons.getChildCount() == 0) {
                 while (scts.length() > 3) {
-                    System.out.println(pages);
                     String sct = scts.substring(0, scts.indexOf(",, "));
                     scts = scts.substring(scts.indexOf(",, ") + 3);
                     Button br = new Button(this);
@@ -1042,7 +1112,6 @@ public class PVQ extends AppCompatActivity {
                     req_buttons.addView(br);
                 }
             }
-            System.out.println(scts);
         }else{
             ans.setText(answers);
         }
@@ -1244,7 +1313,7 @@ class NumWatcher implements TextWatcher {
                     LinearLayout qu = Questionnaire.build_question(question, list2, qchunk, context, NumQuestions,
                             ds);
                     TextView pt = new TextView(context);
-                    pt.setText(Integer.toString(i+1)+": ");
+                    pt.setText(" - "+Integer.toString(i+1));
                     pt.setTag("outer parent text");
                     pt.setVisibility(View.GONE);
                     qu.addView(pt);
@@ -1257,16 +1326,8 @@ class NumWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
 
-// slider/ratings
-// \/
 
-// drop down
-// nested questions/classes; possible multiple nesting
-// repeatable numbering
-
-// sum q -> more general, multiple types, sum becomes a feature
 // spacing between question layouts
-// navbar to end of groups
-// number of questions answered at end
-// list unanswered questions
-// submit slider instead of button
+
+// references to different qs as limits
+// reopening landing page

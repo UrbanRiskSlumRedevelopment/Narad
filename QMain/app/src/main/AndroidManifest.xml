@@ -19,16 +19,20 @@
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
+        android:noHistory="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".Splash"
+            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".Questionnaire"
@@ -75,7 +79,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".Projects"></activity>
+        <activity android:name=".Projects" />
     </application>
 
 </manifest>

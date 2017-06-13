@@ -1,484 +1,2973 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <metadata>
-        <title>Housing Survey</title>
-        <idfield>City</idfield>
-        <idfield>Location - Ward No/Name</idfield>
-        <idfield>Name of Slum</idfield>
-        <idfield>House/Flat/Door No.</idfield>
-    </metadata>
     <groups>
-        <group no="I" name="general_info">
+        <group name="general_info" no="I">
             <gtext>General Information</gtext>
-            <question>
+            <question name="name_of_slum">
                 <q>1</q>
-                <qtext>City</qtext>
-                <qtype>T</qtype>
-                <qhint>Enter city</qhint>
-                <req>T</req>
-                <uid>T</uid>
-            </question>
-            <question>
-                <q>2</q>
-                <qtext>Location - Ward No/Name</qtext>
-                <qtype>T</qtype>
-                <req>T</req>
-                <qhint>Enter location</qhint>
-                <uid>T</uid>
-            </question>
-            <question>
-                <q>3</q>
                 <qtext>Name of Slum</qtext>
                 <qtype>T</qtype>
-                <qhint>Enter slum</qhint>
                 <req>T</req>
-                <uid>T</uid>
             </question>
-            <question>
-                <q>4</q>
-                <qtext>House/Flat/Door No.</qtext>
-                <qtype>N</qtype>
-                <qhint>Enter number</qhint>
+            <question name="location_ward_name">
+                <q>2</q>
+                <qtext>Location - Ward No / Name</qtext>
+                <qtype>T</qtype>
                 <req>T</req>
-                <uid>T</uid>
+            </question>
+            <question name="house_flat_door_no">
+                <q>3</q>
+                <qtext>House / Flat / Door No</qtext>
+                <qtype>T</qtype>
+                <req>T</req>
             </question>
         </group>
-        <group no="II" name="family">
-            <gtext>Household Level General Information</gtext>
-            <question name="Head of Family">
-                <q>5</q>
-                <qtext>Name of Head of the Family</qtext>
+        <group name="household_general_info" no="II">
+            <gtext>Household level general information</gtext>
+            <question name="name_of_head">
+                <q>4</q>
+                <qtext>Name of head of family</qtext>
                 <qtype>T</qtype>
-                <qhint>Enter text</qhint>
-                <req>T</req>
-            </question>
-            <question name="Minority Status">
-                <q>6</q>
-                <qtext>Minority Status</qtext>
-                <qtype>SC</qtype>
                 <qhint></qhint>
                 <req>T</req>
-                <choices>
-                    <choice>
-                        <ctext>Non-Minority</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>Minority</ctext>
-                    </choice>
-                </choices>
             </question>
-            <question name="Female-headed">
-                <q>7</q>
-                <qtext>Female-headed Household?</qtext>
-                <qtype>SC</qtype>
-                <qhint>Select one</qhint>
-                <choices>
-                    <choice>
-                        <ctext>Yes</ctext>
-                        <dependents>8</dependents>
-                    </choice>
-                    <choice>
-                        <ctext>No</ctext>
-                        <extra>F</extra>
-                    </choice>
-                </choices>
-                <req>T</req>
-            </question>
-            <question>
-                <q>8</q>
-                <inv>T</inv>
-                <qtext>Status of female head?</qtext>
-                <qhint>Select one</qhint>
-                <qtype>SC</qtype>
+            <question name="fathers_name">
+                <q>5</q>
+                <qtext>Father&apos;s name</qtext>
+                <qtype>T</qtype>
+                <qhint>Name of head of family&apos;s father</qhint>
                 <req>F</req>
+            </question>
+            <question name="sex">
+                <q>6</q>
+                <qtext>Sex</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
                 <choices>
                     <choice>
-                        <ctext>Married</ctext>
+                        <ctext>Male</ctext>
+                        <ccode>01</ccode>
                     </choice>
                     <choice>
-                        <ctext>Widowed</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>Abandoned/Single</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>Divorced</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>Unwed Mother</ctext>
+                        <ctext>Female</ctext>
+                        <ccode>02</ccode>
+                        <dependents>10</dependents>
+                        <dependents>15</dependents>
                     </choice>
                     <choice>
                         <ctext>Other</ctext>
+                        <ccode>03</ccode>
                     </choice>
                 </choices>
             </question>
-            <question>
+            <question name="caste">
+                <q>7</q>
+                <qtext>Caste</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>General</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>SC</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>ST</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>OBC</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="religion">
+                <q>8</q>
+                <qtext>Religion</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Hindu</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Muslim</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Christian</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sikh</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Jainism</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Buddhism</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Zoroastrianism</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="minority_status">
                 <q>9</q>
+                <qtext>Minority status in State/UT</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Non-minority</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Minority</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="female_head_status">
+                <q>10</q>
+                <qtext>If female headed household, status of female head</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <inv>T</inv>
+                <req>C</req>
+                <choices>
+                    <choice>
+                        <ctext>Married</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Widowed</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Abandoned/Single</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Divorced</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Unwed mother</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="family_members">
+                <q>11</q>
+                <qtext>No of family members</qtext>
                 <qtype>S</qtype>
-                <qtext>Number of family members</qtext>
-                <qhint>Enter number</qhint>
+                <qhint></qhint>
+                <req>T</req>
                 <factor>
                     <ftext>Male</ftext>
+                    <fcode>01</fcode>
                 </factor>
                 <factor>
                     <ftext>Female</ftext>
+                    <fcode>02</fcode>
                 </factor>
-                <req>T</req>
             </question>
-            <question name="Poverty Line">
-                <q>10</q>
-                <qtext>Is your family below the poverty line?</qtext>
-                <qtype>SC</qtype>
-                <qhint>Select one</qhint>
-                <choices>
-                    <choice>
-                        <ctext>Yes</ctext>
-                        <dependents>11</dependents>
-                    </choice>
-                    <choice>
-                        <ctext>No</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>Don't know</ctext>
-                    </choice>
-                </choices>
-                <req>T</req>
-            </question>
-            <question>
-                <q>11</q>
-                <inv>T</inv>
-                <qtext>Does the family possess BPL card?</qtext>
-                <qhint>Select one</qhint>
-                <qtype>SC</qtype>
-                <req>F</req>
-                <choices>
-                    <choice>
-                        <ctext>Yes</ctext>
-                    </choice>
-                    <choice>
-                        <ctext>No</ctext>
-                    </choice>
-                </choices>
-            </question>
-            <question>
+            <question name="illiterate_adult_members">
                 <q>12</q>
-                <qtext>Household Appliances</qtext>
-                <qhint>Select all that apply</qhint>
-                <qtype>MC</qtype>
-                <req>F</req>
+                <qtext>No of illiterate adult members</qtext>
+                <qtype>S</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <factor>
+                    <ftext>Male</ftext>
+                    <fcode>01</fcode>
+                </factor>
+                <factor>
+                    <ftext>Female</ftext>
+                    <fcode>02</fcode>
+                </factor>
+            </question>
+            <question name="unattending_children">
+                <q>13</q>
+                <qtext>No of children in age-group 6-14 not attending school</qtext>
+                <qtype>S</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <factor>
+                    <ftext>Male</ftext>
+                    <fcode>01</fcode>
+                </factor>
+                <factor>
+                    <ftext>Female</ftext>
+                    <fcode>02</fcode>
+                </factor>
+            </question>
+            <question name="disabled_members">
+                <q>14</q>
+                <qtext>No of family members with disabilities</qtext>
+                <qtype>S</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <factor>
+                    <ftext>Physical</ftext>
+                    <fcode>01</fcode>
+                </factor>
+                <factor>
+                    <ftext>Mental</ftext>
+                    <fcode>02</fcode>
+                </factor>
+            </question>
+            <question name="earning_female_status">
+                <q>15</q>
+                <qtext>If major earning member is female, whether</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <inv>T</inv>
                 <choices>
                     <choice>
-                        <ctext>Cell Phone</ctext>
-                        <dependents>13</dependents>
+                        <ctext>Married</ctext>
+                        <ccode>01</ccode>
                     </choice>
                     <choice>
-                        <ctext>Refrigerator</ctext>
+                        <ctext>Widowed</ctext>
+                        <ccode>02</ccode>
                     </choice>
                     <choice>
-                        <ctext>Television</ctext>
-                        <dependents>13</dependents>
+                        <ctext>Abandoned/Single</ctext>
+                        <ccode>03</ccode>
                     </choice>
                     <choice>
-                        <ctext>Washing Machine</ctext>
+                        <ctext>Divorced</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Unwed mother</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
                     </choice>
                 </choices>
             </question>
-            <question>
-                <q>13</q>
-                <inv>T</inv>
-                <qtext>Service Provider?</qtext>
-                <qhint>Enter TV/phone service provider</qhint>
-                <qtype>T</qtype>
-                <req>F</req>
-            </question>
-        </group>
-        <group no="III" name="earning_members">
-            <gtext>Details of Earning Members of the Household</gtext>
-            <rchunk>
-                <q>14</q>
-                <rtext>Details of Earning Members of the Household</rtext>
-                <rsize>Number of earning members</rsize>
-                <rlimit>20</rlimit>
-                <rquestion name="test4">
-                    <q>14a</q>
-                    <qtype>T</qtype>
-                    <qtext>Name</qtext>
-                    <qhint>Enter name</qhint>
-                    <req>T</req>
-                </rquestion>
-                <rquestion name="test5">
-                    <q>14b</q>
-                    <qtype>T</qtype>
-                    <qtext>Relation to head of family</qtext>
-                    <qhint>Enter relation</qhint>
-                    <req>F</req>
-                </rquestion>
-                <rquestion>
-                    <q>14c</q>
-                    <qtype>N</qtype>
-                    <qtext>Age</qtext>
-                    <qhint>Enter age</qhint>
-                    <req>F</req>
-                </rquestion>
-                <rquestion>
-                    <q>14d</q>
-                    <qtype>SC</qtype>
-                    <qtext>Sex</qtext>
-                    <qhint>Select one</qhint>
-                    <req>F</req>
-                    <choices>
-                        <choice>
-                            <ctext>Male</ctext>
-                        </choice>
-                        <choice>
-                            <ctext>Female</ctext>
-                        </choice>
-                    </choices>
-                </rquestion>
-                <rquestion>
-                    <q>15</q>
-                    <qtype>P</qtype>
-                    <qhint></qhint>
-                    <qtext>Siblings</qtext>
-                    <req>F</req>
-                </rquestion>
-                <rquestion>
-                    <q>15a</q>
-                    <qtype>N</qtype>
-                    <qtext>Brothers</qtext>
-                    <qhint>Enter number of brothers</qhint>
-                    <req>F</req>
-                    <parent>15</parent>
-                </rquestion>
-                <rquestion>
-                    <q>15b</q>
-                    <qtype>N</qtype>
-                    <qtext>Sisters</qtext>
-                    <qhint>Enter number of sisters</qhint>
-                    <req>F</req>
-                    <parent>15</parent>
-                </rquestion>
-            </rchunk>
-        </group>
-        <group no="IV" name="household_detail">
-            <gtext>Household Level Detailed Information</gtext>
-            <question>
-                <q>24</q>
-                <qtext>Source of drinking water</qtext>
-                <qhint></qhint>
+            <question name="below_poverty_line">
+                <q>16</q>
+                <qtext>Is your family below poverty line</qtext>
                 <qtype>SC</qtype>
-                <req>F</req>
+                <qhint>Select one</qhint>
+                <req>T</req>
                 <choices>
                     <choice>
-                        <ctext>Tap</ctext>
+                        <ctext>Yes</ctext>
+                        <ccode>01</ccode>
+                        <dependents>17</dependents>
                     </choice>
                     <choice>
-                        <ctext>Tubewell/handpump</ctext>
+                        <ctext>No</ctext>
+                        <ccode>02</ccode>
                     </choice>
                     <choice>
-                        <ctext>Open well</ctext>
+                        <ctext>Don&apos;t know</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="have_bpl_card">
+                <q>17</q>
+                <qtext>Does the family possess BPL card</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <inv>T</inv>
+                <req>C</req>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Don&apos;t know</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+        </group>
+        <!--
+        <group name="household_detailed_info" no="III">
+            <gtext>Household level detailed information</gtext>
+            <question name="tenure_status">
+                <q>18</q>
+                <qtext>Land tenure status</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Patta</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Possession certificate / Occupancy right</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Private land encroached</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Public land encroached</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rented</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="house_type">
+                <q>19</q>
+                <qtext>Type / Structure of house</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Pucca</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Semi-pucca</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Katcha</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="roof_type">
+                <q>20</q>
+                <qtext>Type of roof</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Grass / thatched</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tarpaulin</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Wooden</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Asbestos</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tiled</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cement / concrete slab</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="floor_type">
+                <q>21</q>
+                <qtext>Type of flooring</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Mud</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Brick</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Stone</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cement</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tiles</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="house_lighting">
+                <q>22</q>
+                <qtext>House lighting</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Electricity connection</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Kerosene</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Firewood</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="cooking_fuel">
+                <q>23</q>
+                <qtext>Fuel for cooking</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Gas</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electricity</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Kerosene</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Charcoal</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Firewood</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="drinking_water_source">
+                <q>24a</q>
+                <qtext>Source of drinking water</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Tap within premises</ctext>
+                        <ccode>01</ccode>
+                        <dependents>24b</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Tubewell / handpump within premises</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Open well within premises</ctext>
+                        <ccode>03</ccode>
                     </choice>
                     <choice>
                         <ctext>Public tap</ctext>
+                        <ccode>04</ccode>
                         <dependents>25</dependents>
                     </choice>
                     <choice>
-                        <ctext>Tank/pond</ctext>
+                        <ctext>Tubewell / borewell / handpump outside premises</ctext>
+                        <ccode>05</ccode>
                         <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Open well outside premises</ctext>
+                        <ccode>06</ccode>
+                        <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Tank / pond</ctext>
+                        <ccode>07</ccode>
+                        <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>River / canal / lake / spring</ctext>
+                        <ccode>08</ccode>
+                        <dependents>25</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>Water tanker</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
                     </choice>
                 </choices>
             </question>
-            <question>
-                <q>25</q>
-                <qtext>If outside premises, then distance from drinking water source</qtext>
+            <question name="water_supply_duration">
+                <q>24b</q>
+                <qtext>Duration of water supply</qtext>
                 <qtype>SC</qtype>
-                <qhint></qhint>
-                <req>F</req>
+                <qhint>Select one</qhint>
+                <req>C</req>
                 <inv>T</inv>
                 <choices>
                     <choice>
-                        <ctext>Less than 0.5 kms</ctext>
+                        <ctext>Less than 1 hour daily</ctext>
+                        <ccode>01</ccode>
                     </choice>
                     <choice>
-                        <ctext>0.5 to 1.0 km</ctext>
+                        <ctext>1 - 2 hrs daily</ctext>
+                        <ccode>02</ccode>
                     </choice>
                     <choice>
-                        <ctext>1.0 to 2.0 km</ctext>
+                        <ctext>More than 2 hrs daily</ctext>
+                        <ccode>03</ccode>
                     </choice>
                     <choice>
-                        <ctext>2.0 to 5.0 km</ctext>
+                        <ctext>Once a week</ctext>
+                        <ccode>04</ccode>
                     </choice>
                     <choice>
-                        <ctext>More than 5.0 km</ctext>
+                        <ctext>Twice a week</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Not regular</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>No supply</ctext>
+                        <ccode>99</ccode>
                     </choice>
                 </choices>
             </question>
-            <question>
-                <q>26</q>
+            <question name="distance_from_source">
+                <q>25</q>
+                <qtext>Distance from drinking water source</qtext>
                 <qtype>SC</qtype>
-                <qhint></qhint>
-                <qtext>Existence of toilet facility</qtext>
-                <req>F</req>
+                <qhint>Select one</qhint>
+                <req>C</req>
+                <inv>T</inv>
                 <choices>
                     <choice>
-                        <ctext>Own septic tank/flush latrine</ctext>
+                        <ctext>Less than 0.5km</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>0.5 to 1km</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>1 to 2km</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>2 to 5km</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>More than 5km</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="toilet_facility">
+                <q>26</q>
+                <qtext>Existence of toilet facility</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Own septic tank / flush latrine</ctext>
+                        <ccode>01</ccode>
                     </choice>
                     <choice>
                         <ctext>Own dry latrine</ctext>
+                        <ccode>02</ccode>
                     </choice>
                     <choice>
-                        <ctext>Shared septic tank/flush latrine</ctext>
+                        <ctext>Shared septic tank / flush latrine</ctext>
+                        <ccode>03</ccode>
                     </choice>
                     <choice>
                         <ctext>Shared dry latrine</ctext>
+                        <ccode>04</ccode>
                     </choice>
                     <choice>
-                        <ctext>Community septic tank/flush latrine</ctext>
-                        <dependents>25</dependents>
+                        <ctext>Community septic tank / flush latrine</ctext>
+                        <ccode>05</ccode>
                     </choice>
                     <choice>
                         <ctext>Community dry latrine</ctext>
-                        <dependents>25</dependents>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Open defecation</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="bathroom_facility">
+                <q>27</q>
+                <qtext>Existence of bathroom facility</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Within premises</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Outside premises</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Community bath</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>No bathroom</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="front_road">
+                <q>28</q>
+                <qtext>Road in front of house</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Motorable pucca</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Motorable katcha</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-motorable pucca</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-motorable katcha</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="pre_school_availability">
+                <q>29</q>
+                <qtext>Type of pre-school available</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Municipal</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Government</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Private</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="primary_school_availability">
+                <q>30</q>
+                <qtext>Type of primary school available</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Municipal</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Government</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Private</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="high_school_availability">
+                <q>31</q>
+                <qtext>Type of high school available</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Municipal</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Government</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Private</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="health_facility_access">
+                <q>32</q>
+                <qtext>Type of health facility access</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Primary health centre</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Government hospital</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Maternity centre</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Private clinic</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rural medical practitioner (RMP)</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Ayurvedic doctor / Vaidya</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="welfare_benefits_access">
+                <q>33</q>
+                <qtext>Access to welfare benefits by any family member</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Old age pension</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Widow pension</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Disabled pension</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health insurance</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>General insurance</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="consumer_durables">
+                <q>34</q>
+                <qtext>Consumer durables</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Electric fan</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Refrigerator</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cooler</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Residential telephone</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mobile phone</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>B/W television</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Colour television</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sewing machine</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Furniture</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bicycle</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rickshaw</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Push cart</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bullock cart</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Two wheeler</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Three wheeler</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Taxi</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Car</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="live_stock">
+                <q>35a</q>
+                <qtext>Live stock</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                        <ccode>01</ccode>
+                        <dependents>35b</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Don&apos;t know</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="livestock_types">
+                <q>35b</q>
+                <qtext>Type of livestock</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>C</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>Buffalo</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cow</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sheep / Goat</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pig</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hen / Cock</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Donkey</ctext>
+                        <ccode>06</ccode>
                     </choice>
                 </choices>
             </question>
         </group>
-        <group no="V" name="livelihood">
-            <gtext>Livelihood Surveys</gtext>
-            <question>
-                <q>40</q>
-                <qtype>P</qtype>
-                <qhint>Enter primary and secondary occupations held by family members</qhint>
-                <qtext>Source of earning/livelihood</qtext>
-                <req>F</req>
+        <group name="migration_details" no="IV">
+            <gtext>Migration details of household, if applicable</gtext>
+            <question name="whether_migrated">
+                <q>36x</q>
+                <qtext>Whether the head of family migrated to city/town</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Yes</ctext>
+                        <ccode>01</ccode>
+                        <dependents>36</dependents>
+                        <dependents>37</dependents>
+                        <dependents>38</dependents>
+                        <dependents>39</dependents>
+                    </choice>
+                    <choice>
+                        <ctext>No</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Don&apos;t know</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
             </question>
-            <question>
-                <q>40a</q>
-                <qtype>P</qtype>
-                <qhint></qhint>
-                <qtext>Male</qtext>
-                <parent>40</parent>
-                <req>F</req>
+            <question name="years_of_stay">
+                <q>36</q>
+                <qtext>Number of years of stay in this town/city</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>C</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>0 - 1 year</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>1 - 3 years</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>3 - 5 years</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>More than 5 years</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                </choices>
             </question>
-            <question>
-                <q>40b</q>
-                <qtype>P</qtype>
-                <qhint></qhint>
-                <qtext>Female</qtext>
-                <req>F</req>
-                <parent>40</parent>
+            <question name="migrated_from">
+                <q>37</q>
+                <qtext>Whether migrated from</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>C</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>Rural to urban area</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Urban to urban area</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                </choices>
             </question>
-            <question>
-                <q>40a1</q>
-                <qtype>T</qtype>
-                <qhint>Enter occupation</qhint>
-                <qtext>Primary occupation</qtext>
-                <req>F</req>
-                <parent>40a</parent>
+            <question name="migration_type">
+                <q>38</q>
+                <qtext>Type of migration</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>C</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>Seasonal</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Permanent</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                </choices>
             </question>
-            <question>
-                <q>40a2</q>
-                <qtype>T</qtype>
-                <qhint>Enter occupation</qhint>
-                <qtext>Secondary occupation</qtext>
-                <req>F</req>
-                <parent>40a</parent>
-            </question>
-            <question>
-                <q>40b1</q>
-                <qtype>T</qtype>
-                <qhint>Enter occupation</qhint>
-                <qtext>Primary occupation</qtext>
-                <req>F</req>
-                <parent>40b</parent>
-            </question>
-            <question>
-                <q>40b2</q>
-                <qtype>T</qtype>
-                <qhint>Enter occupation</qhint>
-                <qtext>Secondary occupation</qtext>
-                <parent>40b</parent>
-                <req>F</req>
+            <question name="reasons_for_migration">
+                <q>39</q>
+                <qtext>Reasons for migration</qtext>
+                <qtype>MC</qtype>
+                <qhint>Select all applicable</qhint>
+                <req>C</req>
+                <inv>T</inv>
+                <choices>
+                    <choice>
+                        <ctext>Unemployment</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Low wage</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Debt</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Drought</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Conflict</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Education</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Marriage</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
             </question>
         </group>
-        <group no="V" name="livelihoods">
-            <gtext>Details of Earning Members of the Household</gtext>
-            <rchunk>
-                <q>45</q>
-                <rtext>Details of Earning Members of the Household</rtext>
-                <rsize>Number of earning members</rsize>
+        <group name="income_expenditure_details" no="V">
+            <gtext>Income-expenditure details of household</gtext>
+            <question name="no_earning_adults">
+                <q>40</q>
+                <qtext>Number of earning adult members</qtext>
+                <qtype>S</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <factor>
+                    <ftext>Male</ftext>
+                    <fcode>01</fcode>
+                </factor>
+                <factor>
+                    <ftext>Female</ftext>
+                    <fcode>02</fcode>
+                </factor>
+            </question>
+            <question name="no_earning_nonadults">
+                <q>41</q>
+                <qtext>Number of earning non-adult members</qtext>
+                <qtype>S</qtype>
+                <qhint></qhint>
+                <req>T</req>
+                <factor>
+                    <ftext>Male</ftext>
+                    <fcode>01</fcode>
+                </factor>
+                <factor>
+                    <ftext>Female</ftext>
+                    <fcode>02</fcode>
+                </factor>
+            </question>
+            <question name="avg_monthly_income">
+                <q>42</q>
+                <qtext>Average monthly income of household</qtext>
+                <qtype>N</qtype>
+                <qhint>Rupees</qhint>
+                <req>T</req>
+            </question>
+            <question name="avg_monthly_expenditure">
+                <q>43</q>
+                <qtext>Average monthly expenditure of household</qtext>
+                <qtype>N</qtype>
+                <qhint>Rupees</qhint>
+                <req>T</req>
+            </question>
+            <question name="outstanding_debt">
+                <q>44</q>
+                <qtext>Debt outstanding as on the date of survey</qtext>
+                <qtype>N</qtype>
+                <qhint>Rupees</qhint>
+                <req>T</req>
+            </question>
+        </group>
+        <group name="earning_member_details" _no="VI">
+            <gtext>Details of earning members of the household</gtext>
+            <rchunk name="earning_member_repeatable">
+                <rtext>Earning member details</rtext>
+                <rsize>No. of earning members</rsize>
                 <rlimit>20</rlimit>
-                <rquestion>
-                    <q>45.1</q>
+                <rquestion name="general_details">
+                    <q>45</q>
+                    <qtext>General details</qtext>
                     <qtype>P</qtype>
                     <qhint></qhint>
-                    <qtext>General Details</qtext>
-                    <req>F</req>
                 </rquestion>
-                <rquestion>
-                    <q>45.2</q>
-                    <qtype>P</qtype>
-                    <qhint></qhint>
-                    <qtext>Education and Training</qtext>
-                    <req>F</req>
-                </rquestion>
-                <rquestion>
-                    <q>45.3</q>
-                    <qtype>P</qtype>
-                    <qhint></qhint>
-                    <qtext>Employment and Earnings</qtext>
-                    <req>F</req>
-                </rquestion>
-                <rquestion>
-                    <q>45.1a</q>
+                <rquestion name="earning_member_name">
+                    <q>45.a</q>
+                    <qtext>Name of earning member</qtext>
                     <qtype>T</qtype>
+                    <qhint></qhint>
                     <req>T</req>
-                    <qtext>Name</qtext>
-                    <qhint></qhint>
-                    <parent>45.1</parent>
+                    <parent>45</parent>
                 </rquestion>
-                <rquestion>
-                    <q>45.1b</q>
+                <rquestion name="relation_to_head">
+                    <q>45.b</q>
+                    <qtext>Relation to head of family</qtext>
                     <qtype>T</qtype>
+                    <qhint></qhint>
                     <req>T</req>
-                    <qtext>Relation to Head of Family</qtext>
-                    <qhint></qhint>
-                    <parent>45.1</parent>
+                    <parent>45</parent>
                 </rquestion>
-                <rquestion>
-                    <q>45.2a</q>
-                    <qtype>T</qtype>
-                    <req>F</req>
-                    <qtext>Educational Qualification</qtext>
+                <rquestion name="earning_member_age">
+                    <q>45.c</q>
+                    <qtext>Age</qtext>
+                    <qtype>N</qtype>
                     <qhint></qhint>
-                    <parent>45.2</parent>
+                    <req>T</req>
+                    <parent>45</parent>
                 </rquestion>
-                <rquestion>
-                    <q>45.2b</q>
-                    <qtype>T</qtype>
-                    <req>F</req>
-                    <qtext>Type of Institution</qtext>
+                <rquestion name="earning_member_sex">
+                    <q>45.d</q>
+                    <qtext>Sex</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>45</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Male</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Female</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Other</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="caste">
+                    <q>45.e</q>
+                    <qtext>Caste</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>45</parent>
+                    <choices>
+                        <choice>
+                            <ctext>General</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>SC</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>ST</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>OBC</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="religion">
+                    <q>45.f</q>
+                    <qtext>Religion</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>45</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Hindu</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Muslim</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Christian</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Sikh</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Jainism</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Buddhism</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Zoroastrianism</ctext>
+                            <ccode>07</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Others</ctext>
+                            <ccode>49</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="education_training">
+                    <q>46</q>
+                    <qtext>Education &amp; training details</qtext>
+                    <qtype>P</qtype>
                     <qhint></qhint>
-                    <parent>45.2</parent>
                 </rquestion>
-                <rquestion>
-                    <q>45.3a</q>
-                    <qtype>T</qtype>
+                <rquestion name="education_qualification">
+                    <q>46.g</q>
+                    <qtext>Education qualification</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Highest level</qhint>
+                    <req>T</req>
+                    <parent>46</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Primary school</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Middle school</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Matriculate</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Certificate</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Diploma</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Graduate</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Post-graduate</ctext>
+                            <ccode>07</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Technical</ctext>
+                            <ccode>08</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Other</ctext>
+                            <ccode>49</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>No education</ctext>
+                            <ccode>99</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="skill_training">
+                    <q>46.h</q>
+                    <qtext>Skill training acquired</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>46</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Pre-employment training</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>In-service training</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Skill upgradation</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Apprenticeship</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Soft / Life skills programme</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Entrepreneurship</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Hereditary</ctext>
+                            <ccode>07</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Other</ctext>
+                            <ccode>49</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>No skills training</ctext>
+                            <ccode>99</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="training_institute">
+                    <q>46.i</q>
+                    <qtext>Type of institution from whom skill training received, if applicable</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
                     <req>F</req>
-                    <qtext>Employment Status</qtext>
+                    <parent>46</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Industrial Training Institute</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Polytechnic</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Vocational schools</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Technical schools / institutes</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Other</ctext>
+                            <ccode>49</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="employement_earning">
+                    <q>47</q>
+                    <qtext>Employment &amp; earning details</qtext>
+                    <qtype>P</qtype>
                     <qhint></qhint>
-                    <parent>45.3</parent>
                 </rquestion>
-                <rquestion>
-                    <q>45.3b</q>
-                    <qtype>T</qtype>
-                    <req>F</req>
+                <rquestion name="employment_status">
+                    <q>47.j</q>
+                    <qtext>Employment status</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>47</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Self-employed</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Salaried</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Regular wage</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Casual labour</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Other</ctext>
+                            <ccode>49</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="place_of_work">
+                    <q>47.k</q>
                     <qtext>Place of work</qtext>
-                    <qhint></qhint>
-                    <parent>45.3</parent>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>47</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Within the slum area</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Distance less than 0.5km</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>0.5 to 1.0km</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>1.0 to 2.0km</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>2.0 to 5.0km</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>More than 5.0km</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="time_of_work">
+                    <q>47.l</q>
+                    <qtext>Time of work</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>47</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Whole day</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Half day</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Part time</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>3 months in a year</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>6 months in a year</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Whole year</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                    </choices>
+                </rquestion>
+                <rquestion name="monthly_earning">
+                    <q>47.m</q>
+                    <qtext>Monthly earning</qtext>
+                    <qtype>SC</qtype>
+                    <qhint>Select one</qhint>
+                    <req>T</req>
+                    <parent>47</parent>
+                    <choices>
+                        <choice>
+                            <ctext>Less than Rs. 500</ctext>
+                            <ccode>01</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Rs. 500 to 1000</ctext>
+                            <ccode>02</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Rs. 1000 to 1500</ctext>
+                            <ccode>03</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Rs. 1500 to 2000</ctext>
+                            <ccode>04</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>Rs. 2000 to 3000</ctext>
+                            <ccode>05</ccode>
+                        </choice>
+                        <choice>
+                            <ctext>More than Rs. 3000</ctext>
+                            <ccode>06</ccode>
+                        </choice>
+                    </choices>
                 </rquestion>
             </rchunk>
         </group>
+        <group name="livelihood_details" no="VII">
+            <gtext>Livelihood details of household</gtext>
+            <question name="livelihood_source">
+                <q>48</q>
+                <qtext>Source of earning/livelihood</qtext>
+                <qtype>P</qtype>
+                <qhint></qhint>
+            </question>
+            <question name="male_earners">
+                <q>48.1</q>
+                <qtext>Male earners</qtext>
+                <qtype>P</qtype>
+                <parent>48</parent>
+                <qhint></qhint>
+            </question>
+            <question>
+                <q>48.1.a</q>
+                <qtext>Primary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Agriculture / horticulture</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hawking / Stree vending</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Domestic servant</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sanitation worker</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Ragpicker</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Watchman</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Construction worker</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Industrial worker</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Contract worker</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Casual labourer</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrician</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electronics gadget repairing</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Plumbing</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Weaving</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft &amp; cottage based production</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Auto repair / motor mechanic</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mechanical engineering related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Shoe making / leather related</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Work related to childcare, nuitrition, pre-schools &amp; creche</ctext>
+                        <ccode>24</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>25</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office related</ctext>
+                        <ccode>26</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing related</ctext>
+                        <ccode>27</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hotel &amp; restaurant related</ctext>
+                        <ccode>28</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tourism related activity</ctext>
+                        <ccode>29</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Security related</ctext>
+                        <ccode>30</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer related</ctext>
+                        <ccode>31</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>32</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Laundry related</ctext>
+                        <ccode>33</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Toy making</ctext>
+                        <ccode>34</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Candle making</ctext>
+                        <ccode>35</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artificial jewellery</ctext>
+                        <ccode>36</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Embroidery / knitting</ctext>
+                        <ccode>37</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cooking</ctext>
+                        <ccode>38</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bakery</ctext>
+                        <ccode>39</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mason</ctext>
+                        <ccode>40</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Carpenter</ctext>
+                        <ccode>41</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Painter</ctext>
+                        <ccode>42</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Food processing / preservation</ctext>
+                        <ccode>43</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Petty trader</ctext>
+                        <ccode>44</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rickshaw puller</ctext>
+                        <ccode>45</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cyclerickshaw driver</ctext>
+                        <ccode>46</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pushcart driver</ctext>
+                        <ccode>47</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Autorickshaw driver</ctext>
+                        <ccode>48</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Retail sale</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pig / poultry / cow / buffalo rearing</ctext>
+                        <ccode>50</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>48.1.b</q>
+                <qtext>Secondary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Agriculture / horticulture</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hawking / Stree vending</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Domestic servant</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sanitation worker</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Ragpicker</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Watchman</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Construction worker</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Industrial worker</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Contract worker</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Casual labourer</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrician</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electronics gadget repairing</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Plumbing</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Weaving</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft &amp; cottage based production</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Auto repair / motor mechanic</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mechanical engineering related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Shoe making / leather related</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Work related to childcare, nuitrition, pre-schools &amp; creche</ctext>
+                        <ccode>24</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>25</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office related</ctext>
+                        <ccode>26</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing related</ctext>
+                        <ccode>27</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hotel &amp; restaurant related</ctext>
+                        <ccode>28</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tourism related activity</ctext>
+                        <ccode>29</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Security related</ctext>
+                        <ccode>30</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer related</ctext>
+                        <ccode>31</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>32</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Laundry related</ctext>
+                        <ccode>33</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Toy making</ctext>
+                        <ccode>34</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Candle making</ctext>
+                        <ccode>35</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artificial jewellery</ctext>
+                        <ccode>36</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Embroidery / knitting</ctext>
+                        <ccode>37</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cooking</ctext>
+                        <ccode>38</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bakery</ctext>
+                        <ccode>39</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mason</ctext>
+                        <ccode>40</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Carpenter</ctext>
+                        <ccode>41</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Painter</ctext>
+                        <ccode>42</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Food processing / preservation</ctext>
+                        <ccode>43</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Petty trader</ctext>
+                        <ccode>44</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rickshaw puller</ctext>
+                        <ccode>45</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cyclerickshaw driver</ctext>
+                        <ccode>46</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pushcart driver</ctext>
+                        <ccode>47</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Autorickshaw driver</ctext>
+                        <ccode>48</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Retail sale</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pig / poultry / cow / buffalo rearing</ctext>
+                        <ccode>50</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="female_earners">
+                <q>48.2</q>
+                <qtext>Female earners</qtext>
+                <qtype>P</qtype>
+                <parent>48</parent>
+                <qhint></qhint>
+            </question>
+            <question>
+                <q>48.2.a</q>
+                <qtext>Primary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Agriculture / horticulture</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hawking / Stree vending</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Domestic servant</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sanitation worker</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Ragpicker</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Watchman</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Construction worker</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Industrial worker</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Contract worker</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Casual labourer</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrician</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electronics gadget repairing</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Plumbing</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Weaving</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft &amp; cottage based production</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Auto repair / motor mechanic</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mechanical engineering related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Shoe making / leather related</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Work related to childcare, nuitrition, pre-schools &amp; creche</ctext>
+                        <ccode>24</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>25</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office related</ctext>
+                        <ccode>26</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing related</ctext>
+                        <ccode>27</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hotel &amp; restaurant related</ctext>
+                        <ccode>28</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tourism related activity</ctext>
+                        <ccode>29</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Security related</ctext>
+                        <ccode>30</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer related</ctext>
+                        <ccode>31</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>32</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Laundry related</ctext>
+                        <ccode>33</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Toy making</ctext>
+                        <ccode>34</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Candle making</ctext>
+                        <ccode>35</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artificial jewellery</ctext>
+                        <ccode>36</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Embroidery / knitting</ctext>
+                        <ccode>37</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cooking</ctext>
+                        <ccode>38</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bakery</ctext>
+                        <ccode>39</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mason</ctext>
+                        <ccode>40</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Carpenter</ctext>
+                        <ccode>41</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Painter</ctext>
+                        <ccode>42</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Food processing / preservation</ctext>
+                        <ccode>43</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Petty trader</ctext>
+                        <ccode>44</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rickshaw puller</ctext>
+                        <ccode>45</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cyclerickshaw driver</ctext>
+                        <ccode>46</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pushcart driver</ctext>
+                        <ccode>47</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Autorickshaw driver</ctext>
+                        <ccode>48</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Retail sale</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pig / poultry / cow / buffalo rearing</ctext>
+                        <ccode>50</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>48.2.b</q>
+                <qtext>Secondary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <choices>
+                    <choice>
+                        <ctext>Agriculture / horticulture</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hawking / Stree vending</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Domestic servant</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Sanitation worker</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Ragpicker</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Watchman</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Construction worker</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Industrial worker</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Contract worker</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Casual labourer</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrician</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electronics gadget repairing</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Plumbing</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Weaving</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft &amp; cottage based production</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Auto repair / motor mechanic</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mechanical engineering related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Shoe making / leather related</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Work related to childcare, nuitrition, pre-schools &amp; creche</ctext>
+                        <ccode>24</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>25</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office related</ctext>
+                        <ccode>26</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing related</ctext>
+                        <ccode>27</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Hotel &amp; restaurant related</ctext>
+                        <ccode>28</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tourism related activity</ctext>
+                        <ccode>29</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Security related</ctext>
+                        <ccode>30</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer related</ctext>
+                        <ccode>31</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>32</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Laundry related</ctext>
+                        <ccode>33</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Toy making</ctext>
+                        <ccode>34</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Candle making</ctext>
+                        <ccode>35</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artificial jewellery</ctext>
+                        <ccode>36</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Embroidery / knitting</ctext>
+                        <ccode>37</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cooking</ctext>
+                        <ccode>38</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Bakery</ctext>
+                        <ccode>39</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Mason</ctext>
+                        <ccode>40</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Carpenter</ctext>
+                        <ccode>41</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Painter</ctext>
+                        <ccode>42</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Food processing / preservation</ctext>
+                        <ccode>43</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Petty trader</ctext>
+                        <ccode>44</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Rickshaw puller</ctext>
+                        <ccode>45</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Cyclerickshaw driver</ctext>
+                        <ccode>46</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pushcart driver</ctext>
+                        <ccode>47</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Autorickshaw driver</ctext>
+                        <ccode>48</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Retail sale</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Pig / poultry / cow / buffalo rearing</ctext>
+                        <ccode>50</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Others</ctext>
+                        <ccode>99</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="unemployment_reasons">
+                <q>49</q>
+                <qtext>Main reason for unemployment of unemployed member, if any</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>F</req>
+                <choices>
+                    <choice>
+                        <ctext>Illiterate</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lack of vocational skills</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lack of job opportunities</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Disability</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Low wage</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lack of capital to invest</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Loss of earlier job</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Closure of unit</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lack of work in the enterprise (self-employed)</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lack of work in the area (casual labour)</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Lay-off without pay</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Employer harsh</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health hazard</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="preferred_training">
+                <q>50</q>
+                <qtext>Preferred area for training / skill enhancement</qtext>
+                <qtype>P</qtype>
+                <qhint></qhint>
+            </question>
+            <question name="male_earners">
+                <q>50.1</q>
+                <qtext>Male earners</qtext>
+                <qtype>P</qtype>
+                <parent>50</parent>
+                <qhint></qhint>
+            </question>
+            <question>
+                <q>50.1.a</q>
+                <qtext>For primary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <parent>50.1</parent>
+                <choices>
+                    <choice>
+                        <ctext>Mechanical engineering</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrical &amp; electronic engineering</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Civil engineering &amp; building construction related</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Leather related</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Textile related</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Catering / nuitrition / hotel / restaurant related</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft / cottage based production</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Agriculture &amp; crop production related &amp; food preservation related</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-crop based agriculture &amp; other related activities</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office &amp; business related</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving &amp; motor mechanic</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tour operators / travel managers related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Childcare / nuitrition / pre-school / creche related</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Journalism / mass communication / media related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing technology related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring / weaving</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Entrepreneurship development programmes</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>50.1.b</q>
+                <qtext>For secondary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <parent>50.1</parent>
+                <choices>
+                    <choice>
+                        <ctext>Mechanical engineering</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrical &amp; electronic engineering</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Civil engineering &amp; building construction related</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Leather related</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Textile related</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Catering / nuitrition / hotel / restaurant related</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft / cottage based production</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Agriculture &amp; crop production related &amp; food preservation related</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-crop based agriculture &amp; other related activities</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office &amp; business related</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving &amp; motor mechanic</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tour operators / travel managers related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Childcare / nuitrition / pre-school / creche related</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Journalism / mass communication / media related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing technology related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring / weaving</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Entrepreneurship development programmes</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question name="female_earners">
+                <q>50.2</q>
+                <qtext>Female earners</qtext>
+                <qtype>P</qtype>
+                <parent>50</parent>
+                <qhint></qhint>
+            </question>
+            <question>
+                <q>50.2.a</q>
+                <qtext>For primary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <parent>50.2</parent>
+                <choices>
+                    <choice>
+                        <ctext>Mechanical engineering</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrical &amp; electronic engineering</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Civil engineering &amp; building construction related</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Leather related</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Textile related</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Catering / nuitrition / hotel / restaurant related</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft / cottage based production</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Agriculture &amp; crop production related &amp; food preservation related</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-crop based agriculture &amp; other related activities</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office &amp; business related</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving &amp; motor mechanic</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tour operators / travel managers related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Childcare / nuitrition / pre-school / creche related</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Journalism / mass communication / media related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing technology related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring / weaving</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Entrepreneurship development programmes</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+            <question>
+                <q>50.2.b</q>
+                <qtext>For secondary occupation</qtext>
+                <qtype>SC</qtype>
+                <qhint>Select one</qhint>
+                <req>T</req>
+                <parent>50.2</parent>
+                <choices>
+                    <choice>
+                        <ctext>Mechanical engineering</ctext>
+                        <ccode>01</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Electrical &amp; electronic engineering</ctext>
+                        <ccode>02</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Computer</ctext>
+                        <ccode>03</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Civil engineering &amp; building construction related</ctext>
+                        <ccode>04</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Chemical engineering</ctext>
+                        <ccode>05</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Leather related</ctext>
+                        <ccode>06</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Textile related</ctext>
+                        <ccode>07</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Catering / nuitrition / hotel / restaurant related</ctext>
+                        <ccode>08</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Artisan / craftsman / handicraft / cottage based production</ctext>
+                        <ccode>09</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Creative arts / artists</ctext>
+                        <ccode>10</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Agriculture &amp; crop production related &amp; food preservation related</ctext>
+                        <ccode>11</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Non-crop based agriculture &amp; other related activities</ctext>
+                        <ccode>12</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Health &amp; paramedical services related</ctext>
+                        <ccode>13</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Office &amp; business related</ctext>
+                        <ccode>14</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Driving &amp; motor mechanic</ctext>
+                        <ccode>15</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Beautician / hairdressing &amp; related</ctext>
+                        <ccode>16</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tour operators / travel managers related</ctext>
+                        <ccode>17</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Photography &amp; related</ctext>
+                        <ccode>18</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Childcare / nuitrition / pre-school / creche related</ctext>
+                        <ccode>19</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Journalism / mass communication / media related</ctext>
+                        <ccode>20</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Printing technology related</ctext>
+                        <ccode>21</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Tailoring / weaving</ctext>
+                        <ccode>22</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Entrepreneurship development programmes</ctext>
+                        <ccode>23</ccode>
+                    </choice>
+                    <choice>
+                        <ctext>Other</ctext>
+                        <ccode>49</ccode>
+                    </choice>
+                </choices>
+            </question>
+        </group>
+        <group no="XX" name="map_and_camera">
+            <gtext>Map and Camera</gtext>
+            <question>
+                <q>100</q>
+                <qtext>Map</qtext>
+                <qtype>M</qtype>
+            </question>
+            <question>
+                <q>101</q>
+                <qtext>Camera</qtext>
+                <qtype>C</qtype>
+            </question>
+        </group>
+        -->
     </groups>
+    <metadata>
+        <title>Housing survey</title>
+        <version>0.1</version>
+        <organisation>urbanrisklab</organisation>
+        <city>Cambridge</city>
+        <project>testing</project>
+    </metadata>
+    <identifiers>
+        <idfield>1</idfield>
+        <idfield>2</idfield>
+        <idfield>3</idfield>
+    </identifiers>
 </resources>
-<!-- json just question numbers -->
-<!-- ccode; dictionaries, question numbers, ccode answers -->
+

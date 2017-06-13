@@ -74,12 +74,33 @@ public class Questionnaire extends AppCompatActivity {
 
         String text;
         String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
-        String hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
+        String hint;
         String parent;
-        if(eElement.getElementsByTagName("req").item(0).getTextContent().equals("T")){
+        TextView rqt = null;
+        String req;
+        String qid = eElement.getElementsByTagName("q").item(0).getTextContent();
+        try{
+            req = eElement.getElementsByTagName("req").item(0).getTextContent();
+        }catch(Exception e){
+            req = "F";
+        }
+
+        try{
+            hint = eElement.getElementsByTagName("qhint").item(0).getTextContent();
+        }catch(Exception e){
+            hint = "";
+        }
+
+        if(req.equals("T")){
             text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
         }
-        else{
+        else if(req.equals("C")){
+            text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
+            String req_text = eElement.getElementsByTagName("qtext").item(0).getTextContent()+"*";
+            rqt = new TextView(context);
+            rqt.setText(req_text);
+            rqt.setVisibility(View.GONE);
+        }else{
             text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
         }
         try{
@@ -100,19 +121,37 @@ public class Questionnaire extends AppCompatActivity {
                 Node choice = choices.item(i);
                 Element e = (Element) choice;
                 String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                String tag = e.getElementsByTagName("ccode").item(0).getTextContent();
+                x = x+"~~"+tag;
                 c.add(x);
                 try {
-                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
-                    dependents.replace(" ","");
-                    String[] deps = dependents.split(",");
                     ArrayList dps = new ArrayList();
-                    for(int d = 0; d < deps.length; d++){
-                        dps.add(deps[d]);
+                    NodeList dependents = e.getElementsByTagName("dependents");
+
+                    for(int j = 0; j<dependents.getLength(); j++){
+                        String dep_string = dependents.item(j).getTextContent();
+                        dps.add(dep_string);
                     }
                     dependencies.put(x, dps);
                 }catch(Exception ex){
-                    System.out.println("no dependencies");
+                    //System.out.println("no dependencies");
                 }
+                /*
+                try{
+                    ArrayList dps = new ArrayList();
+                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
+                    dependents.replace(" ","");
+                    String[] deps = dependents.split(",");
+
+                    for(int d = 0; d < deps.length; d++){
+                        dps.add(deps[d]);
+                    }
+
+                    dependencies.put(x, dps);
+                }catch(Exception exc){
+                    //System.out.println("no dependencies");
+                }
+                */
             }
             builder = PVQ.builder;
             q = SingleChoice(text, c, hint, context, builder, qns, ds, dependencies, parent);
@@ -124,19 +163,37 @@ public class Questionnaire extends AppCompatActivity {
                 Node choice = choices.item(i);
                 Element e = (Element) choice;
                 String x = e.getElementsByTagName("ctext").item(0).getTextContent();
+                String code = e.getElementsByTagName("ccode").item(0).getTextContent();
+                x = x + "~~"+code;
                 c.add(x);
                 try {
-                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
-                    dependents.replace(" ","");
-                    String[] deps = dependents.split(",");
                     ArrayList dps = new ArrayList();
-                    for(int d = 0; d < deps.length; d++){
-                        dps.add(deps[d]);
+                    NodeList dependents = e.getElementsByTagName("dependents");
+
+                    for(int j = 0; j<dependents.getLength(); j++){
+                        String dep_string = dependents.item(j).getTextContent();
+                        dps.add(dep_string);
                     }
                     dependencies.put(x, dps);
                 }catch(Exception ex){
-                    System.out.println("no dependencies");
+                    //System.out.println("no dependencies");
                 }
+                /*
+                try{
+                    ArrayList dps = new ArrayList();
+                    String dependents = e.getElementsByTagName("dependents").item(0).getTextContent();
+                    dependents.replace(" ","");
+                    String[] deps = dependents.split(",");
+
+                    for(int d = 0; d < deps.length; d++){
+                        dps.add(deps[d]);
+                    }
+
+                    dependencies.put(x, dps);
+                }catch(Exception exc){
+                    //System.out.println("no dependencies");
+                }
+                */
 
             }
             builder = PVQ.builder;
@@ -150,6 +207,11 @@ public class Questionnaire extends AppCompatActivity {
             q = SumQ(text,hint,context,factors, parent, qns);
         } else if (type.equals("P")){
             q = ParentQ(text, hint, context, parent, qns);
+        }
+
+        if(rqt != null){
+            q.addView(rqt);
+            rqt.setTag("required");
         }
 
         String inv;
@@ -167,7 +229,7 @@ public class Questionnaire extends AppCompatActivity {
             try {
                 layout1.addView(q);
             }catch(IllegalStateException e){
-                System.out.println("child question");
+                //System.out.println("child question");
             }
         }
         list2.add(q);
@@ -179,10 +241,17 @@ public class Questionnaire extends AppCompatActivity {
         }
 
         if(qns != null){
-            String num = eElement.getElementsByTagName("q").item(0).getTextContent();
+            String num = qid;
             qns.put(num, q);
             ds.put(num, 0);
         }
+
+        TextView qt = new TextView(context);
+        qt.setText(qid);
+        qt.setVisibility(View.GONE);
+        qt.setTag("qid");
+        q.addView(qt);
+
 
         return q;
     }
@@ -312,7 +381,7 @@ public class Questionnaire extends AppCompatActivity {
         List to_sum = new ArrayList();
         for(int i = 0;i<factors.getLength();i++){
             Element factor = (Element) factors.item(i);
-            System.out.println(factor.getTextContent());
+            //System.out.println(factor.getTextContent());
             String ftext = factor.getElementsByTagName("ftext").item(0).getTextContent();
             EditText et = new EditText(context);
             et.setTextSize(15);
@@ -325,9 +394,12 @@ public class Questionnaire extends AppCompatActivity {
             TextView ft = new TextView(context);
             ft.setTextSize(15);
             ft.setText(ftext+ " ");
+            ft.setTag("ftext");
+            et.setTag("fanswer");
 
             hbar.addView(ft);
             hbar.addView(et);
+            hbar.setTag("factor");
             qlayout.addView(hbar);
         }
         qlayout.addView(tv);
@@ -361,8 +433,9 @@ public class Questionnaire extends AppCompatActivity {
             RadioButton rb = new RadioButton(rg.getContext());
             String btext = choices.get(i).toString();
             rb.setId(i);
-            rb.setText(btext);
+            rb.setText(btext.substring(0, btext.indexOf("~~")));
             rg.addView(rb);
+            rb.setTag(btext.substring(btext.indexOf("~~")+2));
             ArrayList<String> options = (ArrayList<String>)lds.get(btext);
             if(options == null){
                 options = new ArrayList<String>();
@@ -424,8 +497,6 @@ public class Questionnaire extends AppCompatActivity {
         text.setTextSize(20);
         text.setText(questiontext);
 
-        System.out.println(localds.keySet());
-
         // sets up question linear layout, adds question text
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
@@ -440,8 +511,9 @@ public class Questionnaire extends AppCompatActivity {
             CheckBox cb = new CheckBox(context);
             String ctext = choices.get(i).toString();
             cb.setId(i);
-            cb.setText(ctext);
-            cb.setTag("choice");
+            cb.setText(ctext.substring(0, ctext.indexOf("~~")));
+            String tag = "choice" + ctext.substring(ctext.indexOf("~~"));
+            cb.setTag(tag);
             cb.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             ArrayList<String> options = (ArrayList<String>)localds.get(ctext);
             if(options == null){
@@ -507,7 +579,7 @@ public class Questionnaire extends AppCompatActivity {
         //qlayout.addView(text);
 
         TextView parent_text = new TextView(context);
-        String pp = questiontext+": ";
+        String pp = questiontext+" - ";
         parent_text.setText(pp);
         parent_text.setTag("parent text");
         parent_text.setVisibility(View.GONE);
@@ -516,10 +588,7 @@ public class Questionnaire extends AppCompatActivity {
         if(parent != null){
             LinearLayout pl = (LinearLayout)qns.get(parent);
             pl.addView(qlayout);
-            System.out.println(questiontext);
-            System.out.println("!!!!!!!!!!!!!!!!!!");
-            parent_text.setText(((TextView)pl.findViewWithTag("parent text")).getText()+questiontext+": ");
-            System.out.println(parent_text.getText());
+            parent_text.setText(((TextView)pl.findViewWithTag("parent text")).getText()+questiontext+" - ");
         }
 
         if(!hint.equals("")) {
@@ -538,20 +607,7 @@ public class Questionnaire extends AppCompatActivity {
                     dialog.show();
                 }
             });
-            /*
-            System.out.println("jhgjhgj");
-            qlayout.removeAllViews();
-            LinearLayout qh = new LinearLayout(context);
-            qh.setOrientation(LinearLayout.HORIZONTAL);
-            qh.addView(text);
-            qh.addView(bt);
-            System.out.println("here");
-            System.out.println(text.getVisibility());
-            System.out.println(bt.getVisibility());
-            qlayout.addView(qh);
-            qlayout.addView(parent_text);
-            System.out.println(qlayout.getChildCount());
-            */
+
             LinearLayout qh = new LinearLayout(context);
             qh.setOrientation(LinearLayout.HORIZONTAL);
             qh.addView(text);
@@ -588,7 +644,6 @@ class SumWatcher implements TextWatcher{
             }catch(Exception e){
             }
         }
-        System.out.println(zero);
         if(sum == 0 && !zero){
             tv.setText("Total: ");
             tv.setTextSize(17);
@@ -617,61 +672,42 @@ class onCheckedChangedB implements RadioButton.OnCheckedChangeListener{
     public void onCheckedChanged(CompoundButton b, boolean isChecked){
         if(isChecked){
             for(String dependent: dependents){
-                System.out.println(dependents_map.keySet());
-                System.out.println(dependent);
-                System.out.println(dependents_map.containsKey(dependent));
+                dependent = dependent.replace(" ","");
                 int u = (int)dependents_map.get(dependent);
                 dependents_map.put(dependent, u+1);
                 ((LinearLayout)questions.get(dependent)).setVisibility(View.VISIBLE);
+                LinearLayout q = ((LinearLayout)questions.get(dependent));
+                try{
+                    TextView rtv = (TextView)q.findViewWithTag("required");
+                    TextView tv = (TextView) q.findViewWithTag("text");
+                    String sw = tv.getText().toString();
+                    tv.setText(rtv.getText());
+                    rtv.setText(sw);
+                }catch(Exception e){
+                    System.out.println(e.getStackTrace());
+                }
             }
         }else{
             for(String dependent: dependents){
                 int u = (int)dependents_map.get(dependent);
                 dependents_map.put(dependent, u-1);
                 if(dependents_map.get(dependent).equals(0)) {
-                    ((LinearLayout) questions.get(dependent)).setVisibility(View.GONE);
+                    LinearLayout q = ((LinearLayout)questions.get(dependent));
+                    q.setVisibility(View.GONE);
+                    try{
+                        TextView rtv = (TextView)q.findViewWithTag("required");
+                        TextView tv = (TextView) q.findViewWithTag("text");
+                        String sw = tv.getText().toString();
+                        tv.setText(rtv.getText());
+                        rtv.setText(sw);
+                    }catch(Exception e){
+                        System.out.println(e.getStackTrace());
+                    }
                 }
             }
         }
     }
 }
 
-class onCheckedChanged implements RadioGroup.OnCheckedChangeListener{
-    private LinearLayout ll;
-    private HashMap questions;
-    private Context context;
-    private HashMap qnums;
-    // can take a linear layout, nodelist, and context as parameters
-    public onCheckedChanged(HashMap questions, LinearLayout ll, Context context, HashMap qnums) {
-        this.questions = questions;
-        this.context = context;
-        this.ll = ll;
-        this.qnums = qnums;
-    }
 
-    @Override
-    public void onCheckedChanged(RadioGroup rg, int p)
-    {
-        for(int i=0;i<questions.size();i++){
-            List qs = (List)questions.get(i);
-            if(i==p){
-                for(int h = 0; h<qs.size(); h++) {
-                    String key = (String) qs.get(h);
-                    ((LinearLayout) qnums.get(key)).setVisibility(View.VISIBLE);
-                }
-            }else{
-                for(int h = 0; h<qs.size(); h++) {
-                    String key = (String) qs.get(h);
-                    ((LinearLayout) qnums.get(key)).setVisibility(View.GONE);
-                }
-            }
-        }
-
-    }
-};
-
-
-
-// readme
 // bundling/deploying to phone
-// backwards compatibility

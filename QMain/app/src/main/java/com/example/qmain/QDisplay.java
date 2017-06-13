@@ -18,11 +18,20 @@ import java.io.FileInputStream;
 import android.util.DisplayMetrics;
 import java.io.File;
 import android.app.Activity;
+import com.android.volley.RequestQueue;
+import com.android.volley.Request;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONObject;
+import android.content.Context;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 public class QDisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final Context context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qdisplay);
         final LinearLayout layout = (LinearLayout) findViewById(R.id.activity_qdisplay);
@@ -140,11 +149,71 @@ public class QDisplay extends AppCompatActivity {
         }
 
 
+        Button sync = new Button(this);
+        sync.setText("Sync");
+        sync.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                RequestQueue queue = Volley.newRequestQueue(context);
+                //String url = "http://risklabdev.mit.edu:8001/survey";
+                String url = "http://18.111.85.206:8001/survey";
+
+                JSONObject body = new JSONObject();
+                try {
+                    body.put("data", json);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, body, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("Response: " + response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        System.out.println("push failed");
+
+                    }
+                });
+
+                queue.add(jsonRequest);
+            }
+        });
+
+        layout.addView(sync);
+
+        final String filename = getIntent().getStringExtra("filename");
+
+        final Button del = new Button(this);
+        del.setText("Delete");
+        del.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View w){
+                System.out.println(filename+".txt");
+                System.out.println(deleteFile(filename+".txt"));
+                System.out.println(deleteFile(filename+".json"));
+                System.out.println("deleted?");
+                onBackPressed();
+            }
+        }
+        );
+
+        layout.addView(del);
+
+
+
     }
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, Home.class);
+        intent.putExtra("project", getIntent().getStringExtra("project"));
+        intent.putExtra("action_bar", getIntent().getStringExtra("project_name"));
+        intent.putExtra("city", getIntent().getStringExtra("city"));
+        intent.putExtra("org", getIntent().getStringExtra("org"));
         startActivity(intent);
 
     }

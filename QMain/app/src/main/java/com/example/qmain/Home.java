@@ -30,6 +30,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.io.BufferedReader;
@@ -58,6 +60,10 @@ public class Home extends AppCompatActivity {
     public final static String RESULTS = "";
     Context context = this;
     static Boolean isTouched = false;
+    String[] fileArray;
+    String prjt;
+    String city;
+    String orga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +76,23 @@ public class Home extends AppCompatActivity {
         final HashMap<String,Button> date_hm = new HashMap<>();
         final HashMap<String,Button> city_hm = new HashMap<>();
 
+        String project = getIntent().getStringExtra("project");
+        System.out.println(project);
+        prjt = project;
+        city = getIntent().getStringExtra("city");
+        orga = getIntent().getStringExtra("org");
+        System.out.println(city+orga);
+
         String[] files = fileList();
+        final String hashc = "hc*"+project;
+
+        getSupportActionBar().setTitle(getIntent().getStringExtra("action_bar"));
 
         if(files.length > 0) {
             for (int i = 0; i < files.length; i++) {
+                if(!files[i].contains("hc*"+project)){
+                    continue;
+                }
                 String month = files[i].substring(0,8);
                 if(!(files[i].endsWith("jpeg") || files[i].endsWith("json") || files[i].endsWith("txt"))){
                     System.out.println(files[i]);
@@ -82,14 +101,9 @@ public class Home extends AppCompatActivity {
                 if(!month.substring(0,4).equals("JPEG") && !files[i].endsWith("json")){
 
                     System.out.println(files[i]);
-                    String btext;
-
-                    if(files[i].substring(files[i].length()-1).equals("g")){
-                        btext = files[i].substring(0, files[i].length()-5);
-                    }
-                    else {
-                        btext = files[i].substring(0, files[i].length()-4);
-                    }
+                    String btext = files[i].substring(0, files[i].indexOf("hc*"));
+                    System.out.println(btext);
+                    System.out.println(hashc);
 
                     Button bt = new Button(this);
                     btext = btext.replace("_", " ");
@@ -101,7 +115,7 @@ public class Home extends AppCompatActivity {
                                               public void onClick(View v) {
                                                   Button b = (Button) v;
                                                   System.out.println(b.getText());
-                                                  String btxt = (String) b.getText();
+                                                  String btxt = b.getText() + hashc;
                                                   btxt = btxt.replace(" ", "_");
                                                   String filename = btxt + ".txt";
                                                   String jpeg = btxt + ".jpeg";
@@ -143,12 +157,19 @@ public class Home extends AppCompatActivity {
 
                                                   String result = sb.toString();
                                                   Intent intent = new Intent(context, QDisplay.class);
+                                                  intent.putExtra("project",prjt);
+                                                  intent.putExtra("project_name", getIntent().getStringExtra("action_bar"));
                                                   intent.putExtra(RESULTS, result);
                                                   String date = btxt;
                                                   System.out.println(btxt);
-                                                  date = date.substring(date.lastIndexOf("__")+2);
+                                                  if(date.lastIndexOf("__") != -1){
+                                                      date = date.substring(date.lastIndexOf("__") + 2, date.indexOf("hc*"));
+                                                  }
+                                                  intent.putExtra("filename", btxt);
                                                   intent.putExtra("date", date);
                                                   intent.putExtra("json", jsonstring);
+                                                  intent.putExtra("city", city);
+                                                  intent.putExtra("org", orga);
                                                   startActivity(intent);
                                               }
                                           }
@@ -249,104 +270,22 @@ public class Home extends AppCompatActivity {
     public void newVPQ(View view){
         Intent intent = new Intent(this, PVQ.class);
         intent.putExtra("author",author);
+        intent.putExtra("project", prjt);
+        intent.putExtra("project_name", getIntent().getStringExtra("action_bar"));
+        intent.putExtra("city", city);
+        intent.putExtra("org", orga);
         startActivity(intent);
     }
 
     public void sync(View view){
-        //TestClass.make_post("http://18.111.31.12:4001/test");
-        /*
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.0.2.2:8011/test";
-
-        JSONObject jo = null;
-        String jsonString = "";
-
-        for(int i = 0; i<fileList().length; i++){
-            if(fileList()[i].contains("json")){
-                String jsonfile = fileList()[i];
-                FileInputStream json = null;
-                try{
-                    json = openFileInput(jsonfile);
-                }catch(Exception e){
-                    System.out.println("cannot open file/no json");
-                }
-                BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
-                try {
-                    jsonString = jreader.readLine();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
-
-        final String jss = jsonString;
-
-        JSONObject body = new JSONObject();
-        try {
-            body.put("data", jss);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, body, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                System.out.println("Response: " + response.toString());
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-
-        queue.add(jsonRequest);
-        */
-
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //String url = "http://10.0.2.2:8011/test";
-        String url =  "https://raw.githubusercontent.com/UrbanRiskSlumRedevelopment/Narad/master/QMain/app/src/main/res/raw/questionnaire_with_nums.xml";
-
-        StringRequest req = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        System.out.println(response);
-                        String filename = "questions_from_url.xml";
-                        FileOutputStream fos = null;
-                        try{
-                            fos = openFileOutput(filename, Context.MODE_PRIVATE);
-                            fos.write(response.getBytes());
-                        }catch(Exception e){
-                            System.out.println(filename);
-                        }
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // handle error response
-                    }
-                }
-        );
-
-        queue.add(req);
-
-
-
 
         String[] files = fileList();
         if (files.length > 0){
             for(int i = 0; i<files.length; i++){
                 System.out.println(files[i]);
-                deleteFile(files[i]);
+                if(files[i].contains("hc*"+prjt)) {
+                    deleteFile(files[i]);
+                }
             }
         }
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -354,18 +293,16 @@ public class Home extends AppCompatActivity {
         if(jfiles.length > 0){
             for(int i = 0; i<jfiles.length; i++){
                 System.out.println(jfiles[i].getName());
-                jfiles[i].delete();
+                if(jfiles[i].getName().contains("hc*"+prjt)) {
+                    jfiles[i].delete();
+                }
             }
         }
 
-
-
-
-
-
-
-
-
+        Intent intent = new Intent(context, Home.class);
+        intent.putExtra("action_bar", getIntent().getStringExtra("action_bar"));
+        intent.putExtra("project", prjt);
+        startActivity(intent);
 
 
 
@@ -375,11 +312,13 @@ public class Home extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to sign out?")
+        builder.setMessage("Are you sure you would like to leave this project?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        signOut();
+
+                        Intent intent = new Intent(context, Projects.class);
+                        startActivity(intent);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -392,15 +331,9 @@ public class Home extends AppCompatActivity {
 
     }
 
-    private void signOut() {
-        try {
-            client.connect();
-            Auth.GoogleSignInApi.signOut(client);
-        }catch(Exception e){}
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
 }
 
 
 // onBackPressed doesn't go anywhere -- leaves city only on button press (create button)
+
+// sync buttons for each survey
