@@ -318,6 +318,7 @@ public class Home extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
 
                         Intent intent = new Intent(context, Projects.class);
+                        intent.putExtra("out", "yes");
                         startActivity(intent);
                     }
                 })
@@ -334,6 +335,4 @@ public class Home extends AppCompatActivity {
 }
 
 
-// onBackPressed doesn't go anywhere -- leaves city only on button press (create button)
 
-// sync buttons for each survey

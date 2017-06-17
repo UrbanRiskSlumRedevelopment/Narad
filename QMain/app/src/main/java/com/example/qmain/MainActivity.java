@@ -19,6 +19,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try{
+            if(getIntent().getStringExtra("out").equals("yes")){
+                SaveSharedPreference.setUserName(MainActivity.this, "");
+            }
+        }catch(Exception e){}
+
+        String saved_user = SaveSharedPreference.getUserName(MainActivity.this);
+        if(saved_user.length() > 0){
+            Intent intent = new Intent(this, Projects.class);
+            intent.putExtra("author", saved_user);
+            startActivity(intent);
+        }
+
         setContentView(R.layout.activity_main);
 
         //getSupportActionBar().setTitle("Sign In");
@@ -72,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             String author = result.getSignInAccount().getEmail();
+            SaveSharedPreference.setUserName(MainActivity.this, author);
             System.out.println(author);
             System.out.println("success");
             start(author);

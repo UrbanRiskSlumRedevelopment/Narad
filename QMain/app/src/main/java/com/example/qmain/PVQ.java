@@ -581,9 +581,8 @@ public class PVQ extends AppCompatActivity {
         bt.setText(questiontext);
         bt.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT));
-
         final AlertDialog.Builder bdr = new AlertDialog.Builder(this);
-        final Context context1 = this;
+        final Context context1 = context;
 
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -622,6 +621,7 @@ public class PVQ extends AppCompatActivity {
 
     private File createImageFile(String tag) throws IOException {
         // Create an image file name
+
         Image_Tags.add(tag);
         System.out.println(Image_Tags);
         tag = tag.replaceAll(" ", "_");
@@ -1327,4 +1327,5 @@ class NumWatcher implements TextWatcher {
 }
 
 
-// reopening landing page
+// spacing
+// reopenable

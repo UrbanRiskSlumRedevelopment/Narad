@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
-import java.lang.reflect.Field;
-import java.io.File;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,15 +15,9 @@ import android.widget.Button;
 import android.content.Intent;
 import android.content.Context;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.StringRequest;
-import java.io.FileOutputStream;
 import com.android.volley.RequestQueue;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -40,6 +32,20 @@ public class Projects extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            if (getIntent().getStringExtra("out").equals("yes")) {
+                SaveSharedPreference.setProjectInfo(Projects.this, "", "", "", "");
+            }
+        }catch(Exception e){}
+        ArrayList<String> pinfo = SaveSharedPreference.getProjectInfo(Projects.this);
+        if(pinfo.size() == 4){
+            Intent intent = new Intent(context, Home.class);
+            intent.putExtra("action_bar", pinfo.get(0));
+            intent.putExtra("project", pinfo.get(1));
+            intent.putExtra("city", pinfo.get(2));
+            intent.putExtra("org", pinfo.get(3));
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_projects);
         /*
         something something querying database for different questionnaire versions
@@ -125,6 +131,7 @@ public class Projects extends AppCompatActivity {
             intent.putExtra("project", hash);
             intent.putExtra("city", s_city);
             intent.putExtra("org", s_org);
+            SaveSharedPreference.setProjectInfo(Projects.this, s_project, hash, s_city, s_org);
             startActivity(intent);
         }else{
             String em = "The organization, city, and/or project you are looking for does not exist. Please try again.";
@@ -156,6 +163,7 @@ public class Projects extends AppCompatActivity {
                         intent.putExtra("project", hash);
                         intent.putExtra("city", s_city);
                         intent.putExtra("org", s_org);
+                        SaveSharedPreference.setProjectInfo(Projects.this, s_project, hash, s_city, s_org);
                         startActivity(intent);
                     }
                 },
@@ -172,20 +180,6 @@ public class Projects extends AppCompatActivity {
                         builder.setMessage(em);
                         AlertDialog alert = builder.create();
                         alert.show();
-                        /*
-
-                        System.out.println(ProjectCodes.keySet());
-
-                        Intent intent = new Intent(context, Home.class);
-                        intent.putExtra("action_bar", s_project);
-                        intent.putExtra("org", s_org);
-                        intent.putExtra("city", s_city);
-                        System.out.println(s_org+s_city);
-                        intent.putExtra("project", hash);
-                        startActivity(intent);
-                        //
-
-
                     }
                 }
         );
@@ -224,6 +218,7 @@ public class Projects extends AppCompatActivity {
             Auth.GoogleSignInApi.signOut(client);
         }catch(Exception e){}
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("out", "yes");
         startActivity(intent);
     }
 
@@ -249,5 +244,3 @@ public class Projects extends AppCompatActivity {
     }
 }
 
-
-// project directories
