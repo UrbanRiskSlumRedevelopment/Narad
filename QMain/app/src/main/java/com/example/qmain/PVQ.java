@@ -1327,7 +1327,4 @@ class NumWatcher implements TextWatcher {
 }
 
 
-// spacing between question layouts
-
-// references to different qs as limits
 // reopening landing page

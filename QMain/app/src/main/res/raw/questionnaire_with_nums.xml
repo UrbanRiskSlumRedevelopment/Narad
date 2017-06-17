@@ -316,7 +316,6 @@
                 </choices>
             </question>
         </group>
-        <!--
         <group name="household_detailed_info" no="III">
             <gtext>Household level detailed information</gtext>
             <question name="tenure_status">
@@ -1166,6 +1165,7 @@
                 <rtext>Earning member details</rtext>
                 <rsize>No. of earning members</rsize>
                 <rlimit>20</rlimit>
+                <rlimitq>41</rlimitq>
                 <rquestion name="general_details">
                     <q>45</q>
                     <qtext>General details</qtext>
@@ -2955,7 +2955,6 @@
                 <qtype>C</qtype>
             </question>
         </group>
-        -->
     </groups>
     <metadata>
         <title>Housing survey</title>
