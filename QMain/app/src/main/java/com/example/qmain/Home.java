@@ -277,6 +277,10 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void exit(View view){
+        onBackPressed();
+    }
+
     public void sync(View view){
 
         String[] files = fileList();

@@ -34,11 +34,17 @@
             android:orientation="vertical">
         </LinearLayout>
     </ScrollView>
+    <Button android:id="@+id/exit_project"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit"
+        android:layout_alignParentBottom="true"
+        android:onClick="exit"/>
     <Button android:id="@+id/syncbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/delete"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/exit_project"
         android:onClick="sync"/>
 
 </RelativeLayout>

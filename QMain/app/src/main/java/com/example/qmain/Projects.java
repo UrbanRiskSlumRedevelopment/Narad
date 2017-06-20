@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.content.Intent;
@@ -96,6 +97,17 @@ public class Projects extends AppCompatActivity {
             }
         });
         layout.addView(select);
+        Button signout = new Button(this);
+        String so = "Sign Out";
+        signout.setText(so);
+        signout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        layout.addView(signout);
 
         setupUI(layout);
         for(int j = 0; j < layout.getChildCount(); j++){

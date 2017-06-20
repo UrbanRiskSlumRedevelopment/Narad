@@ -1,10 +1,12 @@
 package com.example.qmain;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Space;
 
 import java.io.*;
 
@@ -266,6 +268,7 @@ public class Questionnaire extends AppCompatActivity {
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        text.setPadding(0,0,0,5);
         // sets up box for answer text entry
         final EditText edittext = new EditText(context);
         edittext.setHint(hint);
@@ -297,6 +300,7 @@ public class Questionnaire extends AppCompatActivity {
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        text.setPadding(0,0,0,5);
         // sets up box for answer text entry (numerical)
         EditText edittext = new EditText(context);
         edittext.setHint(hint);
@@ -334,6 +338,7 @@ public class Questionnaire extends AppCompatActivity {
         text.setTextSize(20);
         text.setText(questiontext);
         text.setTag("text");
+        text.setPadding(0,0,0,5);
         // sets up linear layout for question, adds question text
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
@@ -430,6 +435,7 @@ public class Questionnaire extends AppCompatActivity {
             rb.setOnCheckedChangeListener(new onCheckedChangedB(qns, ds, options));
         }
         text.setTag("text");
+        text.setPadding(0,0,0,5);
         rg.setTag("choices");
 
         // sets up info button, builds dialog with instructions when clicked on
@@ -483,6 +489,7 @@ public class Questionnaire extends AppCompatActivity {
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
+        text.setPadding(0,0,0,5);
 
         // sets up question linear layout, adds question text
         LinearLayout qlayout = new LinearLayout(context);
@@ -491,7 +498,6 @@ public class Questionnaire extends AppCompatActivity {
         LinearLayout qh = new LinearLayout(context);
         qh.setOrientation(LinearLayout.HORIZONTAL);
         qlayout.addView(qh);
-
 
         // for each question choice, adds checkbox to question linear layout
         for (int i=0; i<choices.size(); i++) {
@@ -561,6 +567,7 @@ public class Questionnaire extends AppCompatActivity {
         text.setTextSize(20);
         text.setText(questiontext);
         text.setTag("text");
+        text.setPadding(0,0,0,5);
 
         qlayout.setTag("P");
         //qlayout.addView(text);

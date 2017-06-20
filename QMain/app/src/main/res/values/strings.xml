@@ -7,4 +7,5 @@
     <string name="sync">Sync</string>
     <string name="sections">Sections</string>
     <string name="delete">Delete All</string>
+    <string name="exit">Exit Project</string>
 </resources>
