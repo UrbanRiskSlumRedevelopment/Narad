@@ -198,6 +198,7 @@
                 <qtext>No of illiterate adult members</qtext>
                 <qtype>S</qtype>
                 <qhint></qhint>
+                <qlimit>11</qlimit>
                 <req>T</req>
                 <factor>
                     <ftext>Male</ftext>
@@ -212,6 +213,7 @@
                 <q>13</q>
                 <qtext>No of children in age-group 6-14 not attending school</qtext>
                 <qtype>S</qtype>
+                <qlimit>11</qlimit>
                 <qhint></qhint>
                 <req>T</req>
                 <factor>
@@ -228,6 +230,7 @@
                 <qtext>No of family members with disabilities</qtext>
                 <qtype>S</qtype>
                 <qhint></qhint>
+                <qlimit>11</qlimit>
                 <req>T</req>
                 <factor>
                     <ftext>Physical</ftext>
@@ -1150,6 +1153,7 @@
                 <qtype>N</qtype>
                 <qhint>Rupees</qhint>
                 <req>T</req>
+                <qlimit>42</qlimit>
             </question>
             <question name="outstanding_debt">
                 <q>44</q>
@@ -1165,7 +1169,7 @@
                 <rtext>Earning member details</rtext>
                 <rsize>No. of earning members</rsize>
                 <rlimit>20</rlimit>
-                <rlimitq>41</rlimitq>
+                <rlimitq>40,41</rlimitq>
                 <rquestion name="general_details">
                     <q>45</q>
                     <qtext>General details</qtext>

@@ -65,6 +65,8 @@ import android.support.v7.app.ActionBar.LayoutParams;
 import android.text.InputFilter;
 import android.text.Spanned;
 
+import java.lang.reflect.Array;
+
 
 public class Questionnaire extends AppCompatActivity {
     public final static String DATA = "com.example.qmain.PREFERENCE_FILE_KEY";
@@ -113,11 +115,17 @@ public class Questionnaire extends AppCompatActivity {
         }catch(Exception e){
             parent = null;
         }
+        String qlimit;
+        try{
+            qlimit = eElement.getElementsByTagName("qlimit").item(0).getTextContent();
+        }catch(Exception e){
+            qlimit = "";
+        }
         List extras = new ArrayList();
         if (type.equals("T")) {
             q = TextQ(text, hint, context, parent, qns);
         } else if (type.equals("N")) {
-            q = NumQ(text, hint, context, parent, qns);
+            q = NumQ(text, hint, context, parent, qns, qlimit);
         } else if (type.equals("SC")) {
             List c = new ArrayList();
             NodeList choices = eElement.getElementsByTagName("choice");
@@ -193,7 +201,7 @@ public class Questionnaire extends AppCompatActivity {
             return null;
         } else if (type.equals("S")){
             NodeList factors = eElement.getElementsByTagName("factor");
-            q = SumQ(text,hint,context,factors, parent, qns);
+            q = SumQ(text,hint,context,factors, parent, qns, qlimit);
         } else if (type.equals("P")){
             q = ParentQ(text, hint, context, parent, qns);
         }
@@ -295,18 +303,24 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public static LinearLayout NumQ(String questiontext, String hint, Context context,
-                                    String parent, HashMap qns){
+                                    String parent, HashMap qns, String limit){
         // sets up question text
         TextView text = new TextView(context);
         text.setTextSize(20);
         text.setText(questiontext);
         text.setPadding(0,0,0,5);
+
         // sets up box for answer text entry (numerical)
         EditText edittext = new EditText(context);
         edittext.setHint(hint);
         edittext.setInputType(2);
         text.setTag("text");
         edittext.setTag("answer");
+
+        if(!limit.equals("")) {
+            edittext.addTextChangedListener(new NumQWatcher(edittext, limit, qns, context));
+        }
+
         // sets up linear layout for question, adds question text and answer text box
         LinearLayout qlayout = new LinearLayout(context);
         qlayout.setOrientation(LinearLayout.VERTICAL);
@@ -329,7 +343,7 @@ public class Questionnaire extends AppCompatActivity {
 
     //
     public static LinearLayout SumQ(String questiontext, final String hint,Context context,NodeList factors,
-                                    String parent, HashMap qns){
+                                    String parent, HashMap qns, String qlimit){
         // store only factors and not total;
         // if total is a restrictive total should be set as restriction on further ones
 
@@ -378,7 +392,11 @@ public class Questionnaire extends AppCompatActivity {
             EditText et = new EditText(context);
             et.setTextSize(15);
             et.setHint("            ");
-            et.addTextChangedListener(new SumWatcher(tv,to_sum));
+            if(qlimit.equals("")){
+                et.addTextChangedListener(new SumWatcher(tv, to_sum, "", qns, null, context));
+            }else {
+                et.addTextChangedListener(new SumWatcher(tv, to_sum, qlimit, qns, ftext+" ", context));
+            }
             et.setInputType(2);
             to_sum.add(et);
             LinearLayout hbar = new LinearLayout(context);
@@ -614,17 +632,117 @@ public class Questionnaire extends AppCompatActivity {
         return qlayout;
     }
 
+    public static int NumLimit(String qnum, HashMap<String, LinearLayout> numqs, String factor){
+        qnum = qnum.replace(" ","");
+        if(qnum.contains(",")){
+            String[] qnums = qnum.split(",");
+            int total = 0;
+            for(String qn : qnums){
+                try{
+                    LinearLayout qll = numqs.get(qn);
+                    total += NumAnswer(qll, factor);
+                }catch(Exception e){}
+            }
+            return total;
+        }else{
+            LinearLayout qll = numqs.get(qnum);
+            return NumAnswer(qll, factor);
+        }
+    }
+
+    public static int NumAnswer(LinearLayout qll, String factor){
+        if(factor!=null){
+            System.out.println(factor);
+            System.out.println("in num answer");
+            for(int v = 0; v<qll.getChildCount(); v++){
+                System.out.println("looping");
+                if(qll.getChildAt(v).getTag().equals("factor")){
+                    System.out.println("found a factor");
+                    try{
+                        TextView ftext = (TextView) qll.getChildAt(v).findViewWithTag("ftext");
+                        if(ftext.getText().toString().equals(factor)){
+                            EditText et = (EditText) qll.getChildAt(v).findViewWithTag("fanswer");
+                            return Integer.parseInt(et.getText().toString());
+                        }else{
+                            System.out.println(ftext.getText().toString());
+                        }
+                    }catch(Exception e1){
+                        System.out.println("error caught");
+                        e1.printStackTrace();
+                    }
+                }else{
+                    System.out.println(qll.getChildAt(v).getTag());
+                }
+            }
+        }
+        try{
+            TextView answ = (TextView) qll.findViewWithTag("answer");
+            String s = answ.getText().toString();
+            s = s.substring(s.indexOf(" ")+1);
+            if(s.equals("")){
+                return 0;
+            }
+            s = s.replace(" ","");
+            return Integer.parseInt(s);
+        }catch(Exception e){
+            e.printStackTrace();
+            EditText answ = (EditText) qll.findViewWithTag("answer");
+            String s = answ.getText().toString();
+            s = s.replace(" ","");
+            if(s.equals("")){
+                return 0;
+            }
+            return Integer.parseInt(s);
+        }
+    }
+
 }
 
 class SumWatcher implements TextWatcher{
     private TextView tv;
     private List factors;
-    public SumWatcher(TextView tv, List factors){
+    private String qlim;
+    private HashMap<String, LinearLayout> qns;
+    private String f;
+    private AlertDialog dialog;
+    public SumWatcher(TextView tv, List factors, String qlimit, HashMap<String, LinearLayout> qns, String factor, Context context){
         this.tv = tv;
         this.factors = factors;
+        this.qlim = qlimit;
+        this.qns = qns;
+        this.f = factor;
+        AlertDialog.Builder newbuilder = new AlertDialog.Builder(context);
+        String msg = "Value too large, contradicts answer to question "+qlimit;
+        newbuilder.setMessage(msg);
+        this.dialog = newbuilder.create();
     }
 
     public void afterTextChanged(Editable s) {
+        int flim = -1;
+        int tlim = -1;
+        if(!qlim.equals("") && f!=null) {
+            flim = Questionnaire.NumLimit(qlim, qns, f);
+        }
+        if(!qlim.equals("")){
+            tlim = Questionnaire.NumLimit(qlim, qns, null);
+        }
+        int sval;
+        if(s.toString().equals("")){
+            sval = 0;
+        }else {
+            sval = Integer.parseInt(s.toString());
+        }
+
+        System.out.println(f);
+        System.out.println(sval);
+        System.out.println(flim);
+        System.out.println(tlim);
+
+        if(sval > flim && flim >= 0){
+            dialog.show();
+            return;
+        }
+
         int sum = 0;
         boolean zero = false;
         for(int i = 0;i<factors.size();i++){
@@ -635,6 +753,11 @@ class SumWatcher implements TextWatcher{
             try {
                 int v = Integer.parseInt(value);
                 sum += v;
+                if(sum > tlim && tlim > 0){
+                    ((EditText)factors.get(i)).setText("");
+                    dialog.show();
+                    break;
+                }
             }catch(Exception e){
             }
         }
@@ -704,34 +827,48 @@ class onCheckedChangedB implements RadioButton.OnCheckedChangeListener{
 }
 
 
-class InputFilterMinMax implements InputFilter {
-
-    private int min, max;
-
-    public InputFilterMinMax(int min, int max) {
-        this.min = min;
-        this.max = max;
+class NumQWatcher implements TextWatcher {
+    private String q;
+    private EditText et;
+    private HashMap qns;
+    private AlertDialog dialog;
+    NumQWatcher(EditText et, String l, HashMap qns, Context context){
+        this.et = et;
+        this.q = l;
+        this.qns = qns;
+        AlertDialog.Builder newbuilder = new AlertDialog.Builder(context);
+        String msg = "Value too large, contradicts answer to question "+l;
+        newbuilder.setMessage(msg);
+        this.dialog = newbuilder.create();
     }
 
-    public InputFilterMinMax(String min, String max) {
-        this.min = Integer.parseInt(min);
-        this.max = Integer.parseInt(max);
+    public void afterTextChanged(Editable s) {
+        this.setNewLimit(et, q, qns, s);
     }
-
-    @Override
-    public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-        try {
-            int input = Integer.parseInt(dest.toString() + source.toString());
-            if (isInRange(min, max, input))
-                return null;
-        } catch (NumberFormatException nfe) { }
-        return "";
-    }
-
-    private boolean isInRange(int a, int b, int c) {
-        return b > a ? c >= a && c <= b : c >= b && c <= a;
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+    private void setNewLimit(EditText et, String q, HashMap qns, Editable s){
+        int lim = Questionnaire.NumLimit(q, qns, null);
+        int val = 0;
+        if(s.toString().equals("")){
+            return;
+        }
+        try{
+            val = Integer.parseInt(s.toString());
+            System.out.println("successfully parsed");
+            if(val > lim){
+                dialog.show();
+                et.setText("");
+            }
+        }catch(Exception e){
+            et.setText("");
+        }
     }
 }
 
+
+// reopenable
+// apk
+// commenting
 
 // bundling/deploying to phone

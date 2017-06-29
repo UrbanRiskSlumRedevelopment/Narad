@@ -423,6 +423,7 @@ public class PVQ extends AppCompatActivity {
                             }
                         });
                     }else{
+                        String qlims = eE.getElementsByTagName("rlimitq").item(0).getTextContent();
                         EditText num_times = new EditText(this);
                         num_times.setHint(num);
                         num_times.setInputType(2);
@@ -431,7 +432,7 @@ public class PVQ extends AppCompatActivity {
                         NodeList chqs = chunkE.getElementsByTagName("rquestion");
                         LinearLayout questions_here = new LinearLayout(this);
                         questions_here.setOrientation(LinearLayout.VERTICAL);
-                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents));
+                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents, qlims));
                         ll.addView(num_times);
                         ll.addView(questions_here);
                     }
@@ -1279,7 +1280,9 @@ class NumWatcher implements TextWatcher {
     private int max;
     private HashMap NumQuestions;
     private HashMap ds;
-    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2, HashMap nq, HashMap deps){
+    private String qlims;
+    private AlertDialog dialog;
+    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2, HashMap nq, HashMap deps, String qlims){
         this.view1 = ll;
         this.nodes = nodes;
         this.context = context;
@@ -1287,9 +1290,15 @@ class NumWatcher implements TextWatcher {
         this.max = max;
         this.NumQuestions = nq;
         this.ds = deps;
+        this.qlims = qlims;
+        AlertDialog.Builder newbuilder = new AlertDialog.Builder(context);
+        String msg = "Value too large, contradicts answer to question "+qlims;
+        newbuilder.setMessage(msg);
+        this.dialog = newbuilder.create();
     }
 
     public void afterTextChanged(Editable s) {
+        int lim = Questionnaire.NumLimit(qlims, NumQuestions, null);
         String value = s.toString();
         for(int i = 0; i < view1.getChildCount(); i++){
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
@@ -1302,6 +1311,9 @@ class NumWatcher implements TextWatcher {
         }
         int times = Integer.parseInt(value);
         if(times > max){
+            return;
+        }else if(times > lim){
+            dialog.show();
             return;
         }
         for(int i = 0;i<times;i++){
