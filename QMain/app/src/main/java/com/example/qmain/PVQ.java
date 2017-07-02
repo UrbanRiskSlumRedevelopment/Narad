@@ -823,11 +823,11 @@ public class PVQ extends AppCompatActivity {
                 // otherwise adds unanswered required questions to unanswered string
                 if(tag.equals("T") || tag.equals("N")) {
                     EditText editText = (EditText) q.findViewWithTag("answer");
-                    if (editText.getText().toString().equals("") && question.endsWith("*") && !incomplete) {
+                    if (editText.getText().toString().equals("") && (question.endsWith("*") || question.contains("* - ")) && !incomplete) {
                         System.out.println("oops");
                         return "";
                     } else {
-                        if (editText.getText().toString().equals("") && question.endsWith("*")) {
+                        if (editText.getText().toString().equals("") && (question.endsWith("*") || question.contains("* - "))) {
                             //unanswered += "\n" + name+question + "\n";
                             if(! in_list){
                                 unanswered += key + ",, ";
@@ -850,10 +850,10 @@ public class PVQ extends AppCompatActivity {
                         }
                     }
 
-                    if(question.endsWith("*") && !incomplete && at.equals("Total: ")){
+                    if((question.endsWith("*") || question.contains("* - ")) && !incomplete && at.equals("Total: ")){
                         System.out.println("oops");
                         return "";
-                    }else if(question.endsWith("*")&& at.equals("Total: ")){
+                    }else if((question.endsWith("*") || question.contains("* - "))&& at.equals("Total: ")){
                         //unanswered += "\n" + name+question + "\n";
                         if(! in_list){
                             unanswered += key + ",, ";
@@ -897,12 +897,12 @@ public class PVQ extends AppCompatActivity {
                     line = question + ": ";
                     RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
                     int id = rg.getCheckedRadioButtonId();
-                    if (id == -1 && !incomplete && question.endsWith("*")) {
+                    if (id == -1 && !incomplete && (question.endsWith("*") || question.contains("* - "))) {
                         return "";
                     } else {
                         RadioButton rb = (RadioButton) rg.getChildAt(id);
                         try {
-                            if (id == -1  && question.endsWith("*")) {
+                            if (id == -1  && (question.endsWith("*") || question.contains("* - "))){
                                 //unanswered += "\n" + name+question + "\n";
                                 if(! in_list){
                                     unanswered += key + ",, ";
@@ -1298,18 +1298,32 @@ class NumWatcher implements TextWatcher {
     }
 
     public void afterTextChanged(Editable s) {
-        int lim = Questionnaire.NumLimit(qlims, NumQuestions, null);
         String value = s.toString();
+        System.out.println(list2.size());
+        System.out.println(view1.getChildCount());
+        System.out.println("^childcount");
         for(int i = 0; i < view1.getChildCount(); i++){
+            System.out.println("group");
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
+                System.out.println("q");
                 System.out.println(list2.remove(((LinearLayout)view1.getChildAt(i)).getChildAt(j)));
+                LinearLayout chunk = (LinearLayout)((LinearLayout)view1.getChildAt(i)).getChildAt(j);
+                for(int k = 0; k < chunk.getChildCount(); k++){
+                    try {
+                        System.out.println(list2.remove((LinearLayout) chunk.getChildAt(k)));
+                    }catch(Exception e){
+                        System.out.println(chunk.getChildAt(k));
+                    }
+                }
             }
         }
         view1.removeAllViews();
+        System.out.println(list2.size());
         if(value.equals("")){
             return;
         }
         int times = Integer.parseInt(value);
+        int lim = Questionnaire.NumLimit(qlims, NumQuestions, null);
         if(times > max){
             return;
         }else if(times > lim){
