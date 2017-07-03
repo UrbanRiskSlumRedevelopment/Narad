@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,10 @@ import android.widget.Button;
 import android.content.Intent;
 import android.content.Context;
 import android.widget.LinearLayout;
-
 import com.android.volley.toolbox.Volley;
 import com.android.volley.RequestQueue;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
-
 import android.widget.EditText;
 import java.util.HashMap;
 
@@ -34,10 +31,14 @@ public class Projects extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            // checks to see whether user has just left a project;
+            // if so, updates shared preference project information to empty strings
             if (getIntent().getStringExtra("out").equals("yes")) {
                 SaveSharedPreference.setProjectInfo(Projects.this, "", "", "", "");
             }
-        }catch(Exception e){}
+        }catch(Exception e){System.out.println("no update needed");}
+        // checks to see whether a project has already been selected;
+        // if it has, its info will be available from shared preference, app proceeds to project main page
         ArrayList<String> pinfo = SaveSharedPreference.getProjectInfo(Projects.this);
         if(pinfo.size() == 4){
             Intent intent = new Intent(context, Home.class);
@@ -52,7 +53,6 @@ public class Projects extends AppCompatActivity {
         something something querying database for different questionnaire versions
          */
         // dummy stand-in
-        ArrayList<Object> files = new ArrayList<>();
         LinearLayout layout = (LinearLayout) findViewById(R.id.activity_projects);
         /*
         Field[] fields = R.raw.class.getFields();

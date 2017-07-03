@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -20,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
+            // checks to see whether user has just signed out;
+            // if so, updates shared preference username to an empty string
             if(getIntent().getStringExtra("out").equals("yes")){
                 SaveSharedPreference.setUserName(MainActivity.this, "");
             }
-        }catch(Exception e){}
+        }catch(Exception e){System.out.println("no update needed");}
 
+        // if user is already signed in (shared preference username exists), goes to project selection page
         String saved_user = SaveSharedPreference.getUserName(MainActivity.this);
         if(saved_user.length() > 0){
             Intent intent = new Intent(this, Projects.class);
@@ -33,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-
-        //getSupportActionBar().setTitle("Sign In");
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -83,19 +82,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            String author = result.getSignInAccount().getEmail();
+            // Signed in successfully
+            String author;
+            try {
+                author = result.getSignInAccount().getEmail();
+            }catch(Exception e){
+                System.out.println("sign in failed");
+                return;
+            }
+            // update shared preference username to signed in user's username
             SaveSharedPreference.setUserName(MainActivity.this, author);
             System.out.println(author);
             System.out.println("success");
+            // take user to project selection
             start(author);
         } else {
-            // Signed out, show unauthenticated UI.
-            System.out.println("fail");
+            // Signed out
+            System.out.println("sign in failed");
         }
     }
 
     public void start(String author) {
+        // move forward to project selection with username as author
         Intent intent = new Intent(this, Projects.class);
         intent.putExtra("author", author);
         startActivity(intent);
@@ -103,15 +111,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
+        // page refreshes when back button is pressed
+        //Intent intent = new Intent(this, MainActivity.class);
+        //startActivity(intent);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
         startActivity(intent);
 
     }
+
 
 }
 
 class FailedConnection implements GoogleApiClient.OnConnectionFailedListener{
     public void onConnectionFailed(ConnectionResult connectionResult){
-        System.out.println("whoops");
+        System.out.println("failed connection");
     }
 }

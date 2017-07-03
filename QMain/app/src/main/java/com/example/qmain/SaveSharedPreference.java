@@ -6,31 +6,31 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import java.util.ArrayList;
 
-public class SaveSharedPreference
+class SaveSharedPreference
 {
-    static final String PREF_USER_NAME= "username";
-    static final String PROJECT = "project";
-    static final String HASH = "hash";
-    static final String CITY = "city";
-    static final String ORG = "organization";
+    private static final String PREF_USER_NAME= "username";
+    private static final String PROJECT = "project";
+    private static final String HASH = "hash";
+    private static final String CITY = "city";
+    private static final String ORG = "organization";
 
-    static SharedPreferences getSharedPreferences(Context ctx) {
+    private static SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
     }
 
-    public static void setUserName(Context ctx, String userName)
+    static void setUserName(Context ctx, String userName)
     {
         Editor editor = getSharedPreferences(ctx).edit();
         editor.putString(PREF_USER_NAME, userName);
         editor.commit();
     }
 
-    public static String getUserName(Context ctx)
+    static String getUserName(Context ctx)
     {
         return getSharedPreferences(ctx).getString(PREF_USER_NAME, "");
     }
 
-    public static void setProjectInfo(Context ctx, String pr, String hash, String city, String org){
+    static void setProjectInfo(Context ctx, String pr, String hash, String city, String org){
         Editor editor = getSharedPreferences(ctx).edit();
         editor.putString(PROJECT, pr);
         editor.putString(HASH, hash);
@@ -39,7 +39,7 @@ public class SaveSharedPreference
         editor.commit();
     }
 
-    public static ArrayList<String> getProjectInfo(Context ctx){
+    static ArrayList<String> getProjectInfo(Context ctx){
         String pr = getSharedPreferences(ctx).getString(PROJECT, "");
         String hash = getSharedPreferences(ctx).getString(HASH, "");
         String city = getSharedPreferences(ctx).getString(CITY, "");
