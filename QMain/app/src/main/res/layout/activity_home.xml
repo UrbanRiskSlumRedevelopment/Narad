@@ -13,7 +13,7 @@
     <Button android:id="@+id/newvpq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Questionnaire"
+        android:text="@string/nq"
         android:onClick="newVPQ"/>
     <!--
     <Button android:id="@+id/pastq"
@@ -45,6 +45,6 @@
         android:layout_height="wrap_content"
         android:text="@string/delete"
         android:layout_above="@id/exit_project"
-        android:onClick="sync"/>
+        android:onClick="delete_all"/>
 
 </RelativeLayout>

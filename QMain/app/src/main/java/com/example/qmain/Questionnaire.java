@@ -662,6 +662,9 @@ public class Questionnaire extends AppCompatActivity {
                         TextView ftext = (TextView) qll.getChildAt(v).findViewWithTag("ftext");
                         if(ftext.getText().toString().equals(factor)){
                             EditText et = (EditText) qll.getChildAt(v).findViewWithTag("fanswer");
+                            if(et.getText().toString().equals("")){
+                                return 0;
+                            }
                             return Integer.parseInt(et.getText().toString());
                         }else{
                             System.out.println(ftext.getText().toString());

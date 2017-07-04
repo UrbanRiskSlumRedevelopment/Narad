@@ -83,13 +83,13 @@ import java.io.InputStreamReader;
 import android.view.LayoutInflater;
 
 public class PVQ extends AppCompatActivity {
-    HashMap<String,Object> NumQuestions = new HashMap<>();
-    HashMap<String,Integer> Dependents = new HashMap<>();
-    HashMap<String,List> Groups = new HashMap<>(); // Hash map mapping questions to groups
-    List<String> Image_Tags = new ArrayList<>();
-    HashMap<String, String> Images = new HashMap<>();
-    String answers = "";
-    TextView ans = null;
+    HashMap<String,Object> NumQuestions = new HashMap<>(); // hash map mapping questions to their question numbers
+    HashMap<String,Integer> Dependents = new HashMap<>(); // hash map mapping dependent questions to the questions they are dependent on
+    HashMap<String,List> Groups = new HashMap<>(); // hash map mapping questions to groups
+    List<String> Image_Tags = new ArrayList<>(); // list of image tags
+    HashMap<String, String> Images = new HashMap<>(); // hash map mapping images to their tags
+    String answers = ""; // string for storing text of answers to questionnaire
+    TextView ans = null; // TextView where answers will be displayed on review page
     LinearLayout req_buttons;
     static List Counter = new ArrayList();
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
@@ -98,32 +98,37 @@ public class PVQ extends AppCompatActivity {
     ImageView mImageView = null;
     LinearLayout camera_question = null;
     LinearLayout map_question = null;
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-    String ogTimeStamp = timeStamp;
-    String author = "";
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date()); // date and time at which questionnaire was created
+    String ogTimeStamp = timeStamp; // another variable storing original timestamp in case timeStamp is modified
+    String author = ""; // username of survey taker
     List<Object> pages = new ArrayList<>();
-    ViewPager vp = null;
-    DrawerLayout dl = null;
-    List<String> Identifiers = new ArrayList<>();
+    ViewPager vp = null; // ViewPager whose pages will make up the questionnaire
+    DrawerLayout dl = null; // Side drawer for navigation
+    List<String> Identifiers = new ArrayList<>(); // questions whose answers will be used to generate the questionnaire's uid
     String uid = "";
     Boolean uid_set = false;
-    String project;
+    String project; // project name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pvq);
 
-        // Create and set up new questionnaire ViewPager
-        //final ViewPager vp = (ViewPager) findViewById(R.id.activity_pvq);
-        //NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
+        // PAGE SETUP
+
+        // navigation drawer
         NavigationView nv = (NavigationView) findViewById(R.id.navigation);
         dl = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        // linear layout containing ViewPager and navigation bar
         LinearLayout form = (LinearLayout) findViewById(R.id.activity_pvq);
         author = getIntent().getStringExtra("author");
+
+        // sets up support action bar if it exists
         if(getSupportActionBar() != null) {
+            // titles page
             getSupportActionBar().setTitle("Questionnaire");
+            // hamburger button that opens navigation drawer
             ImageButton hamburger = new ImageButton(this);
             hamburger.setImageResource(R.drawable.hamburger);
             int co = ContextCompat.getColor(context, R.color.colorPrimary);
@@ -138,13 +143,15 @@ public class PVQ extends AppCompatActivity {
                     dl.openDrawer(GravityCompat.END);
                 }
             });
+            // displays arrow button allowing viewer to return to project home page
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        project = getIntent().getStringExtra("project");
+        project = getIntent().getStringExtra("project"); // project hash
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
+        // creates and sets up new questionnaire ViewPager
         vp = new ViewPager(this);
         vp.setId(View.generateViewId());
         setupUI(vp);
@@ -153,28 +160,13 @@ public class PVQ extends AppCompatActivity {
         final MainPagerAdapter pg = new MainPagerAdapter();
         vp.setAdapter(pg);
 
+        // navigation bar
         LinearLayout navbar = new LinearLayout(this);
         navbar.setOrientation(LinearLayout.HORIZONTAL);
         navbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
 
-        // creates back to menu, previous, and next buttons
-        Button menu_button = new Button(this);
-        String menu = "Menu";
-        menu_button.setText(menu);
-        menu_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            try {
-                vp.setCurrentItem(0, false);
-                if(vp.getCurrentItem() != vp.getChildCount()-1){
-                    ans.setText("");
-                }
-            }catch(Exception e){
-                System.out.println("no menu");
-            }
-            }
-        });
-
+        // creates back to top, previous, and next buttons for navigation bar
         Button scroll_up = new Button(this);
         String btt = "Back to Top";
         scroll_up.setText(btt);
@@ -221,18 +213,20 @@ public class PVQ extends AppCompatActivity {
         });
 
         setupUI(prev);
-        setupUI(menu_button);
         setupUI(next);
         setupUI(scroll_up);
 
+        // adds buttons to navigation bar
         navbar.addView(prev);
         navbar.addView(scroll_up);
         navbar.addView(next);
         navbar.setGravity(Gravity.CENTER);
         setupUI(navbar);
 
+        // adds navigation bar to page
         form.addView(navbar);
 
+        // adjusting parameters for layout of view pager and navigation bar
         LinearLayout.LayoutParams param1 = new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT,
@@ -250,10 +244,15 @@ public class PVQ extends AppCompatActivity {
         // Sets up an alert dialog builder for use when necessary
         builder = new AlertDialog.Builder(this);
 
+        // QUESTIONNAIRE
+
         // Builds Questionnaire
         try{
-            // Parses XML doc so code can read it
+            // document builder for reading xml
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
+            // opens project questionnaire saved at questions_from_url.xml
             FileInputStream fis;
             try{
                 fis = context.openFileInput("questions_from_url.xml");
@@ -261,18 +260,27 @@ public class PVQ extends AppCompatActivity {
                 System.out.println("nope");
                 fis = null;
             }
+            
+            /*
+            // parses xml and saves as doc
+            Document doc = dBuilder.parse(fis);
+            if(fis!=null) {
+                fis.close();
+            }
+            */
 
-
+            // parses xml from questionnaire_with_nums and saves as doc
+            // use above commented out code when getting questionnaires from the server works
+            // next three lines are just for testing when getting surveys from the server doesn't work
             InputStream in = getResources().openRawResource(R.raw.questionnaire_with_nums);
-            DocumentBuilderFactory dbFactory
-                    = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(in);
-            doc.getDocumentElement().normalize();
             in.close();
+
+            doc.getDocumentElement().normalize();
 
             // Builds first page
             // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
+            /*
             ScrollView sv1 = new ScrollView(this);
             LinearLayout p1 = new LinearLayout(this);
             p1.setOrientation(LinearLayout.VERTICAL);
@@ -294,6 +302,7 @@ public class PVQ extends AppCompatActivity {
             title.setText(sections);
             p1.addView(title);
             pages.add(sections);
+            */
 
             // iterates through all groups of questions in XML doc
             NodeList groups = doc.getElementsByTagName("group");
@@ -303,7 +312,7 @@ public class PVQ extends AppCompatActivity {
                 Element eE = (Element) gr;
                 final int g_button = g; // number of group, counting from 0
                 String g_name = eE.getElementsByTagName("gtext").item(0).getTextContent(); // group name
-
+                /*
                 // creates button on menu page linked to group page
                 Button p1_button = new Button(this);
                 p1.addView(p1_button);
@@ -314,13 +323,16 @@ public class PVQ extends AppCompatActivity {
                         vp.setCurrentItem(g_button+1, false);
                     }
                 });
+                */
+
+                pages.add(g_name);
 
                 // creates group page
                 ScrollView sv = new ScrollView(this);
                 LinearLayout ll = new LinearLayout(this);
                 ll.setOrientation(LinearLayout.VERTICAL);
                 sv.addView(ll);
-                pg.addView(sv,g+1);
+                pg.addView(sv,g);
                 setupUI(sv);
 
                 // adds name to group page
@@ -509,11 +521,12 @@ public class PVQ extends AppCompatActivity {
                 public void onPageScrollStateChanged(int state) {}
             });
 
-            vp.setCurrentItem(1);
+            vp.setCurrentItem(0);
             Menu menu1 = nv.getMenu();
             pages.add("Review ");
-            for(int i = 1; i < pages.size(); i++){
+            for(int i = 0; i < pages.size(); i++){
                 menu1.add((String)pages.get(i));
+                System.out.println((String)pages.get(i));
             }
             for(int i = 0; i < menu1.size(); i++){
                 menu1.getItem(i).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -1352,7 +1365,3 @@ class NumWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
 
-
-// reopenable
-// apk
-// commenting

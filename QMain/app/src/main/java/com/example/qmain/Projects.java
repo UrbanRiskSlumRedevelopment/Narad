@@ -49,35 +49,10 @@ public class Projects extends AppCompatActivity {
             startActivity(intent);
         }
         setContentView(R.layout.activity_projects);
-        /*
-        something something querying database for different questionnaire versions
-         */
-        // dummy stand-in
-        LinearLayout layout = (LinearLayout) findViewById(R.id.activity_projects);
-        /*
-        Field[] fields = R.raw.class.getFields();
-        ArrayList files = new ArrayList();
-        System.out.println(fields.length);
-        */
-        /*
-        files.add("questionnaire");
-        for(int i = 0; i < files.size(); i++){
-            System.out.println(files.get(i));
-            Button b = new Button(this);
-            b.setText(files.get(i).toString());
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sync();
-                    Intent intent = new Intent(context, Home.class);
-                    startActivity(intent);
-                }
-            });
-            layout.addView(b);
-        }
-        */
 
-        // GET request for organizations, cities, projects
+        LinearLayout layout = (LinearLayout) findViewById(R.id.activity_projects);
+
+        // EditTexts in which user enters organization, city, and project
         final EditText org = new EditText(this);
         org.setHint("Organization");
         final EditText city = new EditText(this);
@@ -87,6 +62,8 @@ public class Projects extends AppCompatActivity {
         layout.addView(org);
         layout.addView(city);
         layout.addView(project);
+
+        // hitting select button calls sync() with what is currently in the EditTexts as parameters
         Button select = new Button(this);
         String s = "Select";
         select.setText(s);
@@ -97,6 +74,8 @@ public class Projects extends AppCompatActivity {
             }
         });
         layout.addView(select);
+
+        // sign out button signs user out and takes them back to the sign in page
         Button signout = new Button(this);
         String so = "Sign Out";
         signout.setText(so);
@@ -109,6 +88,7 @@ public class Projects extends AppCompatActivity {
         });
         layout.addView(signout);
 
+        // sets up UI for all views on page (hides soft keyboard if focus is not on an EditText)
         setupUI(layout);
         for(int j = 0; j < layout.getChildCount(); j++){
             setupUI(layout.getChildAt(j));
@@ -117,11 +97,21 @@ public class Projects extends AppCompatActivity {
 
     }
 
+    /**
+     * Given the organization, city, and project, forms a url and sends a get request for the project
+     * questionnaire at the url
+     *
+     * @param s_org organization
+     * @param s_city city
+     * @param s_project project
+     */
     public void sync(final String s_org, final String s_city, final String s_project){
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://18.111.85.206:8001/form";
-        //String url = "http://risklabdev.mit.edu:8001/form";
+        String url = "http://risklabdev.mit.edu:8001/form";
         url += "/"+s_org+"/"+s_city+"/"+s_project;
+
+        // generates a unique local hash code for the project
+        // checks to see if a hash code has already been generated, if not generates a new one
         String p = (s_org+s_city+s_project);
         int h;
         if(ProjectCodes.containsKey(p) && ProjectCodes.get(p) != null){
@@ -133,9 +123,12 @@ public class Projects extends AppCompatActivity {
             }
             ProjectCodes.put(p, h);
         }
-
         final String hash = Integer.toString(Math.abs(h));
 
+        // code below is dummy stand-in code that does not query the database for questionnaires
+        // as long as the user enters "Cambridge" as city, they can proceed to whatever project they specify
+        // app loads questionnaire from local file questionnaire_with_nums.xml, proceeds to project home page
+        //*****************************************************************
         if(s_city.equals("Cambridge")){
             Intent intent = new Intent(context, Home.class);
             intent.putExtra("action_bar", s_project);
@@ -152,7 +145,12 @@ public class Projects extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
+        //*****************************************************************
 
+        // below is the actual code for sending a request to the server for a questionnaire
+        // writes questionnaire into local file, proceeds to project home page if request successful
+        // sends over project information (city, organization, project hash, project name)
+        // generates error message if request not successful
         /*
         StringRequest req = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>()
@@ -223,17 +221,21 @@ public class Projects extends AppCompatActivity {
     }
 
     GoogleApiClient client = MainActivity.getClient();
-
+    // signs user out and takes them to sign in page
     private void signOut() {
         try {
             client.connect();
             Auth.GoogleSignInApi.signOut(client);
-        }catch(Exception e){}
+        }catch(Exception e){
+            System.out.println("sign out failed");
+            return;
+        }
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("out", "yes");
         startActivity(intent);
     }
 
+    // prompts user if they are sure they want to sign out, calls signOut() if sure
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

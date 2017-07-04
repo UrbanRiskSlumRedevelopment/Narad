@@ -12,58 +12,29 @@ import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.view.MotionEvent;
 import android.view.View;
-import android.os.AsyncTask.Status;
-import android.service.carrier.CarrierMessagingService.ResultCallback;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.AuthFailureError;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import org.json.JSONObject;
-
-import java.io.FileOutputStream;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import android.os.AsyncTask;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class Home extends AppCompatActivity {
-    String author = "";
-    GoogleApiClient client = MainActivity.getClient();
+    String author = ""; // username of surveyor
 
     public final static String RESULTS = "";
     Context context = this;
     static Boolean isTouched = false;
-    String[] fileArray;
-    String prjt;
-    String city;
-    String orga;
+    String prjt; // unique project hash; files belonging to surveys filled out for project are identified with "hc*"+prjt
+    String city; // project city
+    String orga; // project organization
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +44,10 @@ public class Home extends AppCompatActivity {
 
         final LinearLayout layout = (LinearLayout) findViewById(R.id.home_ll);
         layout.setOrientation(LinearLayout.VERTICAL);
-        final HashMap<String,Button> date_hm = new HashMap<>();
-        final HashMap<String,Button> city_hm = new HashMap<>();
+        final HashMap<String,Button> date_hm = new HashMap<>(); // hash map mapping questionnaires/surveys' buttons to their dates
+        final HashMap<String,Button> city_hm = new HashMap<>(); // hash map mapping questionnaires/surveys' buttons to their names (city, organization, project)
 
+        // sets project name, city, and organization
         String project = getIntent().getStringExtra("project");
         System.out.println(project);
         prjt = project;
@@ -86,18 +58,28 @@ public class Home extends AppCompatActivity {
         String[] files = fileList();
         final String hashc = "hc*"+project;
 
-        getSupportActionBar().setTitle(getIntent().getStringExtra("action_bar"));
+        // sets title of page to project name
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getIntent().getStringExtra("action_bar"));
+        }
 
+        // iterates through all files available in local storage (where completed questionnaires are stored)
+        // for every text file (text version of a completed questionnaire), creates a button
+        // reads json and text files of questionnaire answers
+        // button opens QDisplay for questionnaire with answers from files and project information for when user navigates back from QDisplay
         if(files.length > 0) {
-            for (int i = 0; i < files.length; i++) {
+            for(int i = 0; i < files.length; i++) {
+                // skips all files not belonging to current project
                 if(!files[i].contains("hc*"+project)){
                     continue;
                 }
+                // skips all non-jpeg, json, or txt files
                 String month = files[i].substring(0,8);
                 if(!(files[i].endsWith("jpeg") || files[i].endsWith("json") || files[i].endsWith("txt"))){
                     System.out.println(files[i]);
                     continue;
                 }
+                // if file is a text file, creates a button for its associated questionnaire
                 if(!month.substring(0,4).equals("JPEG") && !files[i].endsWith("json")){
 
                     System.out.println(files[i]);
@@ -117,10 +99,11 @@ public class Home extends AppCompatActivity {
                                                   System.out.println(b.getText());
                                                   String btxt = b.getText() + hashc;
                                                   btxt = btxt.replace(" ", "_");
-                                                  String filename = btxt + ".txt";
-                                                  String jpeg = btxt + ".jpeg";
-                                                  String jsonfile = btxt + ".json";
+                                                  String filename = btxt + ".txt"; // questionnaire text file
+                                                  String jsonfile = btxt + ".json"; // questionnaire json file
                                                   String jsonstring = "";
+                                                  String result = "";
+                                                  // attempts to open and read json and txt files
                                                   FileInputStream file = null;
                                                   try{
                                                       file = openFileInput(filename);
@@ -134,28 +117,30 @@ public class Home extends AppCompatActivity {
                                                       System.out.println("cannot open file/no json");
                                                   }
                                                   StringBuilder sb = new StringBuilder();
-                                                  try{
-                                                      BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-                                                      BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
-                                                      String line;
-                                                      while ((line = reader.readLine()) != null) {
-                                                          System.out.println(line);
+                                                  if(file != null && json != null) {
+                                                      try {
+                                                          BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+                                                          BufferedReader jreader = new BufferedReader(new InputStreamReader(json));
+                                                          String line;
+                                                          while ((line = reader.readLine()) != null) {
+                                                              System.out.println(line);
 
-                                                          while(line.contains("~~")){
-                                                              String nline = line.substring(0,line.indexOf("~~"));
-                                                              line = line.substring(line.indexOf("~~")+2);
-                                                              sb.append(nline).append("\n");
+                                                              while (line.contains("~~")) {
+                                                                  String nline = line.substring(0, line.indexOf("~~"));
+                                                                  line = line.substring(line.indexOf("~~") + 2);
+                                                                  sb.append(nline).append("\n");
+                                                              }
                                                           }
+                                                          jsonstring = jreader.readLine();
+                                                          json.close();
+                                                          file.close();
+                                                      } catch (Exception e) {
+                                                          e.printStackTrace();
+                                                          System.out.println("input stream didn't close");
                                                       }
-                                                      jsonstring = jreader.readLine();
-                                                      json.close();
-                                                      file.close();
-                                                  }catch(Exception e){
-                                                      e.printStackTrace();
-                                                      System.out.println("input stream didn't close");
+                                                      result = sb.toString();
                                                   }
-
-                                                  String result = sb.toString();
+                                                  // passes json and text answers, project information to QDisplay
                                                   Intent intent = new Intent(context, QDisplay.class);
                                                   intent.putExtra("project",prjt);
                                                   intent.putExtra("project_name", getIntent().getStringExtra("action_bar"));
@@ -174,15 +159,15 @@ public class Home extends AppCompatActivity {
                                               }
                                           }
                     );
+                    // gets questionnaire date, adds button to date hash map
                     String date = (String) bt.getText();
-                    System.out.println(date);
                     if(date.contains("  ")) {
                         date = date.substring(date.lastIndexOf("  ") + 2, date.lastIndexOf(" ")) + date.substring(date.lastIndexOf(" "));
                     }
-                    System.out.println(date);
                     date = date.replace(" ","");
                     System.out.println(date);
                     date_hm.put(date,bt);
+                    // gets questionnaire city/organization/project, adds button to city hash map
                     String city = (String) bt.getText();
                     try {
                         city = city.substring(0, city.lastIndexOf("  "));
@@ -196,7 +181,9 @@ public class Home extends AppCompatActivity {
             }
         }
 
-
+        // scroll views to the linear layouts containing alphabetized and date-ordered surveys the user switches between
+        ScrollView datesv = new ScrollView(this);
+        ScrollView alphasv = new ScrollView(this);
 
         final LinearLayout by_date = new LinearLayout(this);
         final LinearLayout by_alpha = new LinearLayout(this);
@@ -205,8 +192,8 @@ public class Home extends AppCompatActivity {
         by_date.setBackgroundColor(Color.CYAN);
         by_alpha.setBackgroundColor(Color.GREEN);
 
-        final SortedSet<String> dates = new TreeSet<>(date_hm.keySet());
-        final SortedSet<String> cities = new TreeSet<>(city_hm.keySet());
+        final SortedSet<String> dates = new TreeSet<>(date_hm.keySet()); // surveys ordered by date
+        final SortedSet<String> cities = new TreeSet<>(city_hm.keySet()); // surveys ordered alphabetically
 
         SwitchCompat sc = new SwitchCompat(this);
         sc.setTextOff("Alphabetically");
@@ -214,8 +201,10 @@ public class Home extends AppCompatActivity {
         sc.setShowText(true);
 
         layout.addView(sc);
-        layout.addView(by_date);
-        layout.addView(by_alpha);
+        datesv.addView(by_date);
+        alphasv.addView(by_alpha);
+        layout.addView(datesv);
+        layout.addView(alphasv);
 
         for(String city: cities){
             by_alpha.addView(city_hm.get(city));
@@ -230,6 +219,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        // every time toggle changes, populates either dates view or city view with surveys in appropriate order
         sc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -262,11 +252,7 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public void pastQ(View view){
-        Intent intent = new Intent(this, PastQs.class);
-        startActivity(intent);
-    }
-
+    // opens a blank new questionnaire with project information and username
     public void newVPQ(View view){
         Intent intent = new Intent(this, PVQ.class);
         intent.putExtra("author",author);
@@ -281,7 +267,9 @@ public class Home extends AppCompatActivity {
         onBackPressed();
     }
 
-    public void sync(View view){
+    // removes all of project's completed surveys and related files from local storage
+    // removes all images from project's surveys from picture directory
+    public void delete_all(View view){
 
         String[] files = fileList();
         if (files.length > 0){
@@ -308,11 +296,9 @@ public class Home extends AppCompatActivity {
         intent.putExtra("project", prjt);
         startActivity(intent);
 
-
-
-
     }
 
+    // prompts user and asks whether user would like to exit project, returns to project selection page if yes
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

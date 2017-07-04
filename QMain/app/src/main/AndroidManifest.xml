@@ -60,9 +60,6 @@
             android:name=".QDisplay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Display"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".PVQ"
             android:screenOrientation="portrait" />
         <activity

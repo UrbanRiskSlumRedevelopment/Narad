@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Signed out
             System.out.println("sign in failed");
+            System.out.println(result.getStatus());
         }
     }
 
