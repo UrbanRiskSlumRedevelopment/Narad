@@ -11,17 +11,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.Place;
-import android.content.Intent;
-import android.widget.Toast;
 
+
+/**
+ * Map activity prompting user to select their location
+ */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
-    public String LOCATION = "";
+    GoogleMap mMap;
     public LatLng LL = new LatLng(0,0);
 
-
+    /**
+     * Opens place picker map
+     *
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,22 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    int PLACE_PICKER_REQUEST = 1;
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(this, data);
-                String toastMsg = String.format("Place: %s", place.getLatLng());
-                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-                System.out.println(toastMsg);
-                //LOCATION = toastMsg.substring(7);
-                LL = place.getLatLng();
-                //finish();
-            }
-        }
-    }
-
+    int PLACE_PICKER_REQUEST = 1;  // should match place picker request int in PVQ
 
     /**
      * Manipulates the map once available.

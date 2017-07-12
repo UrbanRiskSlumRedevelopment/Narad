@@ -22,11 +22,19 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import android.widget.EditText;
 import java.util.HashMap;
 
+/**
+ * Project selection page
+ */
 public class Projects extends AppCompatActivity {
 
     Context context = this;
     HashMap<String, Integer> ProjectCodes = new HashMap<>();
 
+    /**
+     * Builds project selection page
+     *
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,15 +206,25 @@ public class Projects extends AppCompatActivity {
                 */
     }
 
-    // hides soft keyboard
+    /**
+     * hides soft keyboard
+     *
+     * @param activity current activity
+     * @param view view interacted with
+     */
     public static void hideSoftKeyboard (Activity activity, View view)
     {
         InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
-    // calls hideSoftKeyboard on non-EditText views
     public Activity a = this;
+
+    /**
+     * If view is not EditText, sets onTouchListener that closes soft keyboard when it is interacted with
+     *
+     * @param view view to be monitored
+     */
     public void setupUI(View view) {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
@@ -221,7 +239,10 @@ public class Projects extends AppCompatActivity {
     }
 
     GoogleApiClient client = MainActivity.getClient();
-    // signs user out and takes them to sign in page
+
+    /**
+     * Signs user out and takes them to sign in page
+     */
     private void signOut() {
         try {
             client.connect();
@@ -235,9 +256,12 @@ public class Projects extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // prompts user if they are sure they want to sign out, calls signOut() if sure
+    /**
+     * Prompts user if they are sure they want to sign out, calls signOut() if sure
+     */
     @Override
     public void onBackPressed() {
+        // builds dialog with yes and no options
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you would like to sign out?")
                 .setCancelable(false)

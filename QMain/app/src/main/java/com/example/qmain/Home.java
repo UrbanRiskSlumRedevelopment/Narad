@@ -26,6 +26,9 @@ import java.io.File;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * Home page for project
+ */
 public class Home extends AppCompatActivity {
     String author = ""; // username of surveyor
 
@@ -36,6 +39,11 @@ public class Home extends AppCompatActivity {
     String city; // project city
     String orga; // project organization
 
+    /**
+     * Builds home page for project
+     *
+     * @param savedInstanceState saved instance, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,6 +203,7 @@ public class Home extends AppCompatActivity {
         final SortedSet<String> dates = new TreeSet<>(date_hm.keySet()); // surveys ordered by date
         final SortedSet<String> cities = new TreeSet<>(city_hm.keySet()); // surveys ordered alphabetically
 
+        // switch with two states, alphabetically sorted and chronologically sorted
         SwitchCompat sc = new SwitchCompat(this);
         sc.setTextOff("Alphabetically");
         sc.setTextOn("By Date");
@@ -252,7 +261,11 @@ public class Home extends AppCompatActivity {
 
     }
 
-    // opens a blank new questionnaire with project information and username
+    /**
+     * Opens a blank new questionnaire with project information and username
+     *
+     * @param view view clicked on to start action
+     */
     public void newVPQ(View view){
         Intent intent = new Intent(this, PVQ.class);
         intent.putExtra("author",author);
@@ -263,12 +276,21 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Returns user to project selection, asks if they are sure they want to exit
+     *
+     * @param view view clicked to start action
+     */
     public void exit(View view){
         onBackPressed();
     }
 
-    // removes all of project's completed surveys and related files from local storage
-    // removes all images from project's surveys from picture directory
+    /**
+     * Removes all of project's completed surveys and related files from local storage
+     * removes all images from project's surveys from picture directory
+     *
+     * @param view view clicked to start action
+     */
     public void delete_all(View view){
 
         String[] files = fileList();
@@ -281,7 +303,12 @@ public class Home extends AppCompatActivity {
             }
         }
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File[] jfiles = storageDir.listFiles();
+        File[] jfiles;
+        if(storageDir == null){
+            jfiles = new File[]{};
+        }else{
+            jfiles = storageDir.listFiles();
+        }
         if(jfiles.length > 0){
             for(int i = 0; i<jfiles.length; i++){
                 System.out.println(jfiles[i].getName());
@@ -298,7 +325,9 @@ public class Home extends AppCompatActivity {
 
     }
 
-    // prompts user and asks whether user would like to exit project, returns to project selection page if yes
+    /**
+     * Prompts user and asks whether user would like to exit project, returns to project selection page if yes
+     */
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

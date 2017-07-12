@@ -10,10 +10,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.auth.api.Auth;
 
+/**
+ * Builds sign in page
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static GoogleApiClient mGoogleApiClient;
 
+    /**
+     * Builds sign in page, checks whether user has signed in already or not
+     *
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +68,30 @@ public class MainActivity extends AppCompatActivity {
 
     int RC_SIGN_IN = 1;
 
+    /**
+     * Attempts to sign in
+     */
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /**
+     * Returns google api client
+     *
+     * @return google api client
+     */
     public static GoogleApiClient getClient(){
         return mGoogleApiClient;
     }
 
+    /**
+     * Handles results of sign-ins
+     *
+     * @param requestCode code indicating whether action was sign-in action
+     * @param resultCode code indicating result of action
+     * @param data Intent of action
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -80,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates metadata and takes user to project selection if sign in successful
+     *
+     * @param result result of google sign in
+     */
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully
@@ -103,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Takes user to project selection page
+     *
+     * @param author user username
+     */
     public void start(String author) {
         // move forward to project selection with username as author
         Intent intent = new Intent(this, Projects.class);
@@ -110,11 +143,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Performs same action pressing home button would
+     */
     @Override
     public void onBackPressed() {
-        // page refreshes when back button is pressed
-        //Intent intent = new Intent(this, MainActivity.class);
-        //startActivity(intent);
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
@@ -125,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
 
 }
 
+/**
+ * Handles failed connections
+ */
 class FailedConnection implements GoogleApiClient.OnConnectionFailedListener{
     public void onConnectionFailed(ConnectionResult connectionResult){
         System.out.println("failed connection");

@@ -24,8 +24,16 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+/**
+ * Page for displaying completed survey data
+ */
 public class QDisplay extends AppCompatActivity {
 
+    /**
+     * Builds page
+     *
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final Context context = this;
@@ -224,8 +232,10 @@ public class QDisplay extends AppCompatActivity {
 
     }
 
-    // returns user to project home page using project information from project home page
-    // passed from home page when opening survey page
+
+    /**
+     * Returns user to project home page using project information passed from home page when opening survey page
+     */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, Home.class);

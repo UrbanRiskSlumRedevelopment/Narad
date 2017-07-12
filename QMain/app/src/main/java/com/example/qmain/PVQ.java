@@ -1,7 +1,6 @@
 package com.example.qmain;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -34,13 +33,11 @@ import android.os.Environment;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.widget.ImageButton;
-
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.json.JSONException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,7 +53,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import android.view.Gravity;
 import android.support.v4.view.GravityCompat;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -80,20 +76,21 @@ import android.view.Menu;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import android.view.LayoutInflater;
-
+/**
+ * Builds questionnaire
+ */
 public class PVQ extends AppCompatActivity {
-    HashMap<String,Object> NumQuestions = new HashMap<>(); // hash map mapping questions to their question numbers
-    HashMap<String,Integer> Dependents = new HashMap<>(); // hash map mapping dependent questions to the questions they are dependent on
+    HashMap<String,LinearLayout> NumQuestions = new HashMap<>(); // hash map mapping questions to their question numbers
+    HashMap<String,Integer> Dependents = new HashMap<>(); // maps number of currently positive answers a question is dependent on to the question's id
     HashMap<String,List> Groups = new HashMap<>(); // hash map mapping questions to groups
     List<String> Image_Tags = new ArrayList<>(); // list of image tags
-    HashMap<String, String> Images = new HashMap<>(); // hash map mapping images to their tags
+    HashMap<String, String> Images = new HashMap<>(); // hash map mapping tags to their image files
     String answers = ""; // string for storing text of answers to questionnaire
     TextView ans = null; // TextView where answers will be displayed on review page
     LinearLayout req_buttons;
     static List Counter = new ArrayList();
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
-    public Context context = this; // For accessing context of the questionnaire
+    public Context context = this; // For accessing context of the questionnaire activity
     public static String LOCATION = ""; // Location stored here
     ImageView mImageView = null;
     LinearLayout camera_question = null;
@@ -101,7 +98,7 @@ public class PVQ extends AppCompatActivity {
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date()); // date and time at which questionnaire was created
     String ogTimeStamp = timeStamp; // another variable storing original timestamp in case timeStamp is modified
     String author = ""; // username of survey taker
-    List<Object> pages = new ArrayList<>();
+    List<Object> pages = new ArrayList<>(); // list of pages (one page for each group) for navigation drawer
     ViewPager vp = null; // ViewPager whose pages will make up the questionnaire
     DrawerLayout dl = null; // Side drawer for navigation
     List<String> Identifiers = new ArrayList<>(); // questions whose answers will be used to generate the questionnaire's uid
@@ -278,58 +275,19 @@ public class PVQ extends AppCompatActivity {
 
             doc.getDocumentElement().normalize();
 
-            // Builds first page
-            // Each page consists of a scrollview containing a linear layout containing smaller linear layouts
-            /*
-            ScrollView sv1 = new ScrollView(this);
-            LinearLayout p1 = new LinearLayout(this);
-            p1.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0,10,0,10);
-            p1.setLayoutParams(lp);
-
-            // Adds first page to ViewPager
-            pg.addView(sv1,0);
-            sv1.addView(p1);
-            setupUI(sv1);
-            setupUI(p1);
-
-            // Adds "Sections" title to first page
-            TextView title = new TextView(this);
-            title.setTextSize(30);
-            String sections = "Sections";
-            title.setText(sections);
-            p1.addView(title);
-            pages.add(sections);
-            */
-
-            // iterates through all groups of questions in XML doc
+            // iterates through all question groups in XML doc
             NodeList groups = doc.getElementsByTagName("group");
             for(int g = 0; g<groups.getLength(); g++){
                 System.out.println(g);
                 Node gr = groups.item(g);
-                Element eE = (Element) gr;
-                final int g_button = g; // number of group, counting from 0
+                Element eE = (Element) gr; // group element from xml
                 String g_name = eE.getElementsByTagName("gtext").item(0).getTextContent(); // group name
-                /*
-                // creates button on menu page linked to group page
-                Button p1_button = new Button(this);
-                p1.addView(p1_button);
-                p1_button.setText(g_name);
-                pages.add(g_name);
-                p1_button.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        vp.setCurrentItem(g_button+1, false);
-                    }
-                });
-                */
 
-                pages.add(g_name);
+                pages.add(g_name); // adds group to list of pages
 
                 // creates group page
                 ScrollView sv = new ScrollView(this);
-                LinearLayout ll = new LinearLayout(this);
+                LinearLayout ll = new LinearLayout(this); // linear layout for group page
                 ll.setOrientation(LinearLayout.VERTICAL);
                 sv.addView(ll);
                 pg.addView(sv,g);
@@ -343,25 +301,30 @@ public class PVQ extends AppCompatActivity {
 
                 // iterates through all questions in group
                 NodeList nList = eE.getElementsByTagName("question");
-                List<Object> Qs = new ArrayList<>();
+                List<LinearLayout> Qs = new ArrayList<>(); // list of question linear layouts to be mapped to group in Groups
                 System.out.println(nList.getLength());
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        // builds question linear layout and adds question to Qs, NumQuestions, and Dependents (if applicable)
+                        // does not handle map or camera questions, those built separately below
                         LinearLayout qu = Questionnaire.build_question(nNode, Qs, ll, this, NumQuestions,
                                 Dependents);
                         if(null == qu){
+                            // builds map or camera question
                             Element eElement = (Element) nNode;
                             // Obtains question type, hint, and text; adds * to question text if required
                             String text = eElement.getElementsByTagName("qtext").item(0).getTextContent();
                             String type = eElement.getElementsByTagName("qtype").item(0).getTextContent();
                             if (type.equals("M")){
                                 // Map question
+                                // creates map question and adds it to appropriate lists/linear layout
                                 String qid = eElement.getElementsByTagName("q").item(0).getTextContent();
                                 qu = Map(text, context);
                                 map_question = qu;
                                 Qs.add(qu);
                                 ll.addView(qu);
+                                // assigns question its question number
                                 TextView tq = new TextView(this);
                                 tq.setText(qid);
                                 tq.setVisibility(View.GONE);
@@ -369,12 +332,14 @@ public class PVQ extends AppCompatActivity {
                                 qu.addView(tq);
                                 NumQuestions.put(qid, qu);
                             } else if (type.equals("C")) {
-                                // Camera question; still being worked out
+                                // Camera question
+                                // creates camera question and adds it to appropriate lists/linear layout
                                 String qid = eElement.getElementsByTagName("q").item(0).getTextContent();
                                 qu = Camera(text, context);
                                 camera_question = qu;
                                 Qs.add(qu);
                                 ll.addView(qu);
+                                // assigns question its question number
                                 TextView tq = new TextView(this);
                                 tq.setText(qid);
                                 tq.setVisibility(View.GONE);
@@ -385,8 +350,10 @@ public class PVQ extends AppCompatActivity {
                         }
                     }
                 }
+                // sets up UI (soft keyboard hidden when focus not on EditText) for each question
+                // and its children in group
                 for(int qn = 0; qn < Qs.size(); qn++){
-                    LinearLayout q = (LinearLayout) Qs.get(qn);
+                    LinearLayout q = Qs.get(qn);
                     setupUI(q);
                     int x = q.getChildCount();
                     for(int qi = 0; qi < x; qi++){
@@ -394,60 +361,33 @@ public class PVQ extends AppCompatActivity {
                     }
                 }
 
-                // Iterates through all repeatable chunks in the group
-                NodeList nList2 = eE.getElementsByTagName("rchunk");
-                String num;
-                try{
-                    num = eE.getElementsByTagName("rsize").item(0).getTextContent();
-                }catch(Exception e){
-                    num="";
-                }
+                NodeList nList2 = eE.getElementsByTagName("rchunk"); // list of all repeatable chunks in questionnaire
+
+                // iterates through all repeatable chunks in the group
                 for(int z=0; z<nList2.getLength();z++){
+                    String num; // hint for EditText in which user specifies how many of repeatable chunks to display
+                    try{
+                        num = eE.getElementsByTagName("rsize").item(0).getTextContent();
+                    }catch(Exception e){
+                        num="";
+                    }
                     Node chunk = nList2.item(z);
                     Element chunkE = (Element) chunk;
-                    if(num.equals("")) {
-                        // question chunk button
-                        Button rbt = new Button(this);
-                        String rtext = chunkE.getElementsByTagName("rtext").item(0).getTextContent() + " +";
-                        rbt.setText(rtext);
-                        ll.addView(rbt);
-                        setupUI(rbt);
+                    String qlims = eE.getElementsByTagName("rlimitq").item(0).getTextContent(); // limiting questions (if any)
+                    EditText num_times = new EditText(this); // EditText in which user specifies number of repeatable chunks
+                    num_times.setHint(num);
+                    num_times.setInputType(2);
+                    // user-set static limit on how many times set of repeatable questions can be repeated
+                    String limit = (chunkE.getElementsByTagName("rlimit").item(0).getTextContent());
+                    int max = Integer.parseInt(limit);
+                    NodeList chqs = chunkE.getElementsByTagName("rquestion");
+                    LinearLayout questions_here = new LinearLayout(this);
+                    questions_here.setOrientation(LinearLayout.VERTICAL);
+                    // sets up EditText so that it displays the correct number of repeatable chunks based on answer
+                    num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents, qlims));
+                    ll.addView(num_times);
+                    ll.addView(questions_here);
 
-                        // XML question chunk
-                        NodeList chqs = chunkE.getElementsByTagName("rquestion");
-
-                        // when button is clicked, following code takes as arguments linear layout, XML chunk of questions, context
-                        rbt.setOnClickListener(new RepeatOnClickListener(ll, chqs, this) {
-                            public void onClick(View v) {
-                                // new linear layout of questions in chunk
-                                LinearLayout qchunk = new LinearLayout(context);
-                                qchunk.setOrientation(LinearLayout.VERTICAL);
-                                // iterates through questions and adds them to the linear layout
-                                for (int y = 0; y < nlist.getLength(); y++) {
-                                    Node question = nlist.item(y);
-                                    if (question.getNodeType() == Node.ELEMENT_NODE) {
-                                        String g_name = (String) ((TextView) view1.getChildAt(0)).getText();
-                                        Questionnaire.build_question(question, Groups.get(g_name), qchunk, context, null,
-                                                Dependents);
-                                    }
-                                }
-                                view1.addView(qchunk, view1.getChildCount() - 1);
-                            }
-                        });
-                    }else{
-                        String qlims = eE.getElementsByTagName("rlimitq").item(0).getTextContent();
-                        EditText num_times = new EditText(this);
-                        num_times.setHint(num);
-                        num_times.setInputType(2);
-                        String limit = (chunkE.getElementsByTagName("rlimit").item(0).getTextContent());
-                        int max = Integer.parseInt(limit);
-                        NodeList chqs = chunkE.getElementsByTagName("rquestion");
-                        LinearLayout questions_here = new LinearLayout(this);
-                        questions_here.setOrientation(LinearLayout.VERTICAL);
-                        num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents, qlims));
-                        ll.addView(num_times);
-                        ll.addView(questions_here);
-                    }
 
                 }
 
@@ -457,6 +397,7 @@ public class PVQ extends AppCompatActivity {
                 setupUI(ll);
             }
 
+            // iterate through id fields and record numbers of identifier questions in Identifiers
             NodeList ids = doc.getElementsByTagName("idfield");
             for(int d=0; d<ids.getLength();d++){
                 Node idf = ids.item(d);
@@ -497,7 +438,10 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
-            // blank text view to be updated
+            // blank text view and blank linear layout to be updated
+            // on pressing review (through update_answers())
+            // ans will be populated with text of the questions/answers of survey if all required questions are answered
+            // req_buttons will be populated with buttons to sections where there are unanswered required questions
             ans = new TextView(this);
             req_buttons = new LinearLayout(this);
             req_buttons.setOrientation(LinearLayout.VERTICAL);
@@ -510,6 +454,7 @@ public class PVQ extends AppCompatActivity {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     if(vp.getCurrentItem() != vp.getChildCount()-1) {
+                        // sets required buttons ans answers text view to blank when user leaves review page
                         req_buttons.removeAllViews();
                         req_buttons.setBackgroundColor(Color.TRANSPARENT);
                         ans.setText("");
@@ -521,9 +466,14 @@ public class PVQ extends AppCompatActivity {
                 public void onPageScrollStateChanged(int state) {}
             });
 
-            vp.setCurrentItem(0);
-            Menu menu1 = nv.getMenu();
             pages.add("Review ");
+
+            vp.setCurrentItem(0); // starts questionnaire on first page
+
+            // populates navigation drawer menu with each page in questionnaire
+            // sets up navigation drawer items so that clicking on them results in navigation to the corresponding page
+            // and closing of the drawer
+            Menu menu1 = nv.getMenu();
             for(int i = 0; i < pages.size(); i++){
                 menu1.add((String)pages.get(i));
                 System.out.println((String)pages.get(i));
@@ -549,11 +499,18 @@ public class PVQ extends AppCompatActivity {
     int PLACE_PICKER_REQUEST = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
 
-    // creates map question
+    /**
+     * Creates map question consisting of a button that opens up a map on which user picks a location,
+     * after which the location gets processed in onActivityResult()
+     *
+     * @param questiontext text of map question
+     * @param context context of current activity
+     * @return qlayout, LinearLayout map question
+     */
     public LinearLayout Map(String questiontext, Context context){
-        // set up question linear layout with text and button
-        LinearLayout qlayout = new LinearLayout(context);
+        LinearLayout qlayout = new LinearLayout(context); // question LinearLayout
         qlayout.setOrientation(LinearLayout.VERTICAL);
+        // creates text and button that make up map question
         TextView tv = new TextView(context);
         tv.setTag("text");
         tv.setText(questiontext);
@@ -563,7 +520,7 @@ public class PVQ extends AppCompatActivity {
                 ActionBar.LayoutParams.WRAP_CONTENT));
         final Activity a = this;
 
-        // on click, attempts to start place picker activity
+        // on click, attempts to start place picker activity using place picker request code
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 hideSoftKeyboard(a,v);
@@ -578,16 +535,25 @@ public class PVQ extends AppCompatActivity {
 
             }
         });
-
+        // adds text and button to map question linear layout, returns linear layout
         qlayout.addView(tv);
         qlayout.addView(bt);
         qlayout.setTag("M");
         return qlayout;
     }
 
+    /**
+     * Creates camera question consisting of a button that launches image tagging and camera
+     * after user takes image, the image gets processed in onActivityResult()
+     *
+     * @param questiontext text of camera question
+     * @param context context of current activity
+     * @return qlayout, LinearLayout camera question
+     */
     public LinearLayout Camera(String questiontext, Context context){
-        LinearLayout qlayout = new LinearLayout(context);
+        LinearLayout qlayout = new LinearLayout(context); // question LinearLayout
         qlayout.setOrientation(LinearLayout.VERTICAL);
+        // creates text and button that make up camera question
         TextView tv = new TextView(context);
         tv.setTag("text");
         tv.setText(questiontext);
@@ -598,6 +564,8 @@ public class PVQ extends AppCompatActivity {
         final AlertDialog.Builder bdr = new AlertDialog.Builder(this);
         final Context context1 = context;
 
+        // on click, prompts user for an image tag or no description, then opens camera
+        // opens camera using dispatchTakePictureIntent()
         bt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final EditText input_tag = new EditText(context1);
@@ -606,14 +574,14 @@ public class PVQ extends AppCompatActivity {
                 int maxLength = 30;
                 input_tag.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
                 bdr.setView(input_tag);
-                // Set up the buttons
+                // if user enters a tag, passes new tag to dispatchTakePictureIntent()
                 bdr.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //tag = input_tag.getText().toString();
                         dispatchTakePictureIntent(input_tag.getText().toString());
                     }
                 });
+                // if the user opts for no tag, passes an empty string
                 bdr.setNegativeButton("No description", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -625,22 +593,29 @@ public class PVQ extends AppCompatActivity {
                 alert.show();
             }
         });
+        // adds text and button to camera question linear layout, returns linear layout
         qlayout.addView(tv);
         qlayout.addView(bt);
         qlayout.setTag("C");
         return qlayout;
     }
 
-    String mCurrentPhotoPath = "";
+    String mCurrentPhotoPath = ""; // filepath to most recent image
 
+    /**
+     * Creates file to which image will be saved
+     *
+     * @param tag image tag (blank if no tag)
+     * @return image, file into which the image being taken by the user will be saved
+     * @throws IOException
+     */
     private File createImageFile(String tag) throws IOException {
-        // Create an image file name
-
+        // creates a file name from tag for image
         Image_Tags.add(tag);
         System.out.println(Image_Tags);
         tag = tag.replaceAll(" ", "_");
         System.out.println(tag);
-        String imageFileName = timeStamp+"_t__"+tag+"__t_";
+        String imageFileName = timeStamp+"_t__"+tag+"__t_"+Integer.toString(Image_Tags.size());
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -648,28 +623,33 @@ public class PVQ extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
+        // saves absolute file path to image file
+        // adds image file and image tag to Images
         mCurrentPhotoPath = image.getAbsolutePath();
-        System.out.println(imageFileName);
-        System.out.println(mCurrentPhotoPath);
         Images.put(image.getAbsolutePath(), tag);
+        // returns file
         return image;
     }
 
+    /**
+     * Creates file to save image in using createImageFile, launches photo taking activity
+     *
+     * @param tag tag for image to be taken
+     */
     private void dispatchTakePictureIntent(String tag) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            //startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            // Create the File where the photo should go
+            // creates the file where the photo will be stored
             File photoFile = null;
             try {
                 photoFile = createImageFile(tag);
             } catch (IOException ex) {
                 System.out.println("filename creation error");
             }
-            // Continue only if the File was successfully created
+            // continues only if file was successfully created
             System.out.println(getFilesDir());
-
+            // creates photoURI for storing image
+            // launches photo taking activity using request image capture code
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.qmain.fileprovider",
@@ -681,13 +661,22 @@ public class PVQ extends AppCompatActivity {
         }
     }
 
-    // depending on request code (1 for place picker, 2 for image capture), performs action
+    /**
+     * Processes result of map question or camera question
+     * Saves location chosen by map question
+     * Saves image tag written by and image taken by camera question, displays image
+     *
+     * @param requestCode integer indicating whether activity giving result is camera or map activity
+     * @param resultCode integer indicating whether activity was successful
+     * @param data data from activity
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // activity result from map question
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK)  {
-                // Displays map and prompts user to place picker on location
+                // saves location user chose on map
                 Place place = PlacePicker.getPlace(this, data);
-                // Displays location in toast message after map activity is closed
+                // displays location in toast message after map activity is closed
                 String toastMsg = String.format("Place: %s", place.getLatLng());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
                 System.out.println(toastMsg);
@@ -703,10 +692,10 @@ public class PVQ extends AppCompatActivity {
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // opens camera, saves image as bitmap
-            //Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
+        }
+        // activity result from camera question
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // opens image as bitmap and displays it in ImageView
             mImageView = new ImageView(this);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                     LayoutParams.WRAP_CONTENT);
@@ -734,6 +723,7 @@ public class PVQ extends AppCompatActivity {
                 e.printStackTrace();
                 System.out.println("SOMETHING ELSE");
             }
+            // displays image and tag as part of camera question
             mImageView.setBackgroundColor(Color.CYAN);
             TextView itag = new TextView(this);
             itag.setText(Image_Tags.get(Image_Tags.size()-1));
@@ -741,29 +731,49 @@ public class PVQ extends AppCompatActivity {
             camera_question.addView(mImageView);
         }
     }
-    // don't generate a picture when report has not been completed
 
-    // writes current answers and returns them as one string; optionally writes them to file
+    /**
+     * Writes current answers and returns them as a string (either in text or json format)
+     * Optionally writes question/answers to file and json file
+     *
+     * @param qgs hash map of questions mapped to groups
+     * @param toFile whether question/answers should be written to file
+     * @param f FileOutputStream to write text question/answers to
+     * @param incomplete if true, answers are being written for purposes of review
+     * @param jf FileOutputStream to write json question/answers to
+     * @param rj if True, function returns a json string
+     * @return returns either question/answers as text or json or list of unanswered questions
+     */
     public String writeAnswers(HashMap qgs, boolean toFile, FileOutputStream f, boolean incomplete, FileOutputStream jf, boolean rj) {
-        String total = ""; // string with all answers
-        String unanswered = "";
+        String total = "";  // text with all questions and answers
+        String unanswered = "";  // list of groups with unanswered required questions separated by ",, "
         uid = "";
         uid_set = false;
         timeStamp = ogTimeStamp;
-        Boolean use_un = false;
-        HashMap<String,Object> json = new HashMap<>();
-        HashMap<String,Object> groups = new HashMap<>();
+        Boolean use_un = false;  // whether or not to return list of groups with unanswered questions
+        HashMap<String,Object> json = new HashMap<>();  // hash map to be converted to a jsonstring to be written to file or returned
+        HashMap<String,Object> groups = new HashMap<>();  // element of json hash map containing groups and their question/answers
         json.put("Groups", groups);
         if (toFile) {
             try {
-                // writes answers to file
+                // writes metadata to json, text, and file
+                // when not writing to file (review purposes only), metadata not needed
                 json.put("Author", author);
                 json.put("Project", getIntent().getStringExtra("project_name"));
                 json.put("City", getIntent().getStringExtra("city"));
                 json.put("Organization", getIntent().getStringExtra("org"));
-                String line = "Author: " + author + "~~";
+                String line = "Author: " + author + "~~"; // "~~" serves as a delimiter between lines
+                String project_line = "Project: " + getIntent().getStringExtra("project_name") + "~~";
+                String city_line = "City: "+getIntent().getStringExtra("city")+"~~";
+                String org_line = "Organization: "+getIntent().getStringExtra("org")+"~~";
                 total += line;
+                total += project_line;
+                total += city_line;
+                total += org_line;
                 f.write(line.getBytes());
+                f.write(project_line.getBytes());
+                f.write(project_line.getBytes());
+                f.write(project_line.getBytes());
             } catch (Exception e) {
                 System.out.println("problem writing line");
             }
@@ -773,12 +783,13 @@ public class PVQ extends AppCompatActivity {
         // iterates through group names
         int idp = 0;
         for(Object key:keys) {
+            // adds section name to text
             String name = "Section: "+key + "\n";
             total += name;
-            //unanswered += "\n"+name;
+
+            // iterates through list of questions in group
             List qs = (List) qgs.get(key);
-            boolean in_list = false;
-            // iterates through list of questions
+            boolean in_list = false;  // keeps track of whether group has been added to unanswered
 
             HashMap<String, Object> questions = new HashMap<>();
             groups.put((String)key, questions);
@@ -789,20 +800,21 @@ public class PVQ extends AppCompatActivity {
                 LinearLayout q = (LinearLayout) qs.get(i);
                 // gets question text
                 TextView text = (TextView) q.findViewWithTag("text");
-                text.setTextColor(Color.GRAY);
-                String question = (String) text.getText();
+                text.setTextColor(Color.GRAY);  // sets question text color to gray
+                String question = (String) text.getText();  // question text
                 String line = "";
                 String tag = "";
                 System.out.println(question);
-                String qid;
+                String qid;  // question number
                 try {
                     qid = ((TextView) q.findViewWithTag("qid")).getText().toString();
                 }catch(NullPointerException n){
                     qid = "";
                     n.printStackTrace();
                 }
-                Object qans = "";
+                Object qans = "";  // answer to question (could be string, list, etc.) to be mapped to question in hash map
 
+                // if parent text or outer parent text exist, adds parent text(s) to question text
                 String parent_text = "";
                 try{
                     TextView pt = (TextView) q.findViewWithTag("parent text");
@@ -821,27 +833,32 @@ public class PVQ extends AppCompatActivity {
 
                 question = parent_text+question + outer_parent_text;
 
+                // identify question type by tag
                 try {
                     tag = (String) q.getTag();
                 } catch (Exception e) {
                     System.out.println("there's no tag?");
                 }
 
+                // skip parent questions
                 if(tag.equals("P")){
                     continue;
                 }
 
-                // based on question tag (type), completes question line with answer in appropriate fashion
-                // if for submission, returns "" if any required (*) questions don't have answers
+                // based on question type, completes question text line with answer in appropriate fashion
+                // if for submission purposes (incomplete = False), returns "" if any required (*) questions don't have answers
                 // otherwise adds unanswered required questions to unanswered string
                 if(tag.equals("T") || tag.equals("N")) {
                     EditText editText = (EditText) q.findViewWithTag("answer");
                     if (editText.getText().toString().equals("") && (question.endsWith("*") || question.contains("* - ")) && !incomplete) {
+                        // returns "" for incomplete required questions if writing answers for submission purposes
                         System.out.println("oops");
                         return "";
                     } else {
+                        // if group contains an unanswered required question
+                        // adds group to unanswered if hasn't been done already
+                        // sets question text color to red
                         if (editText.getText().toString().equals("") && (question.endsWith("*") || question.contains("* - "))) {
-                            //unanswered += "\n" + name+question + "\n";
                             if(! in_list){
                                 unanswered += key + ",, ";
                                 in_list = true;
@@ -849,25 +866,30 @@ public class PVQ extends AppCompatActivity {
                             use_un = true;
                             text.setTextColor(Color.RED);
                         }
+                        // adds question answer to line and sets qans as answer
                         line = question + ": " + editText.getText();
                         qans = line.substring(line.indexOf(": ") + 2);
                     }
                 } else if (tag.equals("S")){
+                    // gets total answer of sum question
                     TextView answer_total = (TextView) q.findViewWithTag("answer");
                     String at = answer_total.getText().toString();
 
-                    ArrayList<View> factors = new ArrayList<View>();
+                    // gets list of sum factors (LinearLayouts with text and EditText)
+                    ArrayList<View> factors = new ArrayList<>();
                     for(int v = 0; v<q.getChildCount(); v++){
                         if(q.getChildAt(v).getTag().equals("factor")){
                             factors.add(q.getChildAt(v));
                         }
                     }
 
+                    // returns "" for incomplete required questions if writing answers for submission purposes
                     if((question.endsWith("*") || question.contains("* - ")) && !incomplete && at.equals("Total: ")){
                         System.out.println("oops");
                         return "";
                     }else if((question.endsWith("*") || question.contains("* - "))&& at.equals("Total: ")){
-                        //unanswered += "\n" + name+question + "\n";
+                        // adds group containing question to unanswered if group has not already been added
+                        // sets question text color to red
                         if(! in_list){
                             unanswered += key + ",, ";
                             in_list = true;
@@ -876,21 +898,14 @@ public class PVQ extends AppCompatActivity {
                         text.setTextColor(Color.RED);
                     } else{
                         try {
-                            /*
-                            if(at.equals("Total: ")){
-                                at = " 0";
-                            }
-                            line = question + ": " + at.substring(at.indexOf(" ") + 1);
-                            qans = at.substring(at.indexOf(" ") + 1);
-                            */
-
                             line = question + ": ";
-                            HashMap<String, Integer> fqas = new HashMap();
+                            HashMap<String, Integer> fqas = new HashMap<>();
 
+                            // iterates through factors, adds factor text and answer to line (for text) and hash map (for json)
                             for(View factor : factors){
-                                TextView ftext = (TextView) factor.findViewWithTag("ftext");
+                                TextView ftext = (TextView) factor.findViewWithTag("ftext");  // factor text
                                 EditText fans = (EditText) factor.findViewWithTag("fanswer");
-                                String fa = "";
+                                String fa;  // factor answer
                                 if(fans.getText().toString().equals("")){
                                     fa = "0 ";
                                 }else{
@@ -908,15 +923,18 @@ public class PVQ extends AppCompatActivity {
                     }
                 } else if (tag.equals("SC")) {
                     line = question + ": ";
-                    RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");
-                    int id = rg.getCheckedRadioButtonId();
+                    RadioGroup rg = (RadioGroup) q.findViewWithTag("choices");  // list of question choice radio buttons
+                    int id = rg.getCheckedRadioButtonId();  // id of checked radio button, -1 if none checked
+                    // returns "" for unanswered question if writing answers for submission purposes
                     if (id == -1 && !incomplete && (question.endsWith("*") || question.contains("* - "))) {
                         return "";
                     } else {
                         RadioButton rb = (RadioButton) rg.getChildAt(id);
                         try {
                             if (id == -1  && (question.endsWith("*") || question.contains("* - "))){
-                                //unanswered += "\n" + name+question + "\n";
+                                // if group contains an unanswered required question
+                                // adds group to unanswered if hasn't been done already
+                                // sets question text color to red
                                 if(! in_list){
                                     unanswered += key + ",, ";
                                     in_list = true;
@@ -926,10 +944,12 @@ public class PVQ extends AppCompatActivity {
                                 line = line.toUpperCase();
                                 continue;
                             } else if(id == -1){
+                                // if not required and no answer, qans is a blank string
                                 qans = "";
                             } else {
+                                // adds button text to line (for text) and sets button id as qans (for json)
                                 line += rb.getText();
-                                qans = (String) rb.getTag();
+                                qans = rb.getTag();
                             }
                         } catch (Exception e) {
                             System.out.println("something went wrong");
@@ -937,27 +957,31 @@ public class PVQ extends AppCompatActivity {
                         }
                     }
                 } else if (tag.equals("MC")) {
-                    qans = new ArrayList<>();
+                    qans = new ArrayList<String>();  // answer is list of choices selected
                     line = question + ": ";
+                    // iterates through all child views, checks for choice checkboxes
                     for (int j = 0; j < q.getChildCount(); j++) {
                         String ctag = (String) q.getChildAt(j).getTag();
                         if (ctag.contains("choice")) {
                             CheckBox cb = (CheckBox) q.getChildAt(j);
                             if (cb.isChecked()) {
+                                // if checkbox is checked, adds checkbox text to line, code to list of choices qans
                                 String tt = ctag.substring(ctag.indexOf("~~")+2);
                                 line += cb.getText() + ", ";
-                                ((ArrayList) qans).add(tt);
+                                ((ArrayList<String>)qans).add(tt);
                             }
                         }
                     }
+                    // if more than one choice, remove ending ", " from line
                     if (line.length() > 20) {
                         line = line.substring(0, line.length() - 2);
                     }
                 } else if (tag.equals("M")) {
+                    // adds location to line and sets location as qans
                     line = question + ": " + LOCATION;
                     qans = LOCATION;
                 } else if (tag.equals("C")) {
-                    String imtags = "";
+                    String imtags = "";  // list of image tags
                     for(int t = 0; t<Image_Tags.size()-1; t++){
                         imtags += Image_Tags.get(t) + ", ";
                     }
@@ -966,15 +990,18 @@ public class PVQ extends AppCompatActivity {
                     }
                     line = question + ": ";
                     line += imtags;
-                    qans = Images;
-                    // qans = hashmap of image file:imtag
+                    qans = Images;  // hash map of image tags to their image filenames
                 }
 
+                // jquestion will be key, qans will be value in hash map of question/answers for group
                 String jquestion = question;
                 if(question.endsWith("*")){
                     jquestion = question.substring(0,question.length()-1);
                 }
 
+                // if question is already in hash map for group and has multiple answers
+                // if answer type is already a list of answers, appends new answer
+                // if not, creates list of answers, appends old answer and new answer
                 if(questions.containsKey(jquestion)){
                     if(questions.get(jquestion) instanceof ArrayList){
                         ((ArrayList<Object>)questions.get(jquestion)).add(qans);
@@ -987,18 +1014,19 @@ public class PVQ extends AppCompatActivity {
                         questions.put(jquestion, elems);
                     }
                 }else {
+                    // puts question, answer in hash map for group
                     questions.put(jquestion, qans);
                 }
 
-                // change to refer to question numbers
-
+                // if question is the next sequential Identifier question whose answer should be added to uid
+                // adds answer to uid
                 if(Identifiers.contains(qid) && !uid_set && !qans.equals("") && !qans.equals(" ")){
                     if(Identifiers.get(idp).equals(qid)){
                         String uids = ((String) qans).replace(" ", "_");
                         uids = uids.replace("/", "_");
                         uid += uids + "_";
                         System.out.println(Identifiers.get(idp) + qans);
-                        idp += 1;
+                        idp += 1;  // keeps track of which identifier needs to be added next
                     }
                 }
                 System.out.println(i);
@@ -1022,11 +1050,11 @@ public class PVQ extends AppCompatActivity {
         }
         if(use_un){
             // returns string of unanswered questions if any are present
-            return "!<!," + unanswered;
+            return "!<!," + unanswered;  // "!<!," denotes to update_answers() that there are unanswered questions
         }
 
         if(rj){
-            return json.toString();
+            return json.toString();  // returns json string
         }
         if(Identifiers.size() == idp){
             timeStamp = uid+"_"+timeStamp;
@@ -1034,6 +1062,9 @@ public class PVQ extends AppCompatActivity {
         }
 
         if(jf != null) {
+            // if a FileOutputStream for json is given
+            // convert hash map of question/answers to groups and metadata to jsonobject
+            // convert jsonobject to string, write string to file
             JSONObject j = new JSONObject(json);
             String jstring = j.toString();
             try {
@@ -1064,8 +1095,8 @@ public class PVQ extends AppCompatActivity {
             // if all required questions answered, writes questions and answers to file
             filename = timeStamp+"hc*"+project+".txt";
             String jsonfilename = timeStamp + "hc*"+project+".json";
-            FileOutputStream fos = null;
-            FileOutputStream jfos = null;
+            FileOutputStream fos;
+            FileOutputStream jfos;
             // opens file
             try{
                 fos = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -1105,28 +1136,30 @@ public class PVQ extends AppCompatActivity {
     // updates ans TextView on submit page with current answers
     public void update_answers(){
         answers = writeAnswers(Groups, false, null, true, null, false);
-        //ans.setText(answers);
         if(answers.substring(0,4).equals("!<!,")){
+            // if unanswered required questions present, set ans to message about required questions
             String req_msg = "The following sections have required questions that need to be answered:";
             ans.setText(req_msg);
-            String scts = answers.substring(4);
+            String scts = answers.substring(4);  // list of groups with unanswered required questions separated by ",, "
             req_buttons.setBackgroundColor(Color.MAGENTA);
             if(req_buttons.getChildCount() == 0) {
+                // extract a group name from scts until there are none left
                 while (scts.length() > 3) {
+                    // make button that takes user to group
                     String sct = scts.substring(0, scts.indexOf(",, "));
                     scts = scts.substring(scts.indexOf(",, ") + 3);
                     Button br = new Button(this);
                     br.setText(sct);
                     br.setOnClickListener(new StringOnClickListener(sct) {
                         public void onClick(View v) {
-                            vp.setCurrentItem(pages.indexOf(s));
-                            System.out.println(s + "   " + Integer.toString(pages.indexOf(s)));
+                            vp.setCurrentItem(pages.indexOf(s));  // sets view pager page to group page
                         }
                     });
-                    req_buttons.addView(br);
+                    req_buttons.addView(br);  // add button to req_buttons
                 }
             }
         }else{
+            // display answers
             ans.setText(answers);
         }
     }
@@ -1138,14 +1171,12 @@ public class PVQ extends AppCompatActivity {
         imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
-    // calls hideSoftKeyboard on non-EditText views
+    // calls hideSoftKeyboard for non-EditText views when they are touched
     public Activity a = this;
     public void setupUI(View view) {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-
                     hideSoftKeyboard(a, v);
                     return false;
                 }
@@ -1155,6 +1186,8 @@ public class PVQ extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // prompts user whether they are sure if they'd like to exit questionnaire
+        // exits if yes, returns user to project home page
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to exit? Your answers will not be saved.")
                 .setCancelable(false)
@@ -1176,50 +1209,27 @@ public class PVQ extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int itemId = item.getItemId();
         switch (itemId) {
             case android.R.id.home:
                 onBackPressed();
                 break;
-
         }
-
         return true;
-    }
-
-    public static HashMap<String, String> jsonToMap(String t) throws JSONException {
-
-        HashMap<String, String> map = new HashMap<>();
-        JSONObject jObject = new JSONObject(t);
-        Iterator<?> keys = jObject.keys();
-
-        while( keys.hasNext() ){
-            String key = (String)keys.next();
-            String value = jObject.getString(key);
-            map.put(key, value);
-
-        }
-
-        return map;
     }
 }
 
-// class used to create a PagerAdapter to work with ViewPager
+/**
+ * Class used to create a PagerAdapter to work with ViewPager
+ */
 class MainPagerAdapter extends PagerAdapter
 {
     // This holds all the currently displayable views, in order from left to right.
-    private ArrayList<View> views = new ArrayList<View>();
+    private ArrayList<View> views = new ArrayList<>();
 
-    public void addView (View v, int position)
+    void addView (View v, int position)
     {
         views.add (position, v);
-        super.notifyDataSetChanged();
-    }
-
-    public void removeView (int position)
-    {
-        views.remove (position);
         super.notifyDataSetChanged();
     }
 
@@ -1250,31 +1260,15 @@ class MainPagerAdapter extends PagerAdapter
 
 }
 
-// onClickListener customized for repeatable chunks
-class RepeatOnClickListener implements View.OnClickListener
-{
-    LinearLayout view1;
-    NodeList nlist;
-    Context context;
-    // can take a linear layout, nodelist, and context as parameters
-    public RepeatOnClickListener(LinearLayout view1, NodeList nlist, Context context) {
-        this.view1 = view1;
-        this.nlist = nlist;
-        this.context = context;
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-    }
-
-}
-
+/**
+ * StringOnClickListener has the same functionality as View.OnClickListener with the added ability
+ * of objects to access string parameters passed during their initializations
+ */
 class StringOnClickListener implements View.OnClickListener
 {
     String s;
-    // can take a linear layout, nodelist, and context as parameters
-    public StringOnClickListener(String str) {
+    // can take string as parameter to be accessed in onClick()
+    StringOnClickListener(String str) {
         this.s = str;
     }
 
@@ -1285,17 +1279,21 @@ class StringOnClickListener implements View.OnClickListener
 
 }
 
+/**
+ * NumWatcher helps keep track of how many sets of repeatable questions are displayed for repeatable chunks
+ */
 class NumWatcher implements TextWatcher {
-    private LinearLayout view1;
-    private NodeList nodes;
-    private Context context;
-    private List list2;
-    private int max;
-    private HashMap NumQuestions;
-    private HashMap ds;
-    private String qlims;
+    private LinearLayout view1;  // LinearLayout on which all sets of questions are displayed
+    private NodeList nodes;  // NodeList of questions
+    private Context context;  // context of activity in which questions are being placed
+    private List<LinearLayout> list2;  // list that needs to be updated with questions
+    private int max;  // static maximum number of chunks to be displayed
+    private HashMap<String,LinearLayout> NumQuestions;  // hash map of questions mapped to their numbers
+    private HashMap ds;  // hash map mapping number of currently positively answered choices a question is dependent on to the question's id
+    private String qlims;  // string of question number(s) whose answers limit the possible number of repeatable chunks
     private AlertDialog dialog;
-    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List list2, HashMap nq, HashMap deps, String qlims){
+    NumWatcher(int max, LinearLayout ll, NodeList nodes, Context context, List<LinearLayout> list2, HashMap<String,LinearLayout> nq,
+               HashMap deps, String qlims){
         this.view1 = ll;
         this.nodes = nodes;
         this.context = context;
@@ -1304,17 +1302,21 @@ class NumWatcher implements TextWatcher {
         this.NumQuestions = nq;
         this.ds = deps;
         this.qlims = qlims;
+        // builds error dialog in case one needs to be shown
         AlertDialog.Builder newbuilder = new AlertDialog.Builder(context);
         String msg = "Value too large, contradicts answer to question "+qlims;
         newbuilder.setMessage(msg);
         this.dialog = newbuilder.create();
     }
 
+    /**
+     * Deals with changes with input in EditText controlling number of sets of repeatable questions
+     *
+     * @param s Editable currently inputted in EditText
+     */
     public void afterTextChanged(Editable s) {
         String value = s.toString();
-        System.out.println(list2.size());
-        System.out.println(view1.getChildCount());
-        System.out.println("^childcount");
+        // removes all repeatable question set views from view1 and all repeatable questions from list2 for a fresh start
         for(int i = 0; i < view1.getChildCount(); i++){
             System.out.println("group");
             for(int j = 0; j < ((LinearLayout)view1.getChildAt(i)).getChildCount(); j++){
@@ -1323,7 +1325,7 @@ class NumWatcher implements TextWatcher {
                 LinearLayout chunk = (LinearLayout)((LinearLayout)view1.getChildAt(i)).getChildAt(j);
                 for(int k = 0; k < chunk.getChildCount(); k++){
                     try {
-                        System.out.println(list2.remove((LinearLayout) chunk.getChildAt(k)));
+                        System.out.println(list2.remove(chunk.getChildAt(k)));
                     }catch(Exception e){
                         System.out.println(chunk.getChildAt(k));
                     }
@@ -1331,34 +1333,41 @@ class NumWatcher implements TextWatcher {
             }
         }
         view1.removeAllViews();
-        System.out.println(list2.size());
         if(value.equals("")){
+            // no number entered equates to 0, function can exit without adding questions to view
             return;
         }
-        int times = Integer.parseInt(value);
-        int lim = Questionnaire.NumLimit(qlims, NumQuestions, null);
+        int times = Integer.parseInt(value);  // number entered in EditText
+        int lim = Questionnaire.NumLimit(qlims, NumQuestions, null);  // current answer at limiting question(s)
         if(times > max){
+            // exits if times is greater than static limit
             return;
         }else if(times > lim){
+            // shows error message if times is greater than user-set limit
             dialog.show();
             return;
         }
+        // creates new linear layout holding repeatable set of question for specified number of times
         for(int i = 0;i<times;i++){
             LinearLayout qchunk = new LinearLayout(context);
             qchunk.setOrientation(LinearLayout.VERTICAL);
+            // iterates through question nodes, makes questions for each
             for (int y = 0; y < nodes.getLength(); y++) {
                 Node question = nodes.item(y);
                 if (question.getNodeType() == Node.ELEMENT_NODE) {
+                    // uses Questionnaire.build_question() to create each new question
+                    // function adds new question to list2 and qchunk
                     LinearLayout qu = Questionnaire.build_question(question, list2, qchunk, context, NumQuestions,
                             ds);
                     TextView pt = new TextView(context);
-                    pt.setText(" - "+Integer.toString(i+1));
+                    String chunk_num = " - "+Integer.toString(i+1);  // specifies which set question is part of
+                    pt.setText(chunk_num);
                     pt.setTag("outer parent text");
                     pt.setVisibility(View.GONE);
-                    qu.addView(pt);
+                    qu.addView(pt);  // adds invisible TextView specifying chunk number of question
                 }
             }
-            view1.addView(qchunk, view1.getChildCount() - 1);
+            view1.addView(qchunk, view1.getChildCount() - 1);  // adds qchunk to view holding all sets of repeatable questions
         }
     }
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
