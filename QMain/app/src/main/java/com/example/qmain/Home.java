@@ -30,7 +30,7 @@ import java.util.TreeSet;
  * Home page for project
  */
 public class Home extends AppCompatActivity {
-    String author = ""; // username of surveyor
+    String author = ""; // username of user
 
     public final static String RESULTS = "";
     Context context = this;
@@ -163,6 +163,7 @@ public class Home extends AppCompatActivity {
                                                   intent.putExtra("json", jsonstring);
                                                   intent.putExtra("city", city);
                                                   intent.putExtra("org", orga);
+                                                  intent.putExtra("author", author);
                                                   startActivity(intent);
                                               }
                                           }
@@ -189,7 +190,7 @@ public class Home extends AppCompatActivity {
             }
         }
 
-        // scroll views to the linear layouts containing alphabetized and date-ordered surveys the user switches between
+        // scroll views for the linear layouts containing alphabetized and date-ordered surveys the user switches between
         ScrollView datesv = new ScrollView(this);
         ScrollView alphasv = new ScrollView(this);
 
@@ -277,22 +278,13 @@ public class Home extends AppCompatActivity {
     }
 
     /**
-     * Returns user to project selection, asks if they are sure they want to exit
-     *
-     * @param view view clicked to start action
-     */
-    public void exit(View view){
-        onBackPressed();
-    }
-
-    /**
      * Removes all of project's completed surveys and related files from local storage
      * removes all images from project's surveys from picture directory
      *
      * @param view view clicked to start action
      */
     public void delete_all(View view){
-
+        // files relating to project identified with "hc*"+prjt
         String[] files = fileList();
         if (files.length > 0){
             for(int i = 0; i<files.length; i++){
@@ -318,18 +310,24 @@ public class Home extends AppCompatActivity {
             }
         }
 
+        // restarts home page with cleared file list
         Intent intent = new Intent(context, Home.class);
         intent.putExtra("action_bar", getIntent().getStringExtra("action_bar"));
         intent.putExtra("project", prjt);
+        intent.putExtra("city", city);
+        intent.putExtra("org", orga);
+        intent.putExtra("author", author);
         startActivity(intent);
+        Home.this.finish();
 
     }
 
     /**
-     * Prompts user and asks whether user would like to exit project, returns to project selection page if yes
+     * Asks user if they are sure they want to exit, returns user to project selection page if yes
+     *
+     * @param view view clicked to start action
      */
-    @Override
-    public void onBackPressed() {
+    public void exit(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you would like to leave this project?")
                 .setCancelable(false)
@@ -338,7 +336,10 @@ public class Home extends AppCompatActivity {
 
                         Intent intent = new Intent(context, Projects.class);
                         intent.putExtra("out", "yes");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        Home.this.finish();
+                        System.out.println("finished");
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

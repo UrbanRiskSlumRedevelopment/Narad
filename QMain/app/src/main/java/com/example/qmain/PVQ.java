@@ -87,14 +87,13 @@ public class PVQ extends AppCompatActivity {
     HashMap<String, String> Images = new HashMap<>(); // hash map mapping tags to their image files
     String answers = ""; // string for storing text of answers to questionnaire
     TextView ans = null; // TextView where answers will be displayed on review page
-    LinearLayout req_buttons;
-    static List Counter = new ArrayList();
+    LinearLayout req_buttons; // LinearLayout on which buttons of unanswered required questions will go when user reviews
     public static AlertDialog.Builder builder = null; // For building alert dialogs when necessary
     public Context context = this; // For accessing context of the questionnaire activity
     public static String LOCATION = ""; // Location stored here
-    ImageView mImageView = null;
-    LinearLayout camera_question = null;
-    LinearLayout map_question = null;
+    ImageView mImageView = null; // Most recent taken image
+    LinearLayout camera_question = null; // camera question
+    LinearLayout map_question = null; // map question
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date()); // date and time at which questionnaire was created
     String ogTimeStamp = timeStamp; // another variable storing original timestamp in case timeStamp is modified
     String author = ""; // username of survey taker
@@ -102,10 +101,15 @@ public class PVQ extends AppCompatActivity {
     ViewPager vp = null; // ViewPager whose pages will make up the questionnaire
     DrawerLayout dl = null; // Side drawer for navigation
     List<String> Identifiers = new ArrayList<>(); // questions whose answers will be used to generate the questionnaire's uid
-    String uid = "";
-    Boolean uid_set = false;
-    String project; // project name
+    String uid = ""; // unique id of survey
+    Boolean uid_set = false; // whether unique id has been set
+    String project; // project hash
 
+    /**
+     * Builds questionnaire
+     *
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -306,7 +310,7 @@ public class PVQ extends AppCompatActivity {
                 for(int j=0; j<nList.getLength();j++){
                     Node nNode = nList.item(j);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        // builds question linear layout and adds question to Qs, NumQuestions, and Dependents (if applicable)
+                        // builds question linear layout and adds question to Qs, NumQuestions, and Dependents
                         // does not handle map or camera questions, those built separately below
                         LinearLayout qu = Questionnaire.build_question(nNode, Qs, ll, this, NumQuestions,
                                 Dependents);
@@ -383,7 +387,7 @@ public class PVQ extends AppCompatActivity {
                     NodeList chqs = chunkE.getElementsByTagName("rquestion");
                     LinearLayout questions_here = new LinearLayout(this);
                     questions_here.setOrientation(LinearLayout.VERTICAL);
-                    // sets up EditText so that it displays the correct number of repeatable chunks based on answer
+                    // sets up EditText so that it displays the correct (and a valid) number of repeatable chunks based on answer
                     num_times.addTextChangedListener(new NumWatcher(max, questions_here, chqs, this, Qs, NumQuestions, Dependents, qlims));
                     ll.addView(num_times);
                     ll.addView(questions_here);
@@ -397,7 +401,7 @@ public class PVQ extends AppCompatActivity {
                 setupUI(ll);
             }
 
-            // iterate through id fields and record numbers of identifier questions in Identifiers
+            // iterates through id fields and records numbers of identifier questions in Identifiers
             NodeList ids = doc.getElementsByTagName("idfield");
             for(int d=0; d<ids.getLength();d++){
                 Node idf = ids.item(d);
@@ -438,8 +442,7 @@ public class PVQ extends AppCompatActivity {
                 }
             });
 
-            // blank text view and blank linear layout to be updated
-            // on pressing review (through update_answers())
+            // blank text view and blank linear layout to be updated on pressing review (through update_answers())
             // ans will be populated with text of the questions/answers of survey if all required questions are answered
             // req_buttons will be populated with buttons to sections where there are unanswered required questions
             ans = new TextView(this);
@@ -470,7 +473,7 @@ public class PVQ extends AppCompatActivity {
 
             vp.setCurrentItem(0); // starts questionnaire on first page
 
-            // populates navigation drawer menu with each page in questionnaire
+            // populates navigation drawer menu with names of each page in questionnaire
             // sets up navigation drawer items so that clicking on them results in navigation to the corresponding page
             // and closing of the drawer
             Menu menu1 = nv.getMenu();
@@ -1035,7 +1038,7 @@ public class PVQ extends AppCompatActivity {
                 if (toFile) {
                     try {
                         // writes answers to file
-                        line = line + "~~";
+                        line = line + "~~";  // "~~" delimiter for line
                         total += line;
                         f.write(line.getBytes());
                     } catch (Exception e) {
@@ -1079,8 +1082,6 @@ public class PVQ extends AppCompatActivity {
     }
 
     public String submit(){
-        // time stamp of submission -> filename for file in which data from form at time to be saved
-        //String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date());
         String filename;
 
         // calls writeAnswers first to check for unanswered required questions
@@ -1116,20 +1117,22 @@ public class PVQ extends AppCompatActivity {
             }
         }
 
-        // goes back to main page of app
+        // goes back to main page of project
         Intent intent = new Intent(this, Home.class);
         intent.putExtra("project", project);
         intent.putExtra("city", getIntent().getStringExtra("city"));
         intent.putExtra("org", getIntent().getStringExtra("org"));
         intent.putExtra("action_bar", getIntent().getStringExtra("project_name"));
+        intent.putExtra("author", author);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
         // resets values for new questionnaire
-        Counter = new ArrayList();
         LOCATION = "";
         mImageView = null;
         timeStamp = "";
 
+        PVQ.this.finish();
         return filename;
     }
 
@@ -1184,8 +1187,7 @@ public class PVQ extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
+    public void exitSurvey() {
         // prompts user whether they are sure if they'd like to exit questionnaire
         // exits if yes, returns user to project home page
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1207,12 +1209,26 @@ public class PVQ extends AppCompatActivity {
 
     }
 
+    /**
+     * If back pressed, calls exitSurvey()
+     */
+    @Override
+    public void onBackPressed(){
+        exitSurvey();
+    }
+
+    /**
+     * If user selects back/home button in support action bar, calls exitSurvey()
+     *
+     * @param item MenuItem selected
+     * @return boolean whether item selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
             case android.R.id.home:
-                onBackPressed();
+                exitSurvey();
                 break;
         }
         return true;
@@ -1347,7 +1363,7 @@ class NumWatcher implements TextWatcher {
             dialog.show();
             return;
         }
-        // creates new linear layout holding repeatable set of question for specified number of times
+        // creates new linear layout holding repeatable set of questions for specified number of times
         for(int i = 0;i<times;i++){
             LinearLayout qchunk = new LinearLayout(context);
             qchunk.setOrientation(LinearLayout.VERTICAL);

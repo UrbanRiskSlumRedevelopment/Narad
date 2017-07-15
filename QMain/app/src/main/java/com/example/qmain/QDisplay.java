@@ -81,7 +81,7 @@ public class QDisplay extends AppCompatActivity {
         Button j = new Button(this); // button for displaying json
         Button im = new Button(this); // button for displaying images
 
-        // text, json, and image buttons all remove all three ScrollViews from layout, then restores
+        // text, json, and image button each removes all three ScrollViews from layout, then restores
         // the one corresponding to itself
 
         t.setOnClickListener(new View.OnClickListener() {
@@ -221,13 +221,25 @@ public class QDisplay extends AppCompatActivity {
                 System.out.println(filename+".txt");
                 System.out.println(deleteFile(filename+".txt"));
                 System.out.println(deleteFile(filename+".json"));
-                onBackPressed();
+                goBack();
             }
         }
         );
 
         layout.addView(del);
 
+        Button back = new Button(this);
+        String back_str = "Back";
+        back.setText(back_str);
+        back.setOnClickListener(new View.OnClickListener(){
+                                    public void onClick(View w){
+                                        goBack();
+                                    }
+                                }
+        );
+        back.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        layout.addView(back);
 
 
     }
@@ -236,14 +248,16 @@ public class QDisplay extends AppCompatActivity {
     /**
      * Returns user to project home page using project information passed from home page when opening survey page
      */
-    @Override
-    public void onBackPressed() {
+    public void goBack() {
         Intent intent = new Intent(this, Home.class);
         intent.putExtra("project", getIntent().getStringExtra("project"));
         intent.putExtra("action_bar", getIntent().getStringExtra("project_name"));
         intent.putExtra("city", getIntent().getStringExtra("city"));
         intent.putExtra("org", getIntent().getStringExtra("org"));
+        intent.putExtra("author", getIntent().getStringExtra("author"));
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        QDisplay.this.finish();
 
     }
 }

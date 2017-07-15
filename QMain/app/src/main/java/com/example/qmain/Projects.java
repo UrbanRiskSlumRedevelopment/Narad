@@ -29,6 +29,7 @@ public class Projects extends AppCompatActivity {
 
     Context context = this;
     HashMap<String, Integer> ProjectCodes = new HashMap<>();
+    String author;  // user username
 
     /**
      * Builds project selection page
@@ -39,22 +40,26 @@ public class Projects extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            // checks to see whether user has just left a project;
+            // checks to see whether user has just left a project
+            // when user leaves project, projects page activity is started with intent extra "out" as "yes"
             // if so, updates shared preference project information to empty strings
             if (getIntent().getStringExtra("out").equals("yes")) {
                 SaveSharedPreference.setProjectInfo(Projects.this, "", "", "", "");
             }
         }catch(Exception e){System.out.println("no update needed");}
-        // checks to see whether a project has already been selected;
+        // checks to see whether a project has previously been selected and not exited from;
         // if it has, its info will be available from shared preference, app proceeds to project main page
         ArrayList<String> pinfo = SaveSharedPreference.getProjectInfo(Projects.this);
+        author = SaveSharedPreference.getUserName(Projects.this);  // username stored in SharedPreferences when user signs in
         if(pinfo.size() == 4){
             Intent intent = new Intent(context, Home.class);
             intent.putExtra("action_bar", pinfo.get(0));
             intent.putExtra("project", pinfo.get(1));
             intent.putExtra("city", pinfo.get(2));
             intent.putExtra("org", pinfo.get(3));
+            intent.putExtra("author", author);
             startActivity(intent);
+            this.finish();
         }
         setContentView(R.layout.activity_projects);
 
@@ -91,12 +96,12 @@ public class Projects extends AppCompatActivity {
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                requestSignOut();
             }
         });
         layout.addView(signout);
 
-        // sets up UI for all views on page (hides soft keyboard if focus is not on an EditText)
+        // sets up UI for all views on page (hides soft keyboard if view is clicked and is not an EditText)
         setupUI(layout);
         for(int j = 0; j < layout.getChildCount(); j++){
             setupUI(layout.getChildAt(j));
@@ -118,7 +123,7 @@ public class Projects extends AppCompatActivity {
         String url = "http://risklabdev.mit.edu:8001/form";
         url += "/"+s_org+"/"+s_city+"/"+s_project;
 
-        // generates a unique local hash code for the project
+        // assigns a unique local hash code for the project
         // checks to see if a hash code has already been generated, if not generates a new one
         String p = (s_org+s_city+s_project);
         int h;
@@ -144,8 +149,10 @@ public class Projects extends AppCompatActivity {
             intent.putExtra("project", hash);
             intent.putExtra("city", s_city);
             intent.putExtra("org", s_org);
+            intent.putExtra("author", author);
             SaveSharedPreference.setProjectInfo(Projects.this, s_project, hash, s_city, s_org);
             startActivity(intent);
+            this.finish();
         }else{
             String em = "The organization, city, and/or project you are looking for does not exist. Please try again.";
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -181,8 +188,10 @@ public class Projects extends AppCompatActivity {
                         intent.putExtra("project", hash);
                         intent.putExtra("city", s_city);
                         intent.putExtra("org", s_org);
+                        intent.putExtra("author", author);
                         SaveSharedPreference.setProjectInfo(Projects.this, s_project, hash, s_city, s_org);
                         startActivity(intent);
+                        this.finish();  // user cannot navigate back to page unless they exit their project
                     }
                 },
                 new Response.ErrorListener()
@@ -221,7 +230,7 @@ public class Projects extends AppCompatActivity {
     public Activity a = this;
 
     /**
-     * If view is not EditText, sets onTouchListener that closes soft keyboard when it is interacted with
+     * If view is not EditText, sets onTouchListener that closes soft keyboard when view is interacted with
      *
      * @param view view to be monitored
      */
@@ -229,8 +238,6 @@ public class Projects extends AppCompatActivity {
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-
                     hideSoftKeyboard(a, v);
                     return false;
                 }
@@ -252,15 +259,16 @@ public class Projects extends AppCompatActivity {
             return;
         }
         Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("out", "yes");
         startActivity(intent);
+        Projects.this.finish();
     }
 
     /**
      * Prompts user if they are sure they want to sign out, calls signOut() if sure
      */
-    @Override
-    public void onBackPressed() {
+    public void requestSignOut() {
         // builds dialog with yes and no options
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you would like to sign out?")
@@ -280,5 +288,6 @@ public class Projects extends AppCompatActivity {
         alert.show();
 
     }
+
 }
 

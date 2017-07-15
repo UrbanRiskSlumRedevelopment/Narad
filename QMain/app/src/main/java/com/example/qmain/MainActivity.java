@@ -11,7 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.auth.api.Auth;
 
 /**
- * Builds sign in page
+ * Sign in page
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-            // checks to see whether user has just signed out;
+            // checks to see whether user has just signed out
+            // when user signs out, sign in page activity is started with intent extra "out" as "yes"
             // if so, updates shared preference username to an empty string
             if(getIntent().getStringExtra("out").equals("yes")){
                 SaveSharedPreference.setUserName(MainActivity.this, "");
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, Projects.class);
             intent.putExtra("author", saved_user);
             startActivity(intent);
+            this.finish();  // user cannot navigate back to sign in page unless they sign out
         }
 
         setContentView(R.layout.activity_main);
@@ -137,22 +139,11 @@ public class MainActivity extends AppCompatActivity {
      * @param author user username
      */
     public void start(String author) {
-        // move forward to project selection with username as author
+        // proceeds to project selection with username as author
         Intent intent = new Intent(this, Projects.class);
         intent.putExtra("author", author);
         startActivity(intent);
-    }
-
-    /**
-     * Performs same action pressing home button would
-     */
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        startActivity(intent);
-
+        this.finish();  // user cannot navigate back to sign in page unless they sign out
     }
 
 

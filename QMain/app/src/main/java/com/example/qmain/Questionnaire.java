@@ -740,7 +740,7 @@ public class Questionnaire extends AppCompatActivity {
                 }
             }
         }
-        // if a factor is specified by not found in the limiting question, function moves on
+        // if a factor is specified but not found in the limiting question, function moves on
         // returns limit on total question answer as limit on factor
         try{
             // tries finding answer in a TextView (answers are in TextViews for sum questions)
@@ -846,7 +846,7 @@ class SumWatcher implements TextWatcher{
         for(int i = 0;i<factors.size();i++){
             String value = ((EditText)factors.get(i)).getText().toString();
             if(value.equals("0")){
-                // zero is true if a customer entered a 0 and didn't just miss the question
+                // zero is true if user entered a 0 and didn't just miss the question
                 zero = true;
             }
             try {
@@ -863,7 +863,7 @@ class SumWatcher implements TextWatcher{
                 e.printStackTrace();
             }
         }
-        // updates answer TextView display either with blank answer of updated sum
+        // updates answer TextView display either with blank answer or updated sum
         if(sum == 0 && !zero){
             String settext = "Total: ";
             tv.setText(settext);
@@ -934,7 +934,7 @@ class onCheckedChangedB implements RadioButton.OnCheckedChangeListener{
             }
         }else{
             for(String dependent: dependents){
-                // each dependent increases by one the number of answers it depends on answered positively
+                // each dependent decreases by one the number of answers it depends on answered positively
                 int u = dependents_map.get(dependent);
                 dependents_map.put(dependent, u-1);
                 if(dependents_map.get(dependent).equals(0)) {
